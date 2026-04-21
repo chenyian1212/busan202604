@@ -68,6 +68,7 @@
                         <button onclick="appendCalc('*')" class="bg-sand/10 p-4 rounded-xl shadow-sm font-bold">×</button>
                         <button onclick="appendCalc('0')" class="bg-white p-4 rounded-xl shadow-sm font-bold">0</button>
                         <button onclick="appendCalc('+')" class="bg-sand/10 p-4 rounded-xl shadow-sm font-bold">+</button>
+                        <button onclick="appendCalc('0')" class="bg-white p-4 rounded-xl shadow-sm font-bold">0</button>
                         <button onclick="appendCalc('-')" class="bg-sand/10 p-4 rounded-xl shadow-sm font-bold">-</button>
                         <button onclick="calculateResult()" class="bg-dark-brown text-white p-4 rounded-xl shadow-sm font-bold">=</button>
                     </div>
@@ -75,7 +76,6 @@
                 </div>
             </div>
 
-            <!-- 帳務篩選功能 -->
             <div class="mb-4 space-y-2">
                 <div class="flex justify-between items-center px-2">
                     <h3 class="serif-en text-xl italic text-brown">Ledger</h3>
@@ -136,7 +136,6 @@
         <!-- 5. INFO SECTION -->
         <section id="tab-info" class="tab-content">
             <div class="space-y-6">
-                <!-- 固定航班資訊 -->
                 <div class="glass-card p-6 border-l-8 border-sand">
                     <h3 class="serif-en text-xl mb-4 font-bold italic text-brown"><i class="fa-solid fa-plane-up mr-2"></i>Flight Info</h3>
                     <div class="text-sm space-y-4">
@@ -151,22 +150,20 @@
                     </div>
                 </div>
 
-                <!-- 固定住宿資訊 -->
                 <div class="glass-card p-6 border-l-8 border-brown">
                     <h3 class="serif-en text-xl mb-4 font-bold italic text-brown"><i class="fa-solid fa-hotel mr-2"></i>Stay</h3>
                     <div class="text-sm space-y-4">
                         <div class="pb-2 border-b border-brown/5">
                             <p class="font-bold">4/24-4/26 (2晚) 海雲台</p>
-                            <p class="text-xs opacity-60 italic">溫德姆華美達安可酒店</p>
+                            <p class="text-xs opacity-60 italic text-brown/60">溫德姆華美達安可酒店</p>
                         </div>
                         <div>
                             <p class="font-bold">4/26-4/28 (2晚) Good Ol' Days</p>
-                            <p class="text-xs opacity-60 italic">中央洞 (地鐵 1 號線)</p>
+                            <p class="text-xs opacity-60 italic text-brown/60">中央洞 (地鐵 1 號線)</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- 緊急資訊 -->
                 <div class="glass-card p-6 bg-red-50/40">
                     <h3 class="serif-en text-xl mb-3 font-bold italic text-red-900"><i class="fa-solid fa-phone-flip mr-2"></i>Emergency</h3>
                     <div class="grid grid-cols-2 gap-3">
@@ -181,7 +178,6 @@
                     </div>
                 </div>
 
-                <!-- 可增減欄位 -->
                 <div class="glass-card p-6">
                     <div class="flex justify-between items-center mb-4">
                         <h3 class="serif-en text-xl font-bold italic text-brown">Custom Notes</h3>
@@ -190,10 +186,9 @@
                     <div id="custom-info-list" class="space-y-4"></div>
                 </div>
 
-                <!-- 資料備份與搬家區 (New) -->
                 <div class="glass-card p-6 border-l-8 border-green-600/30">
                     <h3 class="serif-en text-xl mb-4 font-bold italic text-green-800"><i class="fa-solid fa-database mr-2"></i>Data Transfer</h3>
-                    <p class="text-[10px] opacity-60 mb-4 leading-tight">換網址或換手機時，點選「備份碼」並在新網頁「還原」即可遷移資料。</p>
+                    <p class="text-[10px] opacity-60 mb-4 leading-tight italic">換網址或手機時，點擊複製備份碼並在目標頁面還原即可。</p>
                     <div class="grid grid-cols-2 gap-3">
                         <button onclick="copyFullData()" class="bg-brown text-white py-3 rounded-xl text-[10px] font-bold shadow-md active:scale-95 transition-transform">複製備份碼</button>
                         <button onclick="importFullData()" class="bg-white border border-brown/20 text-brown py-3 rounded-xl text-[10px] font-bold shadow-sm active:scale-95 transition-transform">還原備份碼</button>
@@ -232,7 +227,7 @@
         <div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 shadow-2xl max-h-[85vh] overflow-y-auto">
             <h3 class="serif-en text-xl mb-6 font-bold italic text-brown">Edit Itinerary</h3>
             <div class="space-y-4">
-                <input type="text" id="card-title" class="w-full bg-cream border-none rounded-xl p-4 text-sm font-bold text-brown" placeholder="景點名稱">
+                <input type="text" id="card-title" class="w-full bg-cream border-none rounded-xl p-4 text-sm font-bold text-brown" placeholder="項目名稱">
                 <textarea id="card-desc" class="w-full bg-cream border-none rounded-xl p-4 text-sm h-24 text-brown leading-relaxed" placeholder="內容說明..."></textarea>
                 <div class="flex items-center gap-4 py-2">
                     <label class="bg-brown text-white px-4 py-2 rounded-xl text-[10px] font-bold cursor-pointer">
@@ -242,7 +237,7 @@
                     <img id="card-img-preview" class="w-12 h-12 rounded-lg object-cover hidden">
                 </div>
                 <input type="text" id="card-loc" class="w-full bg-cream border-none rounded-xl p-4 text-xs text-brown" placeholder="Naver Map 關鍵字">
-                <input type="text" id="card-link" class="w-full bg-cream border-none rounded-xl p-4 text-xs text-brown" placeholder="相關連結 (部落格等)">
+                <input type="text" id="card-link" class="w-full bg-cream border-none rounded-xl p-4 text-xs text-brown" placeholder="連結 (部落格等)">
                 <div class="flex gap-3 mt-4">
                     <button onclick="deleteCard()" class="flex-1 bg-red-50 text-red-500 py-3 rounded-xl font-bold text-xs">刪除</button>
                     <button onclick="saveCard()" class="flex-[2] bg-brown text-white py-3 rounded-xl font-bold text-xs">儲存</button>
@@ -261,7 +256,7 @@
             <div class="space-y-4">
                 <input type="text" id="exp-title" class="w-full border-b border-sand py-2 focus:outline-none text-brown font-bold text-lg" placeholder="品項名稱...">
                 <div class="grid grid-cols-2 gap-4">
-                    <input type="number" id="exp-amount" class="border-b border-sand py-2 focus:outline-none text-brown font-bold text-lg" placeholder="KRW 金額">
+                    <input type="number" id="exp-amount" class="border-b border-sand py-2 focus:outline-none text-brown font-bold text-lg" placeholder="KRW">
                     <select id="exp-cat" class="border-b border-sand py-2 bg-transparent text-xs font-bold text-brown">
                         <option value="食">🍽️ 食</option>
                         <option value="行">交通</option>
@@ -277,7 +272,7 @@
                         <option value="Cash">現鈔</option>
                         <option value="WOWPASS">WOWPASS</option>
                     </select>
-                    <input type="text" id="exp-payer" class="border-b border-sand py-2 focus:outline-none text-xs font-bold text-brown" placeholder="付款人 (A/B...)">
+                    <input type="text" id="exp-payer" class="border-b border-sand py-2 focus:outline-none text-xs font-bold text-brown" placeholder="付款人">
                 </div>
                 <button onclick="saveExpense()" class="w-full bg-dark-brown text-white py-4 rounded-2xl font-bold tracking-widest mt-6 shadow-lg">SAVE</button>
             </div>
@@ -291,11 +286,11 @@
         let state = JSON.parse(localStorage.getItem(APP_ID)) || {
             currentDayIdx: 0,
             itinerary: [
-                { date: "4/24 (五)", weather: "14°C / 12°C", text: "晴", slots: { "早上": [{id:1, title: "抵達機場", desc: "ZE988 06:05", loc: "金海機場"}], "午餐": [], "下午": [], "晚餐": [], "住宿": [] } },
-                { date: "4/25 (六)", weather: "16°C / 14°C", text: "多雲", slots: { "早上": [], "午餐": [], "下午": [], "晚餐": [], "住宿": [] } },
-                { date: "4/26 (日)", weather: "15°C / 13°C", text: "雨", slots: { "早上": [], "午餐": [], "下午": [], "晚餐": [], "住宿": [] } },
-                { date: "4/27 (一)", weather: "17°C / 15°C", text: "晴", slots: { "早上": [], "午餐": [], "下午": [], "晚餐": [], "住宿": [] } },
-                { date: "4/28 (二)", weather: "18°C / 16°C", text: "暖", slots: { "早上": [], "午餐": [], "下午": [], "晚餐": [], "住宿": [] } }
+                { date: "4/24 (五)", weather: "14°C / 12°C", text: "晴", slots: { "早上": [], "午餐": [], "下午": [], "晚餐": [], "晚上": [], "住宿": [] } },
+                { date: "4/25 (六)", weather: "16°C / 14°C", text: "多雲", slots: { "早上": [], "午餐": [], "下午": [], "晚餐": [], "晚上": [], "住宿": [] } },
+                { date: "4/26 (日)", weather: "15°C / 13°C", text: "雨", slots: { "早上": [], "午餐": [], "下午": [], "晚餐": [], "晚上": [], "住宿": [] } },
+                { date: "4/27 (一)", weather: "17°C / 15°C", text: "晴", slots: { "早上": [], "午餐": [], "下午": [], "晚餐": [], "晚上": [], "住宿": [] } },
+                { date: "4/28 (二)", weather: "18°C / 16°C", text: "暖", slots: { "早上": [], "午餐": [], "下午": [], "晚餐": [], "晚上": [], "住宿": [] } }
             ],
             expenses: [],
             checklist: [{text: "護照、ESIM", done: false}, {text: "轉接頭", done: false}, {text: "WOWPASS", done: false}],
@@ -314,7 +309,6 @@
             render();
         }
 
-        // --- DATA BACKUP ---
         function copyFullData() {
             const dataStr = JSON.stringify(state);
             const el = document.createElement('textarea');
@@ -332,16 +326,18 @@
                 try {
                     const newData = JSON.parse(code);
                     if (newData.itinerary) {
+                        newData.itinerary.forEach(day => {
+                            if (!day.slots["晚上"]) day.slots["晚上"] = [];
+                        });
                         state = newData;
                         persist();
-                        alert('還原成功！網頁將重整。');
+                        alert('還原成功！');
                         location.reload();
                     }
-                } catch (e) { alert('備份碼無效。'); }
+                } catch (e) { alert('無效備份碼。'); }
             }
         }
 
-        // --- ITINERARY ---
         function renderItinerary() {
             const daySel = document.getElementById('day-selector');
             daySel.innerHTML = state.itinerary.map((d, i) => `
@@ -360,7 +356,7 @@
                 </div>
             `;
 
-            const slots = ["早上", "午餐", "下午", "晚餐", "住宿"];
+            const slots = ["早上", "午餐", "下午", "晚餐", "晚上", "住宿"];
             const container = document.getElementById('itinerary-sections');
             container.innerHTML = slots.map(slot => `
                 <div class="section-title flex justify-between items-center">
@@ -372,7 +368,7 @@
                         <div class="glass-card p-5 relative active:scale-95 transition-transform" onclick="openEditCard('${slot}', ${idx})">
                             ${card.img ? `<img src="${card.img}" class="w-full h-40 object-cover rounded-xl mb-4 shadow-sm">` : ''}
                             <h4 class="font-bold text-sm text-brown leading-tight">${card.title || '點擊新增標題'}</h4>
-                            <p class="text-xs opacity-60 mt-2 leading-relaxed">${card.desc || '編輯行程敘述...'}</p>
+                            <p class="text-xs opacity-60 mt-2 leading-relaxed">${card.desc || '編輯敘述...'}</p>
                             <div class="mt-4 flex gap-2">
                                 ${card.loc ? `<span class="bg-brown/5 text-brown text-[9px] px-3 py-1.5 rounded-full font-bold border border-brown/10"><i class="fa-solid fa-location-dot mr-1"></i>MAP</span>` : ''}
                                 ${card.link ? `<span class="bg-sand/10 text-brown text-[9px] px-3 py-1.5 rounded-full font-bold border border-sand/30"><i class="fa-solid fa-link mr-1"></i>WEB</span>` : ''}
@@ -418,7 +414,6 @@
         }
         function closeCardModal() { document.getElementById('card-modal').classList.add('hidden'); window.tempImg = null; }
 
-        // --- WALLET ---
         function appendCalc(v) { 
             const d = document.getElementById('calc-display'); 
             d.value = d.value === '0' ? v : d.value + v; 
@@ -461,7 +456,7 @@
             const payers = [...new Set(state.expenses.map(e => e.payer))];
             const payerSelect = document.getElementById('filter-payer');
             const currentPayer = payerSelect.value;
-            payerSelect.innerHTML = `<option value="all">所有付款人</option>` + payers.map(p => `<option value="${p}">${p}</option>`).join('');
+            payerSelect.innerHTML = `<option value="all">付款人</option>` + payers.map(p => `<option value="${p}">${p}</option>`).join('');
             payerSelect.value = currentPayer;
 
             let filtered = state.expenses.filter(e => {
@@ -499,7 +494,6 @@
             link.click();
         }
 
-        // --- INFO & OTHERS ---
         function renderInfo() {
             const list = document.getElementById('custom-info-list');
             list.innerHTML = state.customInfo.map((info, idx) => `
@@ -519,7 +513,6 @@
         }
         function removeCustomInfo(idx) { if(confirm('刪除？')){ state.customInfo.splice(idx, 1); persist(); renderInfo(); } }
 
-        // --- UTILS ---
         function handleImage(input, mode) {
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
