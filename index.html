@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Busan 2026 - Cloud Collaboration v4.1</title>
+    <title>Busan 2026 - Cloud Collaboration v4.6</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
@@ -12,13 +12,7 @@
     <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js" type="module"></script>
     <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js" type="module"></script>
     <style>
-        :root {
-            --color-milk-tea: #F5EBE0;
-            --color-cream: #FDF8F5;
-            --color-sand: #D5BDAF;
-            --color-brown: #6B4F4F;
-            --color-dark-brown: #3E2C2C;
-        }
+        :root { --color-milk-tea: #F5EBE0; --color-cream: #FDF8F5; --color-sand: #D5BDAF; --color-brown: #6B4F4F; --color-dark-brown: #3E2C2C; }
         body { font-family: 'Noto Serif TC', serif; background-color: var(--color-cream); color: var(--color-dark-brown); -webkit-tap-highlight-color: transparent; }
         .serif-en { font-family: 'Playfair Display', serif; }
         .glass-card { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border-radius: 1.5rem; border: 1px solid rgba(255, 255, 255, 0.5); box-shadow: 0 4px 20px rgba(107, 79, 79, 0.05); }
@@ -30,49 +24,48 @@
         .day-btn-active { background-color: var(--color-dark-brown) !important; color: white !important; }
         .section-title { border-left: 4px solid var(--color-sand); padding-left: 0.75rem; margin: 1.5rem 0 1rem; font-weight: 700; font-size: 0.95rem; color: var(--color-brown); }
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        
         .status-pill { font-size: 8px; padding: 2px 8px; border-radius: 10px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
         .status-online { background: #E1F5FE; color: #0288D1; }
         .status-offline { background: #F5F5F5; color: #9E9E9E; }
-
         #lightbox { display: none; background: rgba(0,0,0,0.95); z-index: 200; position: fixed; inset: 0; align-items: center; justify-content: center; padding: 0; }
         #lightbox img { max-width: 100vw; max-height: 100vh; object-fit: contain; }
-        
         #toast { position: fixed; top: 10%; left: 50%; transform: translateX(-50%); background: #3E2C2C; color: white; padding: 12px 24px; border-radius: 2rem; font-size: 12px; z-index: 300; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+        #confirm-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 400; align-items: center; justify-content: center; padding: 20px; }
     </style>
 </head>
 <body class="pb-32">
+    <div id="toast">Message</div>
+    <div id="lightbox" onclick="this.style.display='none'"><img id="lightbox-img" src=""><p class="fixed bottom-12 text-white text-[10px] opacity-40 font-bold uppercase tracking-widest bg-black/20 px-4 py-2 rounded-full text-center">Tap to close</p></div>
 
-    <!-- Toast 訊息提示 -->
-    <div id="toast">Message here</div>
-
-    <!-- 全螢幕圖片查看器 -->
-    <div id="lightbox" onclick="this.style.display='none'">
-        <img id="lightbox-img" src="" alt="Full view">
-        <p class="fixed bottom-12 text-white text-[10px] opacity-40 font-bold uppercase tracking-widest bg-black/20 px-4 py-2 rounded-full">Tap to close</p>
+    <!-- 自定義確認對話框 -->
+    <div id="confirm-modal">
+        <div class="bg-white rounded-3xl p-8 w-full max-w-xs text-center shadow-2xl">
+            <h3 class="font-bold text-brown mb-4" id="confirm-msg">確認操作？</h3>
+            <div class="flex gap-4">
+                <button id="confirm-cancel" class="flex-1 py-3 bg-gray-100 rounded-xl text-xs font-bold text-gray-500">取消</button>
+                <button id="confirm-ok" class="flex-1 py-3 bg-brown text-white rounded-xl text-xs font-bold">確定</button>
+            </div>
+        </div>
     </div>
 
     <!-- 雲端同步遮罩 -->
     <div id="cloud-overlay" class="fixed inset-0 bg-[#F5EBE0] z-[100] flex items-center justify-center p-8">
-        <div class="text-center w-full max-w-sm">
+        <div class="text-center w-full max-sm">
             <h1 class="serif-en text-4xl mb-2 italic text-[#3E2C2C]">Annyeong, Busan!</h1>
             <p class="text-xs opacity-60 mb-10 tracking-widest uppercase text-brown/70">안녕, 부산! 請輸入暗號進行同步</p>
             <input type="text" id="room-id-input" class="w-full bg-white/70 border-none rounded-2xl py-5 px-6 text-center text-xl font-bold text-[#3E2C2C] shadow-sm mb-6 focus:ring-2 focus:ring-brown" placeholder="例如: busan-2026">
-            <button id="start-sync-btn" onclick="startCloudSync()" class="w-full bg-[#3E2C2C] text-white py-5 rounded-2xl font-bold tracking-[0.4em] shadow-xl active:scale-95 transition-all">START ADVENTURE</button>
-            <p class="text-[10px] opacity-40 mt-8 italic px-4">輸入同一個暗號，即可即時共享。</p>
+            <button id="start-sync-btn" onclick="window.startCloudSync()" class="w-full bg-[#3E2C2C] text-white py-5 rounded-2xl font-bold tracking-[0.4em] shadow-xl active:scale-95 transition-all">START ADVENTURE</button>
         </div>
     </div>
 
     <header class="p-8 pt-12 text-center relative">
-        <div class="absolute top-8 right-8" id="sync-status">
-            <span class="status-pill status-offline">Offline</span>
-        </div>
+        <div class="absolute top-8 right-8" id="sync-status"><span class="status-pill status-offline">Offline</span></div>
         <h1 class="serif-en text-4xl font-bold tracking-widest uppercase mb-1 text-[#3E2C2C]">Busan</h1>
         <p class="text-[10px] tracking-[0.4em] opacity-60 italic">— Spring 2026 —</p>
     </header>
 
     <main class="px-5">
-        <!-- 1. 行程規劃 (ITINERARY) -->
+        <!-- 1. 行程規劃 (PLAN) -->
         <section id="tab-home" class="tab-content active">
             <div id="day-selector" class="mb-6 overflow-x-auto whitespace-nowrap py-2 no-scrollbar flex items-center gap-2"></div>
             <div id="day-info" class="mb-6 px-2"></div>
@@ -81,87 +74,85 @@
 
         <!-- 2. 錢包記帳 (WALLET) -->
         <section id="tab-wallet" class="tab-content">
+            <div id="settlement-board" class="glass-card p-6 mb-6 border-t-8 border-sand">
+                <h3 class="serif-en text-xl font-bold italic text-brown mb-4 text-center">Settlement Radar</h3>
+                <div id="settlement-content" class="space-y-2 text-xs"></div>
+            </div>
+
             <div class="glass-card p-6 mb-6">
-                <h2 class="serif-en text-2xl mb-4 italic text-brown font-bold">Calculator</h2>
+                <h2 class="serif-en text-2xl mb-4 italic text-brown font-bold text-center">Calculator</h2>
                 <div class="space-y-3">
                     <input type="text" id="calc-display" class="w-full bg-white/50 rounded-2xl py-5 px-6 text-right text-2xl font-bold text-brown" placeholder="0" readonly>
-                    <div class="flex justify-between items-center px-2 mb-2">
-                        <span class="text-[10px] font-bold opacity-40 uppercase tracking-widest text-brown/60">TWD Estimate</span>
-                        <span id="twd-result" class="text-lg font-bold text-sand">≈ NT$ 0</span>
-                    </div>
+                    <div id="twd-result" class="text-lg font-bold text-sand text-right px-2">≈ NT$ 0</div>
                     <div class="grid grid-cols-4 gap-2">
-                        <button onclick="appendCalc('7')" class="bg-white p-4 rounded-xl shadow-sm font-bold active:bg-sand/20 text-[#3E2C2C]">7</button>
-                        <button onclick="appendCalc('8')" class="bg-white p-4 rounded-xl shadow-sm font-bold active:bg-sand/20 text-[#3E2C2C]">8</button>
-                        <button onclick="appendCalc('9')" class="bg-white p-4 rounded-xl shadow-sm font-bold active:bg-sand/20 text-[#3E2C2C]">9</button>
-                        <button onclick="clearCalc()" class="bg-red-50 text-red-500 p-4 rounded-xl shadow-sm font-bold">C</button>
-                        <button onclick="appendCalc('4')" class="bg-white p-4 rounded-xl shadow-sm font-bold active:bg-sand/20 text-[#3E2C2C]">4</button>
-                        <button onclick="appendCalc('5')" class="bg-white p-4 rounded-xl shadow-sm font-bold active:bg-sand/20 text-[#3E2C2C]">5</button>
-                        <button onclick="appendCalc('6')" class="bg-white p-4 rounded-xl shadow-sm font-bold active:bg-sand/20 text-[#3E2C2C]">6</button>
-                        <button onclick="appendCalc('/')" class="bg-sand/10 p-4 rounded-xl shadow-sm font-bold text-brown">÷</button>
-                        <button onclick="appendCalc('1')" class="bg-white p-4 rounded-xl shadow-sm font-bold active:bg-sand/20 text-[#3E2C2C]">1</button>
-                        <button onclick="appendCalc('2')" class="bg-white p-4 rounded-xl shadow-sm font-bold active:bg-sand/20 text-[#3E2C2C]">2</button>
-                        <button onclick="appendCalc('3')" class="bg-white p-4 rounded-xl shadow-sm font-bold active:bg-sand/20 text-[#3E2C2C]">3</button>
-                        <button onclick="appendCalc('*')" class="bg-sand/10 p-4 rounded-xl shadow-sm font-bold text-brown">×</button>
-                        <button onclick="appendCalc('0')" class="bg-white p-4 rounded-xl shadow-sm font-bold active:bg-sand/20 text-[#3E2C2C]">0</button>
-                        <button onclick="appendCalc('+')" class="bg-sand/10 p-4 rounded-xl shadow-sm font-bold text-brown">+</button>
-                        <button onclick="appendCalc('-')" class="bg-sand/10 p-4 rounded-xl shadow-sm font-bold text-brown">-</button>
-                        <button onclick="calculateResult()" class="bg-[#3E2C2C] text-white p-4 rounded-xl shadow-sm font-bold active:bg-black">=</button>
+                        <button onclick="window.appendCalc('7')" class="bg-white p-4 rounded-xl shadow-sm font-bold text-[#3E2C2C]">7</button>
+                        <button onclick="window.appendCalc('8')" class="bg-white p-4 rounded-xl shadow-sm font-bold text-[#3E2C2C]">8</button>
+                        <button onclick="window.appendCalc('9')" class="bg-white p-4 rounded-xl shadow-sm font-bold text-[#3E2C2C]">9</button>
+                        <button onclick="window.clearCalc()" class="bg-red-50 text-red-500 p-4 rounded-xl shadow-sm font-bold">C</button>
+                        <button onclick="window.appendCalc('4')" class="bg-white p-4 rounded-xl shadow-sm font-bold text-[#3E2C2C]">4</button>
+                        <button onclick="window.appendCalc('5')" class="bg-white p-4 rounded-xl shadow-sm font-bold text-[#3E2C2C]">5</button>
+                        <button onclick="window.appendCalc('6')" class="bg-white p-4 rounded-xl shadow-sm font-bold text-[#3E2C2C]">6</button>
+                        <button onclick="window.appendCalc('/')" class="bg-sand/10 p-4 rounded-xl shadow-sm font-bold text-brown">÷</button>
+                        <button onclick="window.appendCalc('1')" class="bg-white p-4 rounded-xl shadow-sm font-bold text-[#3E2C2C]">1</button>
+                        <button onclick="window.appendCalc('2')" class="bg-white p-4 rounded-xl shadow-sm font-bold text-[#3E2C2C]">2</button>
+                        <button onclick="window.appendCalc('3')" class="bg-white p-4 rounded-xl shadow-sm font-bold text-[#3E2C2C]">3</button>
+                        <button onclick="window.appendCalc('*')" class="bg-sand/10 p-4 rounded-xl shadow-sm font-bold text-brown">×</button>
+                        <button onclick="window.appendCalc('0')" class="bg-white p-4 rounded-xl shadow-sm font-bold text-[#3E2C2C]">0</button>
+                        <button onclick="window.appendCalc('+')" class="bg-sand/10 p-4 rounded-xl shadow-sm font-bold text-brown">+</button>
+                        <button onclick="window.appendCalc('-')" class="bg-sand/10 p-4 rounded-xl shadow-sm font-bold text-brown">-</button>
+                        <button onclick="window.calculateResult()" class="bg-[#3E2C2C] text-white p-4 rounded-xl shadow-sm font-bold">=</button>
                     </div>
-                    <button onclick="openExpenseModal()" class="w-full bg-[#6B4F4F] text-white py-4 rounded-2xl mt-2 font-bold tracking-widest shadow-lg active:scale-95 transition-all">ADD RECORD</button>
+                    <button onclick="window.openExpenseModal()" class="w-full bg-[#6B4F4F] text-white py-4 rounded-2xl mt-2 font-bold shadow-lg active:scale-95">ADD RECORD</button>
                 </div>
             </div>
 
             <div class="mb-4 space-y-2">
                 <div class="flex justify-between items-center px-2">
                     <h3 class="serif-en text-xl italic text-brown font-bold">Ledger</h3>
-                    <button onclick="exportToExcel()" class="bg-green-600 text-white text-[10px] px-3 py-1.5 rounded-full font-bold shadow-sm"><i class="fa-solid fa-file-excel mr-1"></i>匯出 EXCEL</button>
+                    <button onclick="window.exportToExcel()" class="bg-green-600 text-white text-[10px] px-3 py-1.5 rounded-full font-bold shadow-sm">EXPORT CSV</button>
                 </div>
-                <div class="grid grid-cols-3 gap-2 px-2">
-                    <select id="filter-payer" onchange="renderExpenses()" class="bg-white border-none rounded-lg text-[10px] p-2 text-brown font-bold focus:ring-1 focus:ring-sand">
-                        <option value="all">付款人</option>
+                <div class="grid grid-cols-2 gap-2 px-2">
+                    <select id="filter-payer" onchange="window.render()" class="bg-white border-none rounded-lg text-[10px] p-2 text-brown font-bold">
+                        <option value="all">所有付款人</option>
+                        <option value="Yian">Yian</option>
+                        <option value="MZ">MZ</option>
+                        <option value="共同">共同公費</option>
                     </select>
-                    <select id="filter-method" onchange="renderExpenses()" class="bg-white border-none rounded-lg text-[10px] p-2 text-brown font-bold focus:ring-1 focus:ring-sand">
-                        <option value="all">方式</option>
-                        <option value="Card">刷卡</option>
-                        <option value="Cash">現鈔</option>
-                        <option value="WOWPASS">WOWPASS</option>
-                    </select>
-                    <select id="filter-cat" onchange="renderExpenses()" class="bg-white border-none rounded-lg text-[10px] p-2 text-brown font-bold focus:ring-1 focus:ring-sand">
-                        <option value="all">類別</option>
+                    <select id="filter-cat" onchange="window.render()" class="bg-white border-none rounded-lg text-[10px] p-2 text-brown font-bold">
+                        <option value="all">所有類別</option>
                         <option value="食">🍽️ 食</option>
                         <option value="行">交通</option>
                         <option value="玩">景點</option>
                         <option value="購">購物</option>
-                        <option value="住">住宿</option>
+                        <option value="其他">其他</option>
                     </select>
                 </div>
             </div>
             <div id="expense-history" class="space-y-3 mb-10"></div>
         </section>
 
-        <!-- 3. 行李與筆記 (LISTS) -->
+        <!-- 3. 清單與備忘錄 (LISTS) -->
         <section id="tab-lists" class="tab-content">
             <div class="glass-card p-6 mb-6">
-                <h2 class="serif-en text-2xl mb-4 italic text-brown font-bold">Checklist</h2>
+                <h2 class="serif-en text-2xl mb-4 italic text-brown font-bold text-center">Checklist</h2>
                 <div id="checklist-container" class="space-y-3"></div>
                 <div class="mt-6 flex gap-2">
                     <input type="text" id="new-check-item" class="flex-1 bg-white/50 border-none rounded-xl p-3 text-sm text-brown" placeholder="新增清單項目...">
-                    <button onclick="addChecklistItem()" class="bg-[#6B4F4F] text-white px-5 rounded-xl"><i class="fa-solid fa-plus"></i></button>
+                    <button onclick="window.addChecklistItem()" class="bg-[#6B4F4F] text-white px-5 rounded-xl"><i class="fa-solid fa-plus"></i></button>
                 </div>
             </div>
             <div class="glass-card p-6">
-                <h2 class="serif-en text-2xl mb-4 italic text-brown font-bold">Memos</h2>
-                <textarea id="memo-input" class="w-full bg-white/50 border-none rounded-xl p-4 text-sm h-48 focus:ring-2 focus:ring-sand text-brown leading-relaxed" placeholder="隨手筆記..." oninput="saveMemos()"></textarea>
+                <h2 class="serif-en text-2xl mb-4 italic text-brown font-bold text-center">Memos</h2>
+                <textarea id="memo-input" class="w-full bg-white/50 border-none rounded-xl p-4 text-sm h-48 focus:ring-1 focus:ring-sand text-brown leading-relaxed" placeholder="隨手筆記..." oninput="window.saveMemos()"></textarea>
             </div>
         </section>
 
         <!-- 4. 憑證管理 (DOCS) -->
         <section id="tab-vouchers" class="tab-content">
             <div class="flex justify-between items-center mb-6 px-2">
-                <h2 class="serif-en text-3xl italic text-brown font-bold">Docs</h2>
-                <label class="bg-[#6B4F4F] text-white px-5 py-3 rounded-full text-xs font-bold cursor-pointer shadow-md active:scale-95 transition-transform">
-                    <i class="fa-solid fa-cloud-arrow-up mr-2"></i>上傳憑證
-                    <input type="file" class="hidden" accept="image/*" onchange="uploadVoucher(this)">
+                <h2 class="serif-en text-3xl italic text-brown font-bold font-bold">Docs</h2>
+                <label class="bg-[#6B4F4F] text-white px-5 py-3 rounded-full text-xs font-bold cursor-pointer shadow-md">
+                    上傳憑證<input type="file" class="hidden" accept="image/*" onchange="window.uploadVoucher(this)">
                 </label>
             </div>
             <div id="voucher-grid" class="grid grid-cols-2 gap-4 pb-10"></div>
@@ -170,136 +161,97 @@
         <!-- 5. 旅程資訊 (INFO) -->
         <section id="tab-info" class="tab-content">
             <div class="space-y-6">
-                <div class="glass-card p-6 border-l-8 border-sand shadow-sm">
-                    <h3 class="serif-en text-xl mb-4 font-bold italic text-brown"><i class="fa-solid fa-plane-up mr-2"></i>Flight Info</h3>
-                    <div class="text-sm space-y-4 text-brown">
-                        <div class="flex justify-between items-center pb-2 border-b border-brown/5">
-                            <span class="opacity-60 italic text-xs">4/24 (五) ZE988</span>
-                            <span class="font-bold">TPE 02:35 → PUS 06:05</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <span class="opacity-60 italic text-xs">4/28 (二) BX791</span>
-                            <span class="font-bold">PUS 14:15 → TPE 15:50</span>
-                        </div>
+                <div class="glass-card p-6 border-l-8 border-sand">
+                    <h3 class="serif-en text-xl mb-4 font-bold italic text-brown">Flight & Stay</h3>
+                    <div class="text-xs space-y-4 text-brown opacity-80 leading-relaxed">
+                        <p>✈️ 4/24 TPE 02:35 → PUS 06:05 (ZE988)</p>
+                        <p>🏨 4/24-26 溫德姆華美達 (海雲台)</p>
+                        <p>🏨 4/26-28 Good Ol' Days (中央洞)</p>
                     </div>
                 </div>
-
-                <div class="glass-card p-6 border-l-8 border-brown shadow-sm">
-                    <h3 class="serif-en text-xl mb-4 font-bold italic text-brown"><i class="fa-solid fa-hotel mr-2"></i>Stay</h3>
-                    <div class="text-sm space-y-4 text-brown">
-                        <div class="pb-2 border-b border-brown/5">
-                            <p class="font-bold">4/24-4/26 (2晚) 海雲台</p>
-                            <p class="text-xs opacity-60 italic">溫德姆華美達安可酒店</p>
-                        </div>
-                        <div>
-                            <p class="font-bold">4/26-4/28 (2晚) Good Ol' Days</p>
-                            <p class="text-xs opacity-60 italic">中央洞 (地鐵 1 號線)</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 遺漏的自定義筆記區塊 -->
-                <div class="glass-card p-6 shadow-sm">
+                <div class="glass-card p-6">
                     <div class="flex justify-between items-center mb-4">
-                        <h3 class="serif-en text-xl font-bold italic text-brown">Custom Notes</h3>
-                        <button onclick="window.addCustomInfo()" class="text-brown/40 p-1"><i class="fa-solid fa-circle-plus text-xl"></i></button>
+                        <h3 class="serif-en text-xl font-bold italic text-brown text-center">Custom Notes</h3>
+                        <button onclick="window.addCustomInfo()" class="text-brown/40"><i class="fa-solid fa-circle-plus text-xl"></i></button>
                     </div>
                     <div id="custom-info-list" class="space-y-4"></div>
                 </div>
-
-                <div class="glass-card p-6 border-l-8 border-green-600/30 shadow-sm">
-                    <h3 class="serif-en text-xl mb-4 font-bold italic text-green-800"><i class="fa-solid fa-cloud-arrow-up mr-2"></i>Cloud & Backup</h3>
+                <div class="glass-card p-6 border-l-8 border-green-600/30">
+                    <h3 class="serif-en text-xl mb-4 font-bold italic text-green-800 text-center">Cloud Control</h3>
                     <div class="p-3 bg-white/50 rounded-xl mb-4">
-                        <p class="text-[10px] opacity-40 uppercase font-bold text-brown/60">Current Shared Key</p>
-                        <p id="display-room-id" class="text-sm font-bold text-brown tracking-wider italic">Not Connected</p>
+                        <p class="text-[10px] opacity-40 uppercase font-bold text-brown">Shared Key</p>
+                        <p id="display-room-id" class="text-sm font-bold text-brown italic tracking-widest text-center">Not Connected</p>
                     </div>
                     <div class="grid grid-cols-2 gap-3">
-                        <button onclick="window.copyFullData()" class="bg-[#6B4F4F] text-white py-3 rounded-xl text-[10px] font-bold shadow-md active:scale-95 transition-transform">複製備份碼</button>
-                        <button onclick="window.importFullData()" class="bg-white border border-brown/20 text-brown py-3 rounded-xl text-[10px] font-bold shadow-sm active:scale-95 transition-transform">還原備份碼</button>
+                        <button onclick="window.copyFullData()" class="bg-[#6B4F4F] text-white py-3 rounded-xl text-[10px] font-bold">複製備份</button>
+                        <button onclick="window.importFullData()" class="bg-white border border-brown/20 text-brown py-3 rounded-xl text-[10px] font-bold">還原備份碼</button>
                     </div>
-                    <button onclick="window.confirmReset()" class="w-full mt-4 text-[10px] text-red-400 underline">更換共用暗號 (退出目前房間)</button>
+                    <button onclick="window.confirmReset()" class="w-full mt-4 text-[10px] text-red-400 underline text-center">更換共用暗號 (退出目前房間)</button>
                 </div>
             </div>
         </section>
     </main>
 
     <nav class="fixed bottom-0 left-0 right-0 glass-card mx-4 mb-6 px-4 py-4 flex justify-between items-center shadow-2xl z-50">
-        <button onclick="switchTab('home')" class="nav-btn active relative flex flex-col items-center flex-1 transition-all" id="btn-home">
-            <i class="fa-solid fa-map-location-dot text-lg"></i>
-            <span class="text-[9px] mt-1 font-bold">PLAN</span>
-        </button>
-        <button onclick="switchTab('wallet')" class="nav-btn relative flex flex-col items-center flex-1 transition-all" id="btn-wallet">
-            <i class="fa-solid fa-wallet text-lg"></i>
-            <span class="text-[9px] mt-1 font-bold">WALLET</span>
-        </button>
-        <button onclick="switchTab('lists')" class="nav-btn relative flex flex-col items-center flex-1 transition-all" id="btn-lists">
-            <i class="fa-solid fa-list-check text-lg"></i>
-            <span class="text-[9px] mt-1 font-bold">LISTS</span>
-        </button>
-        <button onclick="switchTab('vouchers')" class="nav-btn relative flex flex-col items-center flex-1 transition-all" id="btn-vouchers">
-            <i class="fa-solid fa-ticket text-lg"></i>
-            <span class="text-[9px] mt-1 font-bold">DOCS</span>
-        </button>
-        <button onclick="switchTab('info')" class="nav-btn relative flex flex-col items-center flex-1 transition-all" id="btn-info">
-            <i class="fa-solid fa-circle-info text-lg"></i>
-            <span class="text-[9px] mt-1 font-bold">INFO</span>
-        </button>
+        <button onclick="window.switchTab('home')" class="nav-btn active flex flex-col items-center flex-1" id="btn-home"><i class="fa-solid fa-map-location-dot text-lg"></i><span class="text-[9px] mt-1 font-bold">PLAN</span></button>
+        <button onclick="window.switchTab('wallet')" class="nav-btn flex flex-col items-center flex-1" id="btn-wallet"><i class="fa-solid fa-wallet text-lg"></i><span class="text-[9px] mt-1 font-bold">WALLET</span></button>
+        <button onclick="window.switchTab('lists')" class="nav-btn flex flex-col items-center flex-1" id="btn-lists"><i class="fa-solid fa-list-check text-lg"></i><span class="text-[9px] mt-1 font-bold">LISTS</span></button>
+        <button onclick="window.switchTab('vouchers')" class="nav-btn flex flex-col items-center flex-1" id="btn-vouchers"><i class="fa-solid fa-ticket text-lg"></i><span class="text-[9px] mt-1 font-bold">DOCS</span></button>
+        <button onclick="window.switchTab('info')" class="nav-btn flex flex-col items-center flex-1" id="btn-info"><i class="fa-solid fa-circle-info text-lg"></i><span class="text-[9px] mt-1 font-bold">INFO</span></button>
     </nav>
 
-    <!-- 彈出編輯視窗 -->
+    <!-- Modal: Edit Itinerary (功能全回復) -->
     <div id="card-modal" class="fixed inset-0 bg-black/60 hidden z-[60] flex items-center justify-center px-6">
         <div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 shadow-2xl max-h-[85vh] overflow-y-auto">
-            <h3 class="serif-en text-xl mb-6 font-bold italic text-brown">Edit Itinerary</h3>
+            <h3 class="serif-en text-xl mb-6 font-bold italic text-brown text-center">Edit Itinerary</h3>
             <div class="space-y-4">
-                <input type="text" id="card-title" class="w-full bg-cream border-none rounded-xl p-4 text-sm font-bold text-[#3E2C2C]" placeholder="項目名稱">
-                <textarea id="card-desc" class="w-full bg-cream border-none rounded-xl p-4 text-sm h-24 text-[#3E2C2C] leading-relaxed" placeholder="內容說明..."></textarea>
-                <div class="flex items-center gap-4 py-2">
-                    <label class="bg-[#6B4F4F] text-white px-4 py-2 rounded-xl text-[10px] font-bold cursor-pointer">
-                        <i class="fa-solid fa-image mr-1"></i> 上傳照片
-                        <input type="file" class="hidden" accept="image/*" onchange="handleImage(this, 'card')">
+                <input type="text" id="card-title" class="w-full bg-cream rounded-xl p-4 text-sm font-bold text-brown border-none" placeholder="景點/項目名稱">
+                <textarea id="card-desc" class="w-full bg-cream rounded-xl p-4 text-sm h-24 text-brown border-none leading-relaxed" placeholder="詳細內容說明..."></textarea>
+                <div class="flex items-center gap-4 py-2 border-b border-sand/30 pb-4">
+                    <label class="bg-[#6B4F4F] text-white px-4 py-2 rounded-xl text-[10px] font-bold cursor-pointer active:scale-95">
+                        <i class="fa-solid fa-camera mr-1"></i> 上傳相片
+                        <input type="file" class="hidden" accept="image/*" onchange="window.handleImage(this, 'card')">
                     </label>
                     <img id="card-img-preview" class="w-12 h-12 rounded-lg object-cover hidden">
                 </div>
-                <input type="text" id="card-loc" class="w-full bg-cream border-none rounded-xl p-4 text-xs text-[#3E2C2C]" placeholder="Naver Map 關鍵字">
-                <input type="text" id="card-link" class="w-full bg-cream border-none rounded-xl p-4 text-xs text-[#3E2C2C]" placeholder="連結 (部落格等)">
+                <input type="text" id="card-loc" class="w-full bg-cream rounded-xl p-4 text-xs text-brown border-none" placeholder="Naver Map 關鍵字 (例如：海雲台烤肉)">
+                <input type="text" id="card-link" class="w-full bg-cream rounded-xl p-4 text-xs text-brown border-none" placeholder="參考網址 (部落格攻略等)">
                 <div class="flex gap-3 mt-4">
-                    <button onclick="deleteCard()" class="flex-1 bg-red-50 text-red-500 py-3 rounded-xl font-bold text-xs">刪除</button>
-                    <button onclick="saveCard()" class="flex-[2] bg-[#3E2C2C] text-white py-3 rounded-xl font-bold text-xs shadow-md active:scale-95 transition-all">儲存修改</button>
+                    <button onclick="window.deleteCard()" class="flex-1 bg-red-50 text-red-500 py-3 rounded-xl font-bold text-xs">刪除</button>
+                    <button onclick="window.saveCard()" class="flex-[2] bg-[#3E2C2C] text-white py-3 rounded-xl font-bold text-xs shadow-md">儲存修改</button>
                 </div>
-                <button onclick="closeCardModal()" class="w-full text-sand text-[10px] font-bold underline mt-2 uppercase tracking-widest">Cancel</button>
+                <button onclick="window.closeCardModal()" class="w-full text-sand text-[10px] font-bold underline mt-4 text-center">CANCEL</button>
             </div>
         </div>
     </div>
 
-    <!-- 彈出記帳視窗 -->
+    <!-- Modal: Expense (Yian & MZ 專屬) -->
     <div id="expense-modal" class="fixed inset-0 bg-black/60 hidden z-[60] flex items-end">
         <div class="bg-white w-full rounded-t-[2.5rem] p-8 shadow-2xl">
             <div class="flex justify-between items-center mb-6 text-[#3E2C2C]">
-                <h3 class="serif-en text-2xl font-bold italic text-brown">New Expense</h3>
-                <button onclick="closeExpenseModal()" class="text-brown"><i class="fa-solid fa-xmark text-xl"></i></button>
+                <h3 class="serif-en text-2xl font-bold italic text-brown text-center">New Expense</h3>
+                <button onclick="window.closeExpenseModal()" class="text-brown"><i class="fa-solid fa-xmark text-xl"></i></button>
             </div>
             <div class="space-y-4">
-                <input type="text" id="exp-title" class="w-full border-b border-sand py-2 focus:outline-none text-[#3E2C2C] font-bold text-lg" placeholder="品項名稱...">
+                <input type="text" id="exp-title" class="w-full border-b border-sand py-2 focus:outline-none font-bold text-lg text-brown" placeholder="品項名稱...">
                 <div class="grid grid-cols-2 gap-4">
-                    <input type="number" id="exp-amount" class="border-b border-sand py-2 focus:outline-none text-[#3E2C2C] font-bold text-lg" placeholder="KRW">
+                    <input type="number" id="exp-amount" class="border-b border-sand py-2 focus:outline-none font-bold text-lg text-brown" placeholder="KRW">
                     <select id="exp-cat" class="border-b border-sand py-2 bg-transparent text-xs font-bold text-brown">
-                        <option value="食">🍽️ 食</option>
-                        <option value="行">交通</option>
-                        <option value="玩">景點</option>
-                        <option value="購">購物</option>
-                        <option value="住">住宿</option>
-                        <option value="其他">其他</option>
+                        <option value="食">🍽️ 食</option><option value="行">交通</option>
+                        <option value="玩">景點</option><option value="購">購物</option><option value="其他">其他</option>
                     </select>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
-                    <select id="exp-method" class="border-b border-sand py-2 bg-transparent text-xs font-bold text-brown">
-                        <option value="Card">刷卡</option>
-                        <option value="Cash">現鈔</option>
-                        <option value="WOWPASS">WOWPASS</option>
+                    <select id="exp-payer" class="border-b border-sand py-2 bg-transparent text-xs font-bold text-brown">
+                        <option value="Yian">Yian 付款</option>
+                        <option value="MZ">MZ 付款</option>
+                        <option value="共同">公費 付款</option>
                     </select>
-                    <input type="text" id="exp-payer" class="border-b border-sand py-2 focus:outline-none text-xs font-bold text-[#3E2C2C]" placeholder="付款人">
+                    <select id="exp-method" class="border-b border-sand py-2 bg-transparent text-xs font-bold text-brown">
+                        <option value="Card">刷卡</option><option value="Cash">現鈔</option><option value="WOWPASS">WOWPASS</option>
+                    </select>
                 </div>
-                <button onclick="saveExpense()" class="w-full bg-[#3E2C2C] text-white py-4 rounded-2xl font-bold tracking-widest mt-6 shadow-lg active:scale-95 transition-all">SAVE RECORD</button>
+                <button onclick="window.saveExpense()" class="w-full bg-[#3E2C2C] text-white py-4 rounded-2xl font-bold mt-6 shadow-lg">SAVE RECORD</button>
             </div>
         </div>
     </div>
@@ -313,7 +265,7 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const globalAppId = typeof __app_id !== 'undefined' ? __app_id : 'busan-2026-v3';
+        const globalAppId = typeof __app_id !== 'undefined' ? __app_id : 'busan-2026-v4';
 
         const RATE = 42;
         let roomId = localStorage.getItem('busan_room_id') || "";
@@ -322,380 +274,248 @@
         let state = {
             currentDayIdx: 0,
             itinerary: [
-                { date: "4/24 (五)", weather: "14°C / 12°C", text: "晴", slots: { "早上": [], "午餐": [], "下午": [], "晚餐": [], "晚上": [], "住宿": [] } },
-                { date: "4/25 (六)", weather: "16°C / 14°C", text: "多雲", slots: { "早上": [], "午餐": [], "下午": [], "晚餐": [], "晚上": [], "住宿": [] } },
-                { date: "4/26 (日)", weather: "15°C / 13°C", text: "雨", slots: { "早上": [], "午餐": [], "下午": [], "晚餐": [], "晚上": [], "住宿": [] } },
-                { date: "4/27 (一)", weather: "17°C / 15°C", text: "晴", slots: { "早上": [], "午餐": [], "下午": [], "晚餐": [], "晚上": [], "住宿": [] } },
-                { date: "4/28 (二)", weather: "18°C / 16°C", text: "暖", slots: { "早上": [], "午餐": [], "下午": [], "晚餐": [], "晚上": [], "住宿": [] } }
+                { date: "4/24 (五)", weather: "14/12°C", slots: { "早上": [], "午餐": [], "下午": [], "晚餐": [], "晚上": [], "住宿": [] } },
+                { date: "4/25 (六)", weather: "16/14°C", slots: { "早上": [], "午餐": [], "下午": [], "晚餐": [], "晚上": [], "住宿": [] } },
+                { date: "4/26 (日)", weather: "15/13°C", slots: { "早上": [], "午餐": [], "下午": [], "晚餐": [], "晚上": [], "住宿": [] } },
+                { date: "4/27 (一)", weather: "17/15°C", slots: { "早上": [], "午餐": [], "下午": [], "晚餐": [], "晚上": [], "住宿": [] } },
+                { date: "4/28 (二)", weather: "18/16°C", slots: { "早上": [], "午餐": [], "下午": [], "晚餐": [], "晚上": [], "住宿": [] } }
             ],
-            expenses: [],
-            checklist: [{text: "護照、ESIM", done: false}, {text: "轉接頭", done: false}],
-            memos: "",
-            vouchers: [],
-            customInfo: []
+            expenses: [], checklist: [], memos: "", vouchers: [], customInfo: []
         };
 
-        window.showToast = (msg) => {
-            const t = document.getElementById('toast');
-            if (t) {
-                t.innerText = msg;
-                t.style.opacity = '1';
-                setTimeout(() => { t.style.opacity = '0'; }, 2500);
-            }
+        window.showToast = (msg) => { const t = document.getElementById('toast'); if (t) { t.innerText = msg; t.style.opacity = '1'; setTimeout(() => t.style.opacity = '0', 2500); } };
+
+        window.customConfirm = (msg, onConfirm) => {
+            const m = document.getElementById('confirm-modal');
+            const ok = document.getElementById('confirm-ok');
+            const cancel = document.getElementById('confirm-cancel');
+            document.getElementById('confirm-msg').innerText = msg;
+            m.style.display = 'flex';
+            const cleanup = () => { m.style.display = 'none'; ok.onclick = null; cancel.onclick = null; };
+            ok.onclick = () => { onConfirm(); cleanup(); };
+            cancel.onclick = () => { cleanup(); };
         };
 
-        const initAuth = async () => {
+        async function initAuth() {
             try {
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                     await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    await signInAnonymously(auth);
-                }
-            } catch (e) {
-                console.error("Auth Error:", e);
-                window.showToast("驗證失敗");
-            }
-        };
-
-        onAuthStateChanged(auth, (user) => {
-            if (user && roomId) {
-                const overlay = document.getElementById('cloud-overlay');
-                if (overlay) overlay.style.display = 'none';
-                const rid = document.getElementById('display-room-id');
-                if (rid) rid.innerText = roomId;
-                startSync();
-            }
-        });
-
-        window.startCloudSync = async () => {
-            const input = document.getElementById('room-id-input').value.trim();
-            if (input) {
-                const btn = document.getElementById('start-sync-btn');
-                btn.innerText = "CONNECTING...";
-                btn.disabled = true;
-                
-                roomId = input;
-                localStorage.setItem('busan_room_id', roomId);
-                
-                if (!auth.currentUser) await initAuth();
-                
-                const overlay = document.getElementById('cloud-overlay');
-                if (overlay) overlay.style.display = 'none';
-                const rid = document.getElementById('display-room-id');
-                if (rid) rid.innerText = roomId;
-                startSync();
-            } else { 
-                window.showToast("請輸入暗號！");
-            }
-        };
+                } else { await signInAnonymously(auth); }
+                return auth.currentUser;
+            } catch (e) { window.showToast("連線驗證失敗"); throw e; }
+        }
 
         const startSync = () => {
             if (!roomId || !auth.currentUser) return;
-            if (syncUnsubscribe) syncUnsubscribe();
-
             const docRef = doc(db, 'artifacts', globalAppId, 'public', 'data', 'roomData', roomId);
+            if (syncUnsubscribe) syncUnsubscribe();
             const status = document.getElementById('sync-status');
-            if (status) status.innerHTML = '<span class="status-pill status-online">Syncing...</span>';
-            
+            if(status) status.innerHTML = '<span class="status-pill status-online">Syncing...</span>';
+
             syncUnsubscribe = onSnapshot(docRef, (snap) => {
                 if (snap.exists()) {
-                    const cloudData = snap.data();
-                    if(cloudData.itinerary) {
-                        cloudData.itinerary.forEach(day => { if (!day.slots["晚上"]) day.slots["晚上"] = []; });
-                    }
-                    state = { ...state, ...cloudData };
+                    state = { ...state, ...snap.data() };
                     render();
-                    if (status) status.innerHTML = '<span class="status-pill status-online">Connected</span>';
-                } else {
-                    persistCloud();
-                }
-            }, (error) => {
-                console.error("Firebase Sync Error:", error);
-                if (status) status.innerHTML = '<span class="status-pill status-offline">Error</span>';
-                if (error.code === 'permission-denied') {
-                    window.showToast("權限不足，正在重新嘗試...");
-                    initAuth();
-                }
-            });
+                    if(status) status.innerHTML = '<span class="status-pill status-online">Connected</span>';
+                    const ridTxt = document.getElementById('display-room-id');
+                    if(ridTxt) ridTxt.innerText = roomId;
+                } else { persistCloud(); }
+            }, (err) => { if(status) status.innerHTML = '<span class="status-pill status-offline">Error</span>'; });
         };
 
-        const persistCloud = async () => {
+        async function persistCloud() {
             if (!roomId || !auth.currentUser) return;
             const docRef = doc(db, 'artifacts', globalAppId, 'public', 'data', 'roomData', roomId);
-            try {
-                await setDoc(docRef, state);
-            } catch (e) {
-                console.error("Save Error:", e);
-                window.showToast("雲端儲存失敗");
-            }
+            try { await setDoc(docRef, state); } catch (e) { console.error(e); }
+        }
+
+        window.startCloudSync = async () => {
+            const input = document.getElementById('room-id-input').value.trim();
+            if (!input) return window.showToast("請輸入暗號！");
+            const btn = document.getElementById('start-sync-btn');
+            btn.innerText = "CONNECTING..."; btn.disabled = true;
+            try { await initAuth(); roomId = input; localStorage.setItem('busan_room_id', roomId); document.getElementById('cloud-overlay').style.display = 'none'; startSync(); } 
+            catch (e) { btn.innerText = "START ADVENTURE"; btn.disabled = false; }
         };
 
-        window.confirmReset = () => { if(confirm('確定要切換暗號？這會退出目前房間。')){ localStorage.removeItem('busan_room_id'); location.reload(); } };
-
-        window.switchTab = (tabId) => {
+        window.switchTab = (id) => {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            const targetTab = document.getElementById(`tab-${tabId}`);
-            const targetBtn = document.getElementById(`btn-${tabId}`);
-            if (targetTab) targetTab.classList.add('active');
-            if (targetBtn) targetBtn.classList.add('active');
+            const tab = document.getElementById('tab-'+id); const btn = document.getElementById('btn-'+id);
+            if(tab) tab.classList.add('active'); if(btn) btn.classList.add('active');
             render();
         };
 
-        const render = () => {
+        window.render = () => {
             const activeBtn = document.querySelector('.nav-btn.active');
             if (!activeBtn) return;
-            const activeTabName = activeBtn.id.replace('btn-', '');
-            
-            if (activeTabName === 'home') renderItinerary();
-            if (activeTabName === 'wallet') renderExpenses();
-            if (activeTabName === 'lists') renderLists();
-            if (activeTabName === 'vouchers') renderVouchers();
-            if (activeTabName === 'info') renderInfo();
+            const active = activeBtn.id.replace('btn-', '');
+            if (active === 'home') renderHome();
+            if (active === 'wallet') renderWallet();
+            if (active === 'lists') renderLists();
+            if (active === 'vouchers') renderVouchers();
+            if (active === 'info') renderInfo();
         };
 
-        const renderItinerary = () => {
+        const renderHome = () => {
             const daySel = document.getElementById('day-selector');
-            if (!daySel) return;
-            daySel.innerHTML = state.itinerary.map((d, i) => `
-                <button onclick="window.setDay(${i})" class="px-6 py-2 rounded-full text-xs font-bold ${state.currentDayIdx === i ? 'day-btn-active' : 'bg-brown/10 text-brown shadow-sm'}">
-                    Day ${i+1}
-                </button>
-            `).join('');
-
+            daySel.innerHTML = state.itinerary.map((d, i) => `<button onclick="window.setDay(${i})" class="px-6 py-2 rounded-full text-xs font-bold ${state.currentDayIdx===i?'day-btn-active':'bg-brown/10 text-brown shadow-sm'}">Day ${i+1}</button>`).join('');
             const day = state.itinerary[state.currentDayIdx];
-            const dinfo = document.getElementById('day-info');
-            if (dinfo) {
-                dinfo.innerHTML = `
-                    <div class="flex justify-between items-end text-brown">
-                        <div>
-                            <h2 class="serif-en text-3xl font-bold tracking-tight">${day.date}</h2>
-                            <p class="text-[10px] font-bold opacity-50 uppercase mt-1 tracking-widest text-brown/60">Temp: ${day.weather} / ${day.text}</p>
-                        </div>
-                    </div>
-                `;
-            }
-
+            document.getElementById('day-info').innerHTML = `<h2 class="serif-en text-3xl font-bold text-brown">${day.date}</h2><p class="text-[10px] opacity-50 font-bold uppercase tracking-widest text-brown/60">${day.weather}</p>`;
             const slots = ["早上", "午餐", "下午", "晚餐", "晚上", "住宿"];
-            const container = document.getElementById('itinerary-sections');
-            if (container) {
-                container.innerHTML = slots.map(slot => `
-                    <div class="section-title flex justify-between items-center text-brown font-bold">
-                        <span>${slot}</span>
-                        <button onclick="window.addNewCard('${slot}')" class="text-brown/20 p-1"><i class="fa-solid fa-plus-circle text-lg"></i></button>
-                    </div>
-                    <div class="space-y-4 min-h-[10px]">
-                        ${(day.slots[slot] || []).map((card, idx) => `
-                            <div class="glass-card p-5 relative active:scale-95 transition-transform shadow-sm" onclick="window.openEditCard('${slot}', ${idx})">
-                                ${card.img ? `<img src="${card.img}" class="w-full h-40 object-cover rounded-xl mb-4 shadow-sm" onclick="event.stopPropagation(); window.viewFullImg('${card.img}')">` : ''}
-                                <h4 class="font-bold text-sm text-[#3E2C2C] leading-tight">${card.title || '新增項目'}</h4>
-                                <p class="text-xs opacity-60 mt-2 leading-relaxed text-[#6B4F4F]">${card.desc || '編輯敘述...'}</p>
-                            </div>
-                        `).join('')}
-                    </div>
-                `).join('');
-            }
+            document.getElementById('itinerary-sections').innerHTML = slots.map(s => `
+                <div class="section-title flex justify-between"><span>${s}</span><button onclick="window.addCard('${s}')"><i class="fa-solid fa-plus-circle text-lg opacity-20"></i></button></div>
+                <div class="space-y-4 min-h-[10px]">${(day.slots[s]||[]).map((c, i) => `
+                    <div class="glass-card p-5 relative shadow-sm" onclick="window.openEdit('${s}', ${i})">
+                        ${c.img?`<img src="${c.img}" class="w-full h-40 object-cover rounded-xl mb-4" onclick="event.stopPropagation(); window.viewImg('${c.img}')">`:''}
+                        <h4 class="font-bold text-sm text-brown leading-tight">${c.title||'新增項目'}</h4>
+                        ${c.desc ? `<p class="text-xs opacity-60 mt-2 leading-relaxed text-brown/70">${c.desc}</p>` : ''}
+                        <div class="mt-4 flex flex-wrap gap-2">
+                            ${c.loc ? `<button onclick="event.stopPropagation(); window.openMap('${c.loc}')" class="bg-brown/10 text-brown text-[9px] px-3 py-1.5 rounded-full font-bold border border-brown/10"><i class="fa-solid fa-map-location-dot mr-1"></i>Naver Map</button>` : ''}
+                            ${c.link ? `<button onclick="event.stopPropagation(); window.open('${c.link}', '_blank')" class="bg-sand/20 text-brown text-[9px] px-3 py-1.5 rounded-full font-bold border border-sand/30"><i class="fa-solid fa-link mr-1"></i>參考連結</button>` : ''}
+                        </div>
+                    </div>`).join('')}</div>
+            `).join('');
         };
 
-        window.setDay = (i) => { state.currentDayIdx = i; renderItinerary(); };
-
-        window.addNewCard = (slot) => {
-            if(!state.itinerary[state.currentDayIdx].slots[slot]) state.itinerary[state.currentDayIdx].slots[slot] = [];
-            state.itinerary[state.currentDayIdx].slots[slot].push({ id: Date.now(), title: "", desc: "", loc: "", link: "", img: null });
-            persistCloud();
-        };
-
-        let editingCardRef = null;
-        window.openEditCard = (slot, idx) => {
-            editingCardRef = { slot, idx };
-            const card = state.itinerary[state.currentDayIdx].slots[slot][idx];
-            document.getElementById('card-title').value = card.title;
-            document.getElementById('card-desc').value = card.desc;
-            document.getElementById('card-loc').value = card.loc || "";
-            document.getElementById('card-link').value = card.link || "";
+        window.setDay = (i) => { state.currentDayIdx = i; renderHome(); };
+        window.addCard = (s) => { state.itinerary[state.currentDayIdx].slots[s].push({ title: "", desc: "", img: null, loc: "", link: "" }); persistCloud(); };
+        window.openMap = (q) => window.open(`https://map.naver.com/v5/search/${encodeURIComponent(q)}`, '_blank');
+        
+        let editRef = null;
+        window.openEdit = (s, i) => {
+            editRef = {s, i}; const c = state.itinerary[state.currentDayIdx].slots[s][i];
+            document.getElementById('card-title').value = c.title; document.getElementById('card-desc').value = c.desc;
+            document.getElementById('card-loc').value = c.loc || ""; document.getElementById('card-link').value = c.link || "";
             const preview = document.getElementById('card-img-preview');
-            if (card.img) { preview.src = card.img; preview.classList.remove('hidden'); }
-            else { preview.classList.add('hidden'); }
+            if(c.img) { preview.src = c.img; preview.classList.remove('hidden'); } else { preview.classList.add('hidden'); }
             document.getElementById('card-modal').classList.remove('hidden');
         };
-
         window.saveCard = () => {
-            const { slot, idx } = editingCardRef;
-            const card = state.itinerary[state.currentDayIdx].slots[slot][idx];
-            card.title = document.getElementById('card-title').value;
-            card.desc = document.getElementById('card-desc').value;
-            card.loc = document.getElementById('card-loc').value;
-            card.link = document.getElementById('card-link').value;
-            if(window.tempImg) card.img = window.tempImg;
-            persistCloud(); window.closeCardModal();
+            const c = state.itinerary[state.currentDayIdx].slots[editRef.s][editRef.i];
+            c.title = document.getElementById('card-title').value; c.desc = document.getElementById('card-desc').value;
+            c.loc = document.getElementById('card-loc').value; c.link = document.getElementById('card-link').value;
+            if(window.tmpImg) c.img = window.tmpImg; persistCloud(); window.closeCardModal();
         };
+        window.closeCardModal = () => { document.getElementById('card-modal').classList.add('hidden'); window.tmpImg=null; };
+        window.deleteCard = () => { window.customConfirm("刪除行程？", () => { state.itinerary[state.currentDayIdx].slots[editRef.s].splice(editRef.i, 1); persistCloud(); window.closeCardModal(); }); };
 
-        window.deleteCard = () => { if(confirm('確定刪除此行程？')){ const { slot, idx } = editingCardRef; state.itinerary[state.currentDayIdx].slots[slot].splice(idx, 1); persistCloud(); window.closeCardModal(); } };
-        window.closeCardModal = () => { document.getElementById('card-modal').classList.add('hidden'); window.tempImg = null; };
-
-        window.appendCalc = (v) => { const d = document.getElementById('calc-display'); if(d) d.value = d.value === '0' ? v : d.value + v; window.updateTWD(); };
-        window.clearCalc = () => { const d = document.getElementById('calc-display'); if(d) d.value = ''; window.updateTWD(); };
-        window.calculateResult = () => { try { const d = document.getElementById('calc-display'); if(d) d.value = eval(d.value.replace('×', '*').replace('÷', '/')); window.updateTWD(); } catch { alert('算式錯誤'); } };
-        window.updateTWD = () => {
-            const d = document.getElementById('calc-display');
-            if (!d) return;
-            const v = parseFloat(d.value) || 0;
-            const res = document.getElementById('twd-result');
-            if (res) res.innerText = `≈ NT$ ${Math.round(v/RATE).toLocaleString()}`;
-        };
-        window.openExpenseModal = () => {
-            const d = document.getElementById('calc-display');
-            const val = d ? parseFloat(d.value) || 0 : 0;
-            const eam = document.getElementById('exp-amount');
-            if (eam) eam.value = val;
-            document.getElementById('expense-modal').classList.remove('hidden');
-        };
+        window.appendCalc = (v) => { const d = document.getElementById('calc-display'); d.value = d.value==='0'?v:d.value+v; updateTWD(); };
+        window.clearCalc = () => { document.getElementById('calc-display').value=''; updateTWD(); };
+        window.calculateResult = () => { try { const d = document.getElementById('calc-display'); d.value = eval(d.value.replace('×', '*').replace('÷', '/')); updateTWD(); } catch(e){ window.showToast('算式錯誤'); } };
+        const updateTWD = () => { const v = parseFloat(document.getElementById('calc-display').value)||0; document.getElementById('twd-result').innerText = `≈ NT$ ${Math.round(v/RATE).toLocaleString()}`; };
+        window.openExpenseModal = () => { document.getElementById('exp-amount').value = document.getElementById('calc-display').value; document.getElementById('expense-modal').classList.remove('hidden'); };
+        
         window.saveExpense = () => {
-            const exp = { id: Date.now(), title: document.getElementById('exp-title').value || "未命名", krw: parseFloat(document.getElementById('exp-amount').value) || 0, cat: document.getElementById('exp-cat').value, method: document.getElementById('exp-method').value, payer: document.getElementById('exp-payer').value || "我", date: new Date().toLocaleDateString() };
-            state.expenses.unshift(exp); persistCloud(); window.closeExpenseModal();
+            const title = document.getElementById('exp-title').value;
+            const krw = parseFloat(document.getElementById('exp-amount').value);
+            if(!title || isNaN(krw)) return window.showToast("填寫完整金額");
+            state.expenses.unshift({ title, krw, cat: document.getElementById('exp-cat').value, payer: document.getElementById('exp-payer').value, method: document.getElementById('exp-method').value, date: new Date().toLocaleDateString() });
+            persistCloud(); window.closeExpenseModal();
         };
         window.closeExpenseModal = () => document.getElementById('expense-modal').classList.add('hidden');
-        window.deleteExpense = (id) => { if(confirm('刪除這筆紀錄？')){ state.expenses = state.expenses.filter(e => e.id !== id); persistCloud(); } };
 
-        const renderExpenses = () => {
-            const pF = document.getElementById('filter-payer').value;
-            const mF = document.getElementById('filter-method').value;
-            const cF = document.getElementById('filter-cat').value;
-            const payers = [...new Set(state.expenses.map(e => e.payer))];
-            const pSel = document.getElementById('filter-payer');
-            if (pSel) {
-                const curP = pSel.value;
-                pSel.innerHTML = `<option value="all">付款人</option>` + payers.map(p => `<option value="${p}">${p}</option>`).join('');
-                pSel.value = curP;
-            }
-
-            let filtered = state.expenses.filter(e => (pF === 'all' || e.payer === pF) && (mF === 'all' || e.method === mF) && (cF === 'all' || e.cat === cF));
-
-            const hist = document.getElementById('expense-history');
-            if (!hist) return;
-            if (filtered.length === 0) { hist.innerHTML = `<p class="text-center py-10 opacity-30 text-xs italic text-brown">無紀錄</p>`; return; }
-            hist.innerHTML = filtered.map(e => `
+        const renderWallet = () => {
+            let yianPaid = 0, mzPaid = 0;
+            state.expenses.forEach(e => { if(e.payer==='Yian') yianPaid+=e.krw; if(e.payer==='MZ') mzPaid+=e.krw; });
+            const diff = Math.abs(yianPaid - mzPaid); const bal = diff / 2;
+            document.getElementById('settlement-content').innerHTML = `
+                <div class="flex justify-between border-b border-brown/5 pb-2"><span>Yian 已墊:</span><span class="font-bold">₩${yianPaid.toLocaleString()}</span></div>
+                <div class="flex justify-between border-b border-brown/5 pb-2"><span>MZ 已墊:</span><span class="font-bold">₩${mzPaid.toLocaleString()}</span></div>
+                <div class="bg-brown/5 p-3 rounded-xl mt-4 text-center">
+                    <p class="font-bold text-brown">💡 結算最佳解：</p>
+                    <p class="text-[10px] mt-1">${yianPaid > mzPaid ? `MZ 應給 Yian ₩${Math.round(bal).toLocaleString()} (NT$ ${Math.round(bal/RATE)})` : `Yian 應給 MZ ₩${Math.round(bal).toLocaleString()} (NT$ ${Math.round(bal/RATE)})`}</p>
+                </div>`;
+            const pF = document.getElementById('filter-payer').value, cF = document.getElementById('filter-cat').value;
+            let fil = state.expenses.filter(e => (pF==='all'||e.payer===pF)&&(cF==='all'||e.cat===cF));
+            document.getElementById('expense-history').innerHTML = fil.map((e, idx) => `
                 <div class="glass-card p-5 flex justify-between items-center shadow-sm">
-                    <div>
-                        <h4 class="font-bold text-sm text-[#3E2C2C]">${e.title} <span class="text-[9px] bg-brown/5 px-2 py-0.5 rounded ml-1 font-bold text-brown">${e.cat}</span></h4>
-                        <p class="text-[10px] opacity-50 mt-1 uppercase font-bold text-[#6B4F4F]">${e.method} · ${e.payer} · ${e.date}</p>
+                    <div class="flex-1">
+                        <h4 class="font-bold text-sm text-brown">${e.title} <span class="text-[9px] bg-brown/5 px-2 py-0.5 rounded ml-1 font-bold">${e.cat}</span></h4>
+                        <p class="text-[10px] opacity-50 mt-1 font-bold">${e.payer} · ${e.method} · ${e.date}</p>
                     </div>
                     <div class="text-right">
-                        <p class="font-bold text-sm text-[#3E2C2C] tracking-tighter">₩${e.krw.toLocaleString()}</p>
-                        <p class="text-[10px] text-sand font-bold tracking-widest">NT$ ${Math.round(e.krw/RATE).toLocaleString()}</p>
+                        <p class="font-bold text-sm text-brown">₩${e.krw.toLocaleString()}</p>
+                        <p class="text-[10px] text-sand font-bold">NT$ ${Math.round(e.krw/RATE).toLocaleString()}</p>
                     </div>
-                    <button onclick="window.deleteExpense(${e.id})" class="ml-4 text-red-200 p-2"><i class="fa-solid fa-trash-can"></i></button>
-                </div>
-            `).join('');
+                    <button onclick="window.deleteExpense(${idx})" class="ml-4 text-red-200"><i class="fa-solid fa-trash"></i></button>
+                </div>`).join('');
         };
-        window.renderExpenses = renderExpenses;
+        window.deleteExpense = (idx) => { window.customConfirm("刪除記帳？", () => { state.expenses.splice(idx, 1); persistCloud(); }); };
 
         window.exportToExcel = () => {
-            let csv = "\uFEFF品項,類別,韓幣,台幣,付款方式,付款人,日期\n";
-            state.expenses.forEach(e => csv += `${e.title},${e.cat},${e.krw},${Math.round(e.krw/RATE)},${e.method},${e.payer},${e.date}\n`);
+            let csv = "\uFEFF日期,項目,類別,付款人,韓幣,台幣\n";
+            state.expenses.forEach(e => csv += `${e.date},${e.title},${e.cat},${e.payer},${e.krw},${Math.round(e.krw/RATE)}\n`);
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement("a"); link.href = URL.createObjectURL(blob); link.download = `釜山記帳.csv`; link.click();
+            const link = document.createElement("a"); link.href = URL.createObjectURL(blob); link.download = `釜山記帳_${new Date().toLocaleDateString()}.csv`; link.click();
         };
 
         const renderLists = () => {
-            const c = document.getElementById('checklist-container');
-            if (c) {
-                c.innerHTML = (state.checklist || []).map((item, idx) => `
-                    <label class="flex items-center gap-4 glass-card p-5 shadow-sm active:bg-sand/5">
-                        <input type="checkbox" ${item.done ? 'checked' : ''} onchange="window.toggleCheck(${idx})" class="w-6 h-6 accent-brown rounded-lg">
-                        <span class="text-sm font-bold text-[#3E2C2C] ${item.done ? 'opacity-30 line-through' : ''}">${item.text}</span>
-                        <button onclick="window.removeList(${idx})" class="ml-auto text-brown/20 p-2"><i class="fa-solid fa-xmark"></i></button>
-                    </label>
-                `).join('');
-            }
-            const memo = document.getElementById('memo-input');
-            if (memo) memo.value = state.memos || "";
+            document.getElementById('checklist-container').innerHTML = state.checklist.map((item, i) => `
+                <div class="flex items-center gap-4 glass-card p-5 shadow-sm">
+                    <input type="checkbox" ${item.done?'checked':''} onchange="window.toggleCheck(${i})" class="w-6 h-6 accent-brown rounded-lg">
+                    <span class="text-sm font-bold text-brown ${item.done?'line-through opacity-30':''}">${item.text}</span>
+                    <button onclick="window.removeList(${i})" class="ml-auto text-brown/20 p-2">×</button>
+                </div>`).join('');
+            document.getElementById('memo-input').value = state.memos;
         };
         window.toggleCheck = (i) => { state.checklist[i].done = !state.checklist[i].done; persistCloud(); };
         window.removeList = (i) => { state.checklist.splice(i, 1); persistCloud(); };
-        window.addChecklistItem = () => { const v = document.getElementById('new-check-item').value; if(v) { state.checklist.push({text: v, done: false}); document.getElementById('new-check-item').value=''; persistCloud(); } };
-        window.saveMemos = () => { const mi = document.getElementById('memo-input'); state.memos = mi ? mi.value : ""; persistCloud(); };
-
-        const renderInfo = () => {
-            const list = document.getElementById('custom-info-list');
-            if (!list) return; // 防錯機制：如果元素不存在，不執行渲染
-            list.innerHTML = (state.customInfo || []).map((info, idx) => `
-                <div class="flex justify-between items-start border-b border-brown/5 pb-3">
-                    <div class="flex-1 pr-4">
-                        <p class="text-[10px] font-bold opacity-30 uppercase tracking-widest text-brown">${info.label}</p>
-                        <p class="text-sm font-bold text-[#3E2C2C] break-all mt-1">${info.value}</p>
-                    </div>
-                    <button onclick="window.removeInfo(${idx})" class="text-red-100 p-2 active:scale-90 transition-all"><i class="fa-solid fa-minus-circle"></i></button>
-                </div>
-            `).join('');
-        };
-
-        window.addCustomInfo = () => { const l = prompt("項目："); const v = prompt("內容："); if (l && v) { if(!state.customInfo) state.customInfo = []; state.customInfo.push({label: l, value: v}); persistCloud(); } };
-        window.removeInfo = (i) => { if(confirm('確定刪除此資訊？')){ state.customInfo.splice(i, 1); persistCloud(); } };
-
-        window.copyFullData = () => { const el = document.createElement('textarea'); el.value = JSON.stringify(state); document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el); window.showToast('備份碼已複製成功！'); };
-        window.importFullData = () => { const c = prompt("請貼上備份碼："); if (c) { try { const newData = JSON.parse(c); state = newData; persistCloud(); window.showToast('資料還原成功！'); setTimeout(() => location.reload(), 1000); } catch(e){ window.showToast('格式錯誤！'); } } };
-
-        window.viewFullImg = (src) => { const lb = document.getElementById('lightbox'); const lbImg = document.getElementById('lightbox-img'); if(lb && lbImg) { lbImg.src = src; lb.style.display = 'flex'; } };
-
-        window.handleImage = (input, mode) => {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const img = new Image();
-                    img.onload = () => {
-                        const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
-                        const maxSide = mode === 'card' ? 700 : 350;
-                        let w = img.width, h = img.height;
-                        if (w > h) { if (w > maxSide) { h *= maxSide/w; w = maxSide; } }
-                        else { if (h > maxSide) { w *= maxSide/h; h = maxSide; } }
-                        canvas.width = w; canvas.height = h;
-                        ctx.drawImage(img, 0, 0, w, h);
-                        const compressed = canvas.toDataURL('image/jpeg', 0.6);
-                        if (mode === 'card') { window.tempImg = compressed; const cpreview = document.getElementById('card-img-preview'); if(cpreview) { cpreview.src = compressed; cpreview.classList.remove('hidden'); } }
-                    };
-                    img.src = e.target.result;
-                };
-                reader.readAsDataURL(input.files[0]);
-            }
-        };
-
-        window.uploadVoucher = (input) => {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const img = new Image();
-                    img.onload = () => {
-                        const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
-                        const maxSide = 1200;
-                        let w = img.width, h = img.height;
-                        if (w > h) { if (w > maxSide) { h *= maxSide/w; w = maxSide; } }
-                        else { if (h > maxSide) { w *= maxSide/h; h = maxSide; } }
-                        canvas.width = w; canvas.height = h;
-                        ctx.drawImage(img, 0, 0, w, h);
-                        if(!state.vouchers) state.vouchers = [];
-                        state.vouchers.unshift({ id: Date.now(), data: canvas.toDataURL('image/jpeg', 0.7) });
-                        persistCloud();
-                    };
-                    img.src = e.target.result;
-                };
-                reader.readAsDataURL(input.files[0]);
-            }
-        };
+        window.addChecklistItem = () => { const v = document.getElementById('new-check-item').value; if(v){ state.checklist.push({text:v, done:false}); document.getElementById('new-check-item').value=''; persistCloud(); } };
+        window.saveMemos = () => { state.memos = document.getElementById('memo-input').value; persistCloud(); };
 
         const renderVouchers = () => {
-            const g = document.getElementById('voucher-grid');
-            if (!g) return;
-            g.innerHTML = (state.vouchers || []).map(v => `
-                <div class="relative glass-card overflow-hidden h-52 shadow-sm bg-black/5" onclick="window.viewFullImg('${v.data}')">
+            document.getElementById('voucher-grid').innerHTML = state.vouchers.map(v => `
+                <div class="relative glass-card overflow-hidden h-40 shadow-sm bg-black/5" onclick="window.viewImg('${v.data}')">
                     <img src="${v.data}" class="w-full h-full object-cover">
-                    <button onclick="event.stopPropagation(); window.deleteVoucher(${v.id})" class="absolute top-3 right-3 bg-black/40 text-white w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-sm"><i class="fa-solid fa-xmark"></i></button>
-                </div>
-            `).join('');
+                    <button onclick="event.stopPropagation(); window.deleteVoucher(${v.id})" class="absolute top-2 right-2 text-white bg-black/40 w-6 h-6 rounded-full flex items-center justify-center">×</button>
+                </div>`).join('');
         };
-        window.deleteVoucher = (id) => { if(confirm('確定刪除此憑證？')){ state.vouchers = state.vouchers.filter(v => v.id !== id); persistCloud(); } };
+        window.viewImg = (src) => { const lb = document.getElementById('lightbox'); const img = document.getElementById('lightbox-img'); if(lb && img) { img.src = src; lb.style.display = 'flex'; } };
+        window.uploadVoucher = (input) => {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader(); reader.onload = (e) => {
+                    state.vouchers.unshift({ id: Date.now(), data: e.target.result }); persistCloud();
+                }; reader.readAsDataURL(input.files[0]);
+            }
+        };
+        window.deleteVoucher = (id) => { state.vouchers = state.vouchers.filter(v => v.id !== id); persistCloud(); };
 
+        const renderInfo = () => {
+            const list = document.getElementById('custom-info-list'); if(!list) return;
+            list.innerHTML = state.customInfo.map((info, i) => `
+                <div class="flex justify-between items-start border-b border-brown/5 pb-2">
+                    <div class="flex-1 pr-4"><p class="text-[10px] font-bold opacity-30 uppercase text-brown">${info.label}</p><p class="text-sm font-bold text-brown mt-1">${info.value}</p></div>
+                    <button onclick="window.removeInfo(${i})" class="text-red-200">×</button>
+                </div>`).join('');
+        };
+        window.addCustomInfo = () => { const l = prompt("項目："); const v = prompt("內容："); if(l&&v){ state.customInfo.push({label:l, value:v}); persistCloud(); } };
+        window.removeInfo = (i) => { state.customInfo.splice(i,1); persistCloud(); };
+
+        window.copyFullData = () => { navigator.clipboard.writeText(JSON.stringify(state)); window.showToast("備份碼已複製"); };
+        window.importFullData = () => { const c = prompt("備份碼："); if(c){ state = JSON.parse(c); persistCloud(); location.reload(); } };
+        window.confirmReset = () => { window.customConfirm("切換暗號？", () => { localStorage.removeItem('busan_room_id'); location.reload(); }); };
+
+        window.handleImage = (input, mode) => { 
+            if (input.files && input.files[0]) { 
+                const reader = new FileReader(); 
+                reader.onload = (e) => { 
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
+                        const maxSide = mode==='card'?700:400; let w=img.width, h=img.height;
+                        if(w>h){if(w>maxSide){h*=maxSide/w; w=maxSide;}}else{if(h>maxSide){w*=maxSide/h; h=maxSide;}}
+                        canvas.width=w; canvas.height=h; ctx.drawImage(img,0,0,w,h);
+                        window.tmpImg = canvas.toDataURL('image/jpeg', 0.6); 
+                        if(mode==='card'){const p=document.getElementById('card-img-preview'); p.src=window.tmpImg; p.classList.remove('hidden');}
+                    }; img.src=e.target.result;
+                }; reader.readAsDataURL(input.files[0]); 
+            } 
+        };
+
+        onAuthStateChanged(auth, (u) => { if (u && roomId) { const overlay = document.getElementById('cloud-overlay'); if(overlay) overlay.style.display = 'none'; startSync(); } });
         initAuth();
+        window.render();
     </script>
 </body>
 </html>
