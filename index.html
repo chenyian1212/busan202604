@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Busan 2026 - Cloud Collaboration v5.2</title>
+    <title>Busan 2026 - Cloud Collaboration v5.3</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
@@ -31,16 +31,10 @@
     </style>
 
     <script>
-        // 核心提示功能
         window.showToast = (msg) => { 
             const t = document.getElementById('toast'); 
             if (t) { t.innerText = msg; t.style.opacity = '1'; setTimeout(() => { t.style.opacity = '0'; }, 3000); } 
-            else { alert(msg); }
-        };
-        // 捕捉初始化前的錯誤
-        window.onerror = function(message, source, lineno, colno, error) {
-            console.error("Critical Error:", message);
-            return false;
+            else { console.log(msg); }
         };
     </script>
 </head>
@@ -48,7 +42,6 @@
     <div id="toast">Message</div>
     <div id="lightbox" onclick="this.style.display='none'"><img id="lightbox-img" src=""><p class="fixed bottom-12 text-white text-[10px] opacity-40 font-bold uppercase tracking-widest bg-black/20 px-4 py-2 rounded-full text-center">Tap to close</p></div>
 
-    <!-- 確認對話框 -->
     <div id="confirm-modal">
         <div class="bg-white rounded-3xl p-8 w-full max-w-xs text-center shadow-2xl">
             <h3 class="font-bold text-brown mb-4" id="confirm-msg">確認操作？</h3>
@@ -66,7 +59,7 @@
             <p class="text-xs opacity-60 mb-10 tracking-widest uppercase text-brown/70">안녕, 부산! 請輸入暗號進行同步</p>
             <input type="text" id="room-id-input" class="w-full bg-white/70 border-none rounded-2xl py-5 px-6 text-center text-xl font-bold text-[#3E2C2C] shadow-sm mb-6 focus:ring-2 focus:ring-brown" placeholder="例如: busan-2026">
             <button id="start-sync-btn" onclick="window.startCloudSync()" class="w-full bg-[#3E2C2C] text-white py-5 rounded-2xl font-bold tracking-[0.4em] shadow-xl active:scale-95 transition-all">START ADVENTURE</button>
-            <p id="connection-status-msg" class="text-[9px] opacity-40 mt-6 italic px-4">Waiting for key...</p>
+            <p id="connection-status-msg" class="text-[10px] opacity-40 mt-6 italic px-4">輸入相同暗號即可同步內容</p>
         </div>
     </div>
 
@@ -77,17 +70,17 @@
     </header>
 
     <main class="px-5">
-        <!-- 1. PLAN -->
+        <!-- 1. PLAN 分頁 -->
         <section id="tab-home" class="tab-content active">
             <div id="day-selector" class="mb-6 overflow-x-auto whitespace-nowrap py-2 no-scrollbar flex items-center gap-2"></div>
             <div id="day-info" class="mb-6 px-2 text-center"></div>
             <div id="itinerary-sections" class="space-y-2"></div>
         </section>
 
-        <!-- 2. WALLET -->
+        <!-- 2. WALLET 分頁 -->
         <section id="tab-wallet" class="tab-content">
             <div id="settlement-board" class="glass-card p-6 mb-6 border-t-8 border-sand text-center">
-                <h3 class="serif-en text-xl font-bold italic text-brown mb-4">Settlement Radar</h3>
+                <h3 class="serif-en text-xl font-bold italic text-brown mb-4 text-center">Settlement Radar</h3>
                 <div id="settlement-content" class="space-y-2 text-xs"></div>
             </div>
             <div class="glass-card p-6 mb-6">
@@ -96,19 +89,19 @@
                     <input type="text" id="calc-display" class="w-full bg-white/50 rounded-2xl py-5 px-6 text-right text-2xl font-bold text-brown" placeholder="0" readonly>
                     <div id="twd-result" class="text-lg font-bold text-sand text-right px-2">≈ NT$ 0</div>
                     <div class="grid grid-cols-4 gap-2">
-                        <button onclick="window.appendCalc('7')" class="bg-white p-4 rounded-xl shadow-sm font-bold">7</button>
-                        <button onclick="window.appendCalc('8')" class="bg-white p-4 rounded-xl shadow-sm font-bold">8</button>
-                        <button onclick="window.appendCalc('9')" class="bg-white p-4 rounded-xl shadow-sm font-bold">9</button>
+                        <button onclick="window.appendCalc('7')" class="bg-white p-4 rounded-xl shadow-sm font-bold active:scale-95">7</button>
+                        <button onclick="window.appendCalc('8')" class="bg-white p-4 rounded-xl shadow-sm font-bold active:scale-95">8</button>
+                        <button onclick="window.appendCalc('9')" class="bg-white p-4 rounded-xl shadow-sm font-bold active:scale-95">9</button>
                         <button onclick="window.clearCalc()" class="bg-red-50 text-red-500 p-4 rounded-xl shadow-sm font-bold">C</button>
-                        <button onclick="window.appendCalc('4')" class="bg-white p-4 rounded-xl shadow-sm font-bold">4</button>
-                        <button onclick="window.appendCalc('5')" class="bg-white p-4 rounded-xl shadow-sm font-bold">5</button>
-                        <button onclick="window.appendCalc('6')" class="bg-white p-4 rounded-xl shadow-sm font-bold">6</button>
+                        <button onclick="window.appendCalc('4')" class="bg-white p-4 rounded-xl shadow-sm font-bold active:scale-95">4</button>
+                        <button onclick="window.appendCalc('5')" class="bg-white p-4 rounded-xl shadow-sm font-bold active:scale-95">5</button>
+                        <button onclick="window.appendCalc('6')" class="bg-white p-4 rounded-xl shadow-sm font-bold active:scale-95">6</button>
                         <button onclick="window.appendCalc('/')" class="bg-sand/10 p-4 rounded-xl shadow-sm font-bold">÷</button>
-                        <button onclick="window.appendCalc('1')" class="bg-white p-4 rounded-xl shadow-sm font-bold">1</button>
-                        <button onclick="window.appendCalc('2')" class="bg-white p-4 rounded-xl shadow-sm font-bold">2</button>
-                        <button onclick="window.appendCalc('3')" class="bg-white p-4 rounded-xl shadow-sm font-bold">3</button>
+                        <button onclick="window.appendCalc('1')" class="bg-white p-4 rounded-xl shadow-sm font-bold active:scale-95">1</button>
+                        <button onclick="window.appendCalc('2')" class="bg-white p-4 rounded-xl shadow-sm font-bold active:scale-95">2</button>
+                        <button onclick="window.appendCalc('3')" class="bg-white p-4 rounded-xl shadow-sm font-bold active:scale-95">3</button>
                         <button onclick="window.appendCalc('*')" class="bg-sand/10 p-4 rounded-xl shadow-sm font-bold">×</button>
-                        <button onclick="window.appendCalc('0')" class="bg-white p-4 rounded-xl shadow-sm font-bold">0</button>
+                        <button onclick="window.appendCalc('0')" class="bg-white p-4 rounded-xl shadow-sm font-bold active:scale-95">0</button>
                         <button onclick="window.appendCalc('+')" class="bg-sand/10 p-4 rounded-xl shadow-sm font-bold">+</button>
                         <button onclick="window.appendCalc('-')" class="bg-sand/10 p-4 rounded-xl shadow-sm font-bold">-</button>
                         <button onclick="window.calculateResult()" class="bg-[#3E2C2C] text-white p-4 rounded-xl shadow-sm font-bold">=</button>
@@ -119,7 +112,7 @@
             <div id="expense-history" class="space-y-3 mb-10"></div>
         </section>
 
-        <!-- 3. LISTS -->
+        <!-- 3. LISTS 分頁 -->
         <section id="tab-lists" class="tab-content">
             <div class="glass-card p-6 mb-6">
                 <h2 class="serif-en text-2xl mb-4 italic text-brown font-bold text-center">Checklist</h2>
@@ -135,10 +128,10 @@
             </div>
         </section>
 
-        <!-- 4. DOCS -->
+        <!-- 4. DOCS 分頁 -->
         <section id="tab-vouchers" class="tab-content">
             <div class="flex justify-between items-center mb-6 px-2">
-                <h2 class="serif-en text-3xl italic text-brown font-bold">Docs</h2>
+                <h2 class="serif-en text-3xl italic text-brown font-bold text-center">Docs</h2>
                 <label class="bg-[#6B4F4F] text-white px-5 py-3 rounded-full text-xs font-bold cursor-pointer shadow-md">
                     上傳憑證<input type="file" class="hidden" accept="image/*" onchange="window.uploadVoucher(this)">
                 </label>
@@ -146,10 +139,10 @@
             <div id="voucher-grid" class="grid grid-cols-2 gap-4 pb-10"></div>
         </section>
 
-        <!-- 5. INFO -->
+        <!-- 5. INFO 分頁 (備忘錄功能回歸) -->
         <section id="tab-info" class="tab-content">
             <div class="space-y-6">
-                <div class="glass-card p-6 border-l-8 border-sand text-center">
+                <div class="glass-card p-6 border-l-8 border-sand">
                     <h3 class="serif-en text-xl mb-4 font-bold italic text-brown">Flight & Stay</h3>
                     <div class="text-xs space-y-4 text-brown opacity-80 leading-relaxed">
                         <p>✈️ 4/24 TPE 02:35 → PUS 06:05 (ZE988)</p>
@@ -157,22 +150,30 @@
                         <p>🏨 4/26-28 Good Ol' Days (中央洞)</p>
                     </div>
                 </div>
-                <div class="glass-card p-6 shadow-sm">
+                <div class="glass-card p-6">
                     <div class="flex justify-between items-center mb-4">
                         <h3 class="serif-en text-xl font-bold italic text-brown">Custom Notes</h3>
                         <button onclick="window.addCustomInfo()" class="text-brown/40"><i class="fa-solid fa-circle-plus text-xl"></i></button>
                     </div>
                     <div id="custom-info-list" class="space-y-4 text-center"></div>
                 </div>
-                <div class="glass-card p-6 border-l-8 border-green-600/30 text-center text-xs">
-                    <h3 class="serif-en text-xl mb-4 font-bold italic text-green-800">Connection</h3>
-                    <p id="display-room-id" class="mb-4 opacity-40 font-bold italic">Not Connected</p>
-                    <button onclick="window.confirmReset()" class="text-red-400 underline">登出 / 更換暗號</button>
+                <div class="glass-card p-6 border-l-8 border-green-600/30 text-center">
+                    <h3 class="serif-en text-xl mb-4 font-bold italic text-green-800">Cloud & Backup</h3>
+                    <div class="p-3 bg-white/50 rounded-xl mb-4">
+                        <p class="text-[10px] opacity-40 uppercase font-bold text-brown">Shared Key</p>
+                        <p id="display-room-id" class="text-sm font-bold text-brown italic tracking-widest">Not Connected</p>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="window.copyFullData()" class="bg-[#6B4F4F] text-white py-3 rounded-xl text-[10px] font-bold shadow-md">複製備份碼</button>
+                        <button onclick="window.importFullData()" class="bg-white border border-brown/20 text-brown py-3 rounded-xl text-[10px] font-bold">還原備份</button>
+                    </div>
+                    <button onclick="window.confirmReset()" class="w-full mt-6 text-[10px] text-red-400 underline">退出房間 / 更換暗號</button>
                 </div>
             </div>
         </section>
     </main>
 
+    <!-- Navigation -->
     <nav class="fixed bottom-0 left-0 right-0 glass-card mx-4 mb-6 px-4 py-4 flex justify-between items-center shadow-2xl z-50">
         <button onclick="window.switchTab('home')" class="nav-btn active flex flex-col items-center flex-1" id="btn-home"><i class="fa-solid fa-map-location-dot text-lg"></i><span class="text-[9px] mt-1 font-bold">PLAN</span></button>
         <button onclick="window.switchTab('wallet')" class="nav-btn flex flex-col items-center flex-1" id="btn-wallet"><i class="fa-solid fa-wallet text-lg"></i><span class="text-[9px] mt-1 font-bold">WALLET</span></button>
@@ -181,29 +182,31 @@
         <button onclick="window.switchTab('info')" class="nav-btn flex flex-col items-center flex-1" id="btn-info"><i class="fa-solid fa-circle-info text-lg"></i><span class="text-[9px] mt-1 font-bold">INFO</span></button>
     </nav>
 
-    <!-- Modal: Card -->
+    <!-- Modals -->
     <div id="card-modal" class="fixed inset-0 bg-black/60 hidden z-[60] flex items-center justify-center px-6">
         <div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 shadow-2xl max-h-[85vh] overflow-y-auto">
-            <h3 class="serif-en text-xl mb-6 font-bold italic text-brown text-center">Edit Itinerary</h3>
+            <h3 class="serif-en text-xl mb-6 font-bold italic text-brown text-center">Edit Card</h3>
             <div class="space-y-4">
-                <input type="text" id="card-title" class="w-full bg-cream rounded-xl p-4 text-sm font-bold text-brown border-none" placeholder="項目名稱">
-                <textarea id="card-desc" class="w-full bg-cream rounded-xl p-4 text-sm h-24 text-brown border-none leading-relaxed" placeholder="內容說明..."></textarea>
+                <input type="text" id="card-title" class="w-full bg-cream rounded-xl p-4 text-sm font-bold text-brown border-none" placeholder="景點名稱">
+                <textarea id="card-desc" class="w-full bg-cream rounded-xl p-4 text-sm h-24 text-brown border-none leading-relaxed" placeholder="詳細內容說明..."></textarea>
                 <div class="flex items-center gap-4 py-2 border-b border-sand/30 pb-4">
-                    <label class="bg-[#6B4F4F] text-white px-4 py-2 rounded-xl text-[10px] font-bold cursor-pointer">上傳照片<input type="file" class="hidden" accept="image/*" onchange="window.handleImage(this, 'card')"></label>
+                    <label class="bg-[#6B4F4F] text-white px-4 py-2 rounded-xl text-[10px] font-bold cursor-pointer active:scale-95 transition-transform">
+                        <i class="fa-solid fa-camera mr-1"></i> 上傳相片
+                        <input type="file" class="hidden" accept="image/*" onchange="window.handleImage(this, 'card')">
+                    </label>
                     <img id="card-img-preview" class="w-12 h-12 rounded-lg object-cover hidden">
                 </div>
-                <input type="text" id="card-loc" class="w-full bg-cream rounded-xl p-4 text-xs text-brown border-none" placeholder="Naver Map 關鍵字">
-                <input type="text" id="card-link" class="w-full bg-cream rounded-xl p-4 text-xs text-brown border-none" placeholder="攻略連結">
+                <input type="text" id="card-loc" class="w-full bg-cream rounded-xl p-4 text-xs text-brown border-none" placeholder="Naver Map 關鍵字 (地圖搜尋)">
+                <input type="text" id="card-link" class="w-full bg-cream rounded-xl p-4 text-xs text-brown border-none" placeholder="部落格/攻略連結 (http://...)">
                 <div class="flex gap-3 mt-4">
                     <button onclick="window.deleteCard()" class="flex-1 bg-red-50 text-red-500 py-3 rounded-xl font-bold text-xs text-center">刪除</button>
-                    <button onclick="window.saveCard()" class="flex-[2] bg-[#3E2C2C] text-white py-3 rounded-xl font-bold text-xs text-center">儲存</button>
+                    <button onclick="window.saveCard()" class="flex-[2] bg-[#3E2C2C] text-white py-3 rounded-xl font-bold text-xs text-center">儲存修改</button>
                 </div>
                 <button onclick="window.closeCardModal()" class="w-full text-sand text-[10px] font-bold underline mt-4 text-center">CANCEL</button>
             </div>
         </div>
     </div>
 
-    <!-- Modal: Expense -->
     <div id="expense-modal" class="fixed inset-0 bg-black/60 hidden z-[60] flex items-end">
         <div class="bg-white w-full rounded-t-[2.5rem] p-8 shadow-2xl">
             <div class="flex justify-between items-center mb-6">
@@ -236,35 +239,40 @@
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // --- Firebase 安全初始化 ---
+        // Firebase 初始化與安全防護
         let db, auth;
-        let firebaseConfig = {};
+        let firebaseConfig = null;
         try {
             firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
+            // 如果妳在 GitHub 上想要啟動雲端同步，請將妳的 Firebase 設定貼在下方取代 null
+            // firebaseConfig = { apiKey: "...", ... }; 
+            
             if (firebaseConfig) {
                 const app = initializeApp(firebaseConfig);
                 auth = getAuth(app);
                 db = getFirestore(app);
             }
-        } catch(e) { console.error("Firebase Config Error", e); }
+        } catch(e) { console.error("Firebase Init Error"); }
 
         const globalAppId = typeof __app_id !== 'undefined' ? __app_id : 'busan-2026-v4';
         const RATE = 42;
         let roomId = localStorage.getItem('busan_room_id') || "";
         let syncUnsubscribe = null;
         
+        // 初始狀態
         let state = {
             currentDayIdx: 0,
             itinerary: [
-                { date: "4/24 (五)", weather: "14/12°C", slots: { "早上": [], "午餐": [], "下午": [], "晚餐": [], "晚上": [], "住宿": [] } },
-                { date: "4/25 (六)", weather: "16/14°C", slots: { "早上": [], "午餐": [], "下午": [], "晚餐": [], "晚上": [], "住宿": [] } },
-                { date: "4/26 (日)", weather: "15/13°C", slots: { "早上": [], "午餐": [], "下午": [], "晚餐": [], "晚上": [], "住宿": [] } },
-                { date: "4/27 (一)", weather: "17/15°C", slots: { "早上": [], "午餐": [], "下午": [], "晚餐": [], "晚上": [], "住宿": [] } },
-                { date: "4/28 (二)", weather: "18/16°C", slots: { "早上": [], "午餐": [], "下午": [], "晚餐": [], "晚上": [], "住宿": [] } }
+                { date: "4/24 (五)", weather: {temp: "14°C", text: "晴"}, slots: { "早上": [], "午餐": [], "下午": [], "晚餐": [], "晚上": [], "住宿": [] } },
+                { date: "4/25 (六)", weather: {temp: "16°C", text: "多雲"}, slots: { "早上": [], "午餐": [], "下午": [], "晚餐": [], "晚上": [], "住宿": [] } },
+                { date: "4/26 (日)", weather: {temp: "15°C", text: "微雨"}, slots: { "早上": [], "午餐": [], "下午": [], "晚餐": [], "晚上": [], "住宿": [] } },
+                { date: "4/27 (一)", weather: {temp: "17°C", text: "晴"}, slots: { "早上": [], "午餐": [], "下午": [], "晚餐": [], "晚上": [], "住宿": [] } },
+                { date: "4/28 (二)", weather: {temp: "18°C", text: "暖晴"}, slots: { "早上": [], "午餐": [], "下午": [], "晚餐": [], "晚上": [], "住宿": [] } }
             ],
             expenses: [], checklist: [], memos: "", vouchers: [], customInfo: []
         };
 
+        // UI 共用功能
         window.customConfirm = (msg, onConfirm) => {
             const m = document.getElementById('confirm-modal');
             const ok = document.getElementById('confirm-ok');
@@ -275,20 +283,21 @@
         };
 
         async function initAuth() {
-            if (!auth) { window.showToast("設定遺失：進入預覽模式"); return null; }
+            if (!auth) return null;
             if (auth.currentUser) return auth.currentUser;
             try {
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                     await signInWithCustomToken(auth, __initial_auth_token);
                 } else { await signInAnonymously(auth); }
                 return auth.currentUser;
-            } catch (e) { console.error(e); return null; }
+            } catch (e) { return null; }
         }
 
         const startSync = () => {
             if (!roomId || !auth?.currentUser || !db) return;
             const docRef = doc(db, 'artifacts', globalAppId, 'public', 'data', 'roomData', roomId);
             if (syncUnsubscribe) syncUnsubscribe();
+            
             const status = document.getElementById('sync-status');
             if(status) status.innerHTML = '<span class="status-pill status-online">Syncing...</span>';
 
@@ -296,39 +305,46 @@
                 if (snap.exists()) {
                     state = { ...state, ...snap.data() };
                     window.render();
-                    if(status) status.innerHTML = '<span class="status-pill status-online">Connected</span>';
+                    if(status) status.innerHTML = '<span class="status-pill status-online">Cloud Sync</span>';
                     const ridTxt = document.getElementById('display-room-id');
                     if(ridTxt) ridTxt.innerText = `Room: ${roomId}`;
                 } else { persistCloud(); }
-            }, (err) => { if(status) status.innerHTML = '<span class="status-pill status-offline">Offline</span>'; });
+            }, (err) => { 
+                if(status) status.innerHTML = '<span class="status-pill status-offline">Offline</span>'; 
+            });
         };
 
         async function persistCloud() {
-            if (!roomId || !auth?.currentUser || !db) return;
+            if (!roomId || !auth?.currentUser || !db) {
+                // 如果沒有雲端，存本地做 Plan B
+                localStorage.setItem(`local_state_${roomId}`, JSON.stringify(state));
+                return;
+            }
             const docRef = doc(db, 'artifacts', globalAppId, 'public', 'data', 'roomData', roomId);
-            try { await setDoc(docRef, state); } catch (e) { console.error(e); }
+            try { await setDoc(docRef, state); } catch (e) { console.error("Cloud Save Failed", e); }
         }
 
         window.startCloudSync = async () => {
             const input = document.getElementById('room-id-input').value.trim();
             if (!input) return window.showToast("請輸入暗號！");
-            if (!auth) { 
-                roomId = input; document.getElementById('cloud-overlay').style.display = 'none'; 
-                window.render(); return; 
+            
+            roomId = input;
+            localStorage.setItem('busan_room_id', roomId);
+            document.getElementById('cloud-overlay').style.display = 'none';
+
+            if (!auth) {
+                window.showToast("本地模式 (無雲端同步)");
+                const local = localStorage.getItem(`local_state_${roomId}`);
+                if(local) state = JSON.parse(local);
+                window.render();
+                return;
             }
+
             const btn = document.getElementById('start-sync-btn');
-            const msg = document.getElementById('connection-status-msg');
             btn.innerText = "CONNECTING..."; btn.disabled = true;
-            try {
-                const u = await initAuth();
-                if (u) {
-                    roomId = input; localStorage.setItem('busan_room_id', roomId);
-                    document.getElementById('cloud-overlay').style.display = 'none'; startSync();
-                } else {
-                    btn.innerText = "START ADVENTURE"; btn.disabled = false;
-                    msg.innerText = "連線失敗，請檢查設定或稍後再試";
-                }
-            } catch (e) { btn.innerText = "START ADVENTURE"; btn.disabled = false; }
+            const u = await initAuth();
+            if (u) { startSync(); } 
+            else { window.showToast("連線失敗：轉為本地預覽"); window.render(); }
         };
 
         window.switchTab = (id) => {
@@ -344,10 +360,10 @@
             if (!activeBtn) return;
             const active = activeBtn.id.replace('btn-', '');
             if (active === 'home') renderHome();
-            if (active === 'wallet') renderWallet();
-            if (active === 'lists') renderLists();
-            if (active === 'vouchers') renderVouchers();
-            if (active === 'info') renderInfo();
+            else if (active === 'wallet') renderWallet();
+            else if (active === 'lists') renderLists();
+            else if (active === 'vouchers') renderVouchers();
+            else if (active === 'info') renderInfo();
         };
 
         const renderHome = () => {
@@ -358,7 +374,8 @@
             const dinfo = document.getElementById('day-info');
             if(dinfo) dinfo.innerHTML = `<h2 class="serif-en text-3xl font-bold text-brown">${day.date}</h2><p class="text-[10px] opacity-50 font-bold uppercase tracking-widest text-brown/60">${day.weather.temp} · ${day.weather.text}</p>`;
             const slots = ["早上", "午餐", "下午", "晚餐", "晚上", "住宿"];
-            document.getElementById('itinerary-sections').innerHTML = slots.map(s => `
+            const sections = document.getElementById('itinerary-sections');
+            if(sections) sections.innerHTML = slots.map(s => `
                 <div class="section-title flex justify-between items-center"><span>${s}</span><button onclick="window.addCard('${s}')"><i class="fa-solid fa-plus-circle text-lg opacity-20"></i></button></div>
                 <div class="space-y-4 min-h-[10px]">${(day.slots[s]||[]).map((c, i) => `
                     <div class="glass-card p-5 relative shadow-sm" onclick="window.openEdit('${s}', ${i})">
@@ -367,7 +384,7 @@
                         ${c.desc ? `<p class="text-xs opacity-60 mt-2 leading-relaxed text-brown/70">${c.desc}</p>` : ''}
                         <div class="mt-4 flex flex-wrap gap-2">
                             ${c.loc ? `<button onclick="event.stopPropagation(); window.openMap('${c.loc}')" class="bg-brown/10 text-brown text-[9px] px-3 py-1.5 rounded-full font-bold border border-brown/10">Naver Map</button>` : ''}
-                            ${c.link ? `<button onclick="event.stopPropagation(); window.open('${c.link}', '_blank')" class="bg-sand/20 text-brown text-[9px] px-3 py-1.5 rounded-full font-bold border border-sand/30">攻略連結</button>` : ''}
+                            ${c.link ? `<button onclick="event.stopPropagation(); window.open('${c.link}', '_blank')" class="bg-sand/20 text-brown text-[9px] px-3 py-1.5 rounded-full font-bold border border-sand/30">參考連結</button>` : ''}
                         </div>
                     </div>`).join('')}</div>
             `).join('');
@@ -486,7 +503,27 @@
         window.addCustomInfo = () => { const l = prompt("項目："); const v = prompt("內容："); if(l&&v){ if(!state.customInfo) state.customInfo = []; state.customInfo.push({label:l, value:v}); persistCloud(); } };
         window.removeInfo = (i) => { state.customInfo.splice(i,1); persistCloud(); };
 
-        window.confirmReset = () => { window.customConfirm("更換暗號？", () => { localStorage.removeItem('busan_room_id'); location.reload(); }); };
+        // 備份功能
+        window.copyFullData = () => { 
+            const dataStr = JSON.stringify(state);
+            // 嘗試複製到剪貼簿
+            const tempInput = document.createElement("textarea");
+            tempInput.value = dataStr; document.body.appendChild(tempInput);
+            tempInput.select(); document.execCommand("copy"); document.body.removeChild(tempInput);
+            window.showToast("備份碼已複製 (Plan B 啟動！)"); 
+        };
+        window.importFullData = () => { 
+            const c = prompt("請貼上備份碼："); 
+            if(c){ 
+                try { 
+                    state = JSON.parse(c); 
+                    persistCloud(); 
+                    window.showToast("還原成功！");
+                    window.render();
+                } catch(e) { window.showToast("格式錯誤"); } 
+            } 
+        };
+        window.confirmReset = () => { window.customConfirm("更換暗號？(會退出目前的房間)", () => { localStorage.removeItem('busan_room_id'); location.reload(); }); };
 
         window.handleImage = (input, mode) => { 
             if (input.files && input.files[0]) { 
