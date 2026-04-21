@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Busan 2026 - Cloud Collaboration v4.6</title>
+    <title>Busan 2026 - Cloud Collaboration v4.7</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
@@ -48,7 +48,7 @@
         </div>
     </div>
 
-    <!-- 雲端同步遮罩 -->
+    <!-- 雲端同步遮罩 (連線畫面) -->
     <div id="cloud-overlay" class="fixed inset-0 bg-[#F5EBE0] z-[100] flex items-center justify-center p-8">
         <div class="text-center w-full max-sm">
             <h1 class="serif-en text-4xl mb-2 italic text-[#3E2C2C]">Annyeong, Busan!</h1>
@@ -102,7 +102,7 @@
                         <button onclick="window.appendCalc('-')" class="bg-sand/10 p-4 rounded-xl shadow-sm font-bold text-brown">-</button>
                         <button onclick="window.calculateResult()" class="bg-[#3E2C2C] text-white p-4 rounded-xl shadow-sm font-bold">=</button>
                     </div>
-                    <button onclick="window.openExpenseModal()" class="w-full bg-[#6B4F4F] text-white py-4 rounded-2xl mt-2 font-bold shadow-lg active:scale-95">ADD RECORD</button>
+                    <button onclick="window.openExpenseModal()" class="w-full bg-[#6B4F4F] text-white py-4 rounded-2xl mt-2 font-bold shadow-lg">ADD RECORD</button>
                 </div>
             </div>
 
@@ -120,11 +120,8 @@
                     </select>
                     <select id="filter-cat" onchange="window.render()" class="bg-white border-none rounded-lg text-[10px] p-2 text-brown font-bold">
                         <option value="all">所有類別</option>
-                        <option value="食">🍽️ 食</option>
-                        <option value="行">交通</option>
-                        <option value="玩">景點</option>
-                        <option value="購">購物</option>
-                        <option value="其他">其他</option>
+                        <option value="食">🍽️ 食</option><option value="行">交通</option>
+                        <option value="玩">景點</option><option value="購">購物</option><option value="其他">其他</option>
                     </select>
                 </div>
             </div>
@@ -150,7 +147,7 @@
         <!-- 4. 憑證管理 (DOCS) -->
         <section id="tab-vouchers" class="tab-content">
             <div class="flex justify-between items-center mb-6 px-2">
-                <h2 class="serif-en text-3xl italic text-brown font-bold font-bold">Docs</h2>
+                <h2 class="serif-en text-3xl italic text-brown font-bold">Docs</h2>
                 <label class="bg-[#6B4F4F] text-white px-5 py-3 rounded-full text-xs font-bold cursor-pointer shadow-md">
                     上傳憑證<input type="file" class="hidden" accept="image/*" onchange="window.uploadVoucher(this)">
                 </label>
@@ -161,7 +158,7 @@
         <!-- 5. 旅程資訊 (INFO) -->
         <section id="tab-info" class="tab-content">
             <div class="space-y-6">
-                <div class="glass-card p-6 border-l-8 border-sand">
+                <div class="glass-card p-6 border-l-8 border-sand shadow-sm">
                     <h3 class="serif-en text-xl mb-4 font-bold italic text-brown">Flight & Stay</h3>
                     <div class="text-xs space-y-4 text-brown opacity-80 leading-relaxed">
                         <p>✈️ 4/24 TPE 02:35 → PUS 06:05 (ZE988)</p>
@@ -200,13 +197,13 @@
         <button onclick="window.switchTab('info')" class="nav-btn flex flex-col items-center flex-1" id="btn-info"><i class="fa-solid fa-circle-info text-lg"></i><span class="text-[9px] mt-1 font-bold">INFO</span></button>
     </nav>
 
-    <!-- Modal: Edit Itinerary (功能全回復) -->
+    <!-- Modals -->
     <div id="card-modal" class="fixed inset-0 bg-black/60 hidden z-[60] flex items-center justify-center px-6">
         <div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 shadow-2xl max-h-[85vh] overflow-y-auto">
             <h3 class="serif-en text-xl mb-6 font-bold italic text-brown text-center">Edit Itinerary</h3>
             <div class="space-y-4">
-                <input type="text" id="card-title" class="w-full bg-cream rounded-xl p-4 text-sm font-bold text-brown border-none" placeholder="景點/項目名稱">
-                <textarea id="card-desc" class="w-full bg-cream rounded-xl p-4 text-sm h-24 text-brown border-none leading-relaxed" placeholder="詳細內容說明..."></textarea>
+                <input type="text" id="card-title" class="w-full bg-cream rounded-xl p-4 text-sm font-bold text-brown border-none" placeholder="項目名稱">
+                <textarea id="card-desc" class="w-full bg-cream rounded-xl p-4 text-sm h-24 text-brown border-none leading-relaxed" placeholder="內容說明..."></textarea>
                 <div class="flex items-center gap-4 py-2 border-b border-sand/30 pb-4">
                     <label class="bg-[#6B4F4F] text-white px-4 py-2 rounded-xl text-[10px] font-bold cursor-pointer active:scale-95">
                         <i class="fa-solid fa-camera mr-1"></i> 上傳相片
@@ -214,18 +211,17 @@
                     </label>
                     <img id="card-img-preview" class="w-12 h-12 rounded-lg object-cover hidden">
                 </div>
-                <input type="text" id="card-loc" class="w-full bg-cream rounded-xl p-4 text-xs text-brown border-none" placeholder="Naver Map 關鍵字 (例如：海雲台烤肉)">
-                <input type="text" id="card-link" class="w-full bg-cream rounded-xl p-4 text-xs text-brown border-none" placeholder="參考網址 (部落格攻略等)">
+                <input type="text" id="card-loc" class="w-full bg-cream rounded-xl p-4 text-xs text-brown border-none" placeholder="Naver Map 關鍵字">
+                <input type="text" id="card-link" class="w-full bg-cream rounded-xl p-4 text-xs text-brown border-none" placeholder="參考網址 (攻略連結)">
                 <div class="flex gap-3 mt-4">
                     <button onclick="window.deleteCard()" class="flex-1 bg-red-50 text-red-500 py-3 rounded-xl font-bold text-xs">刪除</button>
-                    <button onclick="window.saveCard()" class="flex-[2] bg-[#3E2C2C] text-white py-3 rounded-xl font-bold text-xs shadow-md">儲存修改</button>
+                    <button onclick="window.saveCard()" class="flex-[2] bg-[#3E2C2C] text-white py-3 rounded-xl font-bold text-xs shadow-md">儲存</button>
                 </div>
-                <button onclick="window.closeCardModal()" class="w-full text-sand text-[10px] font-bold underline mt-4 text-center">CANCEL</button>
+                <button onclick="window.closeCardModal()" class="w-full text-sand text-[10px] font-bold underline mt-4 text-center uppercase tracking-widest">Cancel</button>
             </div>
         </div>
     </div>
 
-    <!-- Modal: Expense (Yian & MZ 專屬) -->
     <div id="expense-modal" class="fixed inset-0 bg-black/60 hidden z-[60] flex items-end">
         <div class="bg-white w-full rounded-t-[2.5rem] p-8 shadow-2xl">
             <div class="flex justify-between items-center mb-6 text-[#3E2C2C]">
@@ -243,9 +239,7 @@
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <select id="exp-payer" class="border-b border-sand py-2 bg-transparent text-xs font-bold text-brown">
-                        <option value="Yian">Yian 付款</option>
-                        <option value="MZ">MZ 付款</option>
-                        <option value="共同">公費 付款</option>
+                        <option value="Yian">Yian 付款</option><option value="MZ">MZ 付款</option><option value="共同">公費 付款</option>
                     </select>
                     <select id="exp-method" class="border-b border-sand py-2 bg-transparent text-xs font-bold text-brown">
                         <option value="Card">刷卡</option><option value="Cash">現鈔</option><option value="WOWPASS">WOWPASS</option>
@@ -283,7 +277,10 @@
             expenses: [], checklist: [], memos: "", vouchers: [], customInfo: []
         };
 
-        window.showToast = (msg) => { const t = document.getElementById('toast'); if (t) { t.innerText = msg; t.style.opacity = '1'; setTimeout(() => t.style.opacity = '0', 2500); } };
+        window.showToast = (msg) => { 
+            const t = document.getElementById('toast'); 
+            if (t) { t.innerText = msg; t.style.opacity = '1'; setTimeout(() => t.style.opacity = '0', 2500); } 
+        };
 
         window.customConfirm = (msg, onConfirm) => {
             const m = document.getElementById('confirm-modal');
@@ -291,24 +288,32 @@
             const cancel = document.getElementById('confirm-cancel');
             document.getElementById('confirm-msg').innerText = msg;
             m.style.display = 'flex';
-            const cleanup = () => { m.style.display = 'none'; ok.onclick = null; cancel.onclick = null; };
-            ok.onclick = () => { onConfirm(); cleanup(); };
-            cancel.onclick = () => { cleanup(); };
+            const cl = () => { m.style.display = 'none'; ok.onclick = null; cancel.onclick = null; };
+            ok.onclick = () => { onConfirm(); cl(); }; cancel.onclick = () => { cl(); };
         };
 
+        // --- 強化的驗證流程 ---
         async function initAuth() {
+            if (auth.currentUser) return auth.currentUser;
             try {
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                     await signInWithCustomToken(auth, __initial_auth_token);
-                } else { await signInAnonymously(auth); }
+                } else {
+                    await signInAnonymously(auth);
+                }
                 return auth.currentUser;
-            } catch (e) { window.showToast("連線驗證失敗"); throw e; }
+            } catch (e) {
+                console.error("Auth failed", e);
+                window.showToast("登入服務暫時無法連線");
+                throw e;
+            }
         }
 
         const startSync = () => {
             if (!roomId || !auth.currentUser) return;
             const docRef = doc(db, 'artifacts', globalAppId, 'public', 'data', 'roomData', roomId);
             if (syncUnsubscribe) syncUnsubscribe();
+            
             const status = document.getElementById('sync-status');
             if(status) status.innerHTML = '<span class="status-pill status-online">Syncing...</span>';
 
@@ -320,24 +325,52 @@
                     const ridTxt = document.getElementById('display-room-id');
                     if(ridTxt) ridTxt.innerText = roomId;
                 } else { persistCloud(); }
-            }, (err) => { if(status) status.innerHTML = '<span class="status-pill status-offline">Error</span>'; });
+            }, (err) => {
+                console.error("Sync error:", err);
+                if(status) status.innerHTML = '<span class="status-pill status-offline">Error</span>';
+                if(err.code === 'permission-denied') window.showToast("權限不足，請確保暗號正確");
+            });
         };
 
         async function persistCloud() {
             if (!roomId || !auth.currentUser) return;
             const docRef = doc(db, 'artifacts', globalAppId, 'public', 'data', 'roomData', roomId);
-            try { await setDoc(docRef, state); } catch (e) { console.error(e); }
+            try { await setDoc(docRef, state); } catch (e) { console.error("Save error", e); }
         }
 
+        // --- 核心：Start 按鈕觸發 ---
         window.startCloudSync = async () => {
             const input = document.getElementById('room-id-input').value.trim();
             if (!input) return window.showToast("請輸入暗號！");
+            
             const btn = document.getElementById('start-sync-btn');
-            btn.innerText = "CONNECTING..."; btn.disabled = true;
-            try { await initAuth(); roomId = input; localStorage.setItem('busan_room_id', roomId); document.getElementById('cloud-overlay').style.display = 'none'; startSync(); } 
-            catch (e) { btn.innerText = "START ADVENTURE"; btn.disabled = false; }
+            const originalText = btn.innerText;
+            btn.innerText = "CONNECTING...";
+            btn.disabled = true;
+
+            // 設定逾時
+            const timeout = setTimeout(() => {
+                if (btn.disabled) {
+                    btn.innerText = "RETRY?"; btn.disabled = false;
+                    window.showToast("連線逾時，請檢查網路後再試");
+                }
+            }, 5000);
+
+            try {
+                await initAuth();
+                clearTimeout(timeout);
+                roomId = input;
+                localStorage.setItem('busan_room_id', roomId);
+                document.getElementById('cloud-overlay').style.display = 'none';
+                startSync();
+            } catch (e) {
+                clearTimeout(timeout);
+                btn.innerText = originalText; btn.disabled = false;
+                window.showToast("無法同步，請重試");
+            }
         };
 
+        // --- 以下 UI 操作與渲染 (維持 V4.6 優點) ---
         window.switchTab = (id) => {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -359,20 +392,23 @@
 
         const renderHome = () => {
             const daySel = document.getElementById('day-selector');
-            daySel.innerHTML = state.itinerary.map((d, i) => `<button onclick="window.setDay(${i})" class="px-6 py-2 rounded-full text-xs font-bold ${state.currentDayIdx===i?'day-btn-active':'bg-brown/10 text-brown shadow-sm'}">Day ${i+1}</button>`).join('');
+            if(!daySel) return;
+            daySel.innerHTML = state.itinerary.map((d, i) => `<button onclick="window.setDay(${i})" class="px-6 py-2 rounded-full text-xs font-bold ${state.currentDayIdx===i?'day-btn-active':'bg-brown/10 text-brown'}">Day ${i+1}</button>`).join('');
             const day = state.itinerary[state.currentDayIdx];
-            document.getElementById('day-info').innerHTML = `<h2 class="serif-en text-3xl font-bold text-brown">${day.date}</h2><p class="text-[10px] opacity-50 font-bold uppercase tracking-widest text-brown/60">${day.weather}</p>`;
+            const dinfo = document.getElementById('day-info');
+            if(dinfo) dinfo.innerHTML = `<h2 class="serif-en text-3xl font-bold text-brown">${day.date}</h2><p class="text-[10px] opacity-50 font-bold uppercase tracking-widest text-brown/60">${day.weather}</p>`;
             const slots = ["早上", "午餐", "下午", "晚餐", "晚上", "住宿"];
-            document.getElementById('itinerary-sections').innerHTML = slots.map(s => `
+            const sections = document.getElementById('itinerary-sections');
+            sections.innerHTML = slots.map(s => `
                 <div class="section-title flex justify-between"><span>${s}</span><button onclick="window.addCard('${s}')"><i class="fa-solid fa-plus-circle text-lg opacity-20"></i></button></div>
                 <div class="space-y-4 min-h-[10px]">${(day.slots[s]||[]).map((c, i) => `
                     <div class="glass-card p-5 relative shadow-sm" onclick="window.openEdit('${s}', ${i})">
                         ${c.img?`<img src="${c.img}" class="w-full h-40 object-cover rounded-xl mb-4" onclick="event.stopPropagation(); window.viewImg('${c.img}')">`:''}
-                        <h4 class="font-bold text-sm text-brown leading-tight">${c.title||'新增項目'}</h4>
+                        <h4 class="font-bold text-sm text-brown leading-tight">${c.title||'新項目'}</h4>
                         ${c.desc ? `<p class="text-xs opacity-60 mt-2 leading-relaxed text-brown/70">${c.desc}</p>` : ''}
                         <div class="mt-4 flex flex-wrap gap-2">
                             ${c.loc ? `<button onclick="event.stopPropagation(); window.openMap('${c.loc}')" class="bg-brown/10 text-brown text-[9px] px-3 py-1.5 rounded-full font-bold border border-brown/10"><i class="fa-solid fa-map-location-dot mr-1"></i>Naver Map</button>` : ''}
-                            ${c.link ? `<button onclick="event.stopPropagation(); window.open('${c.link}', '_blank')" class="bg-sand/20 text-brown text-[9px] px-3 py-1.5 rounded-full font-bold border border-sand/30"><i class="fa-solid fa-link mr-1"></i>參考連結</button>` : ''}
+                            ${c.link ? `<button onclick="event.stopPropagation(); window.open('${c.link}', '_blank')" class="bg-sand/20 text-brown text-[9px] px-3 py-1.5 rounded-full font-bold border border-sand/30"><i class="fa-solid fa-link mr-1"></i>連結</button>` : ''}
                         </div>
                     </div>`).join('')}</div>
             `).join('');
@@ -402,14 +438,14 @@
 
         window.appendCalc = (v) => { const d = document.getElementById('calc-display'); d.value = d.value==='0'?v:d.value+v; updateTWD(); };
         window.clearCalc = () => { document.getElementById('calc-display').value=''; updateTWD(); };
-        window.calculateResult = () => { try { const d = document.getElementById('calc-display'); d.value = eval(d.value.replace('×', '*').replace('÷', '/')); updateTWD(); } catch(e){ window.showToast('算式錯誤'); } };
+        window.calculateResult = () => { try { const d = document.getElementById('calc-display'); d.value = eval(d.value.replace('×', '*').replace('÷', '/')); updateTWD(); } catch(e){ window.showToast('錯誤'); } };
         const updateTWD = () => { const v = parseFloat(document.getElementById('calc-display').value)||0; document.getElementById('twd-result').innerText = `≈ NT$ ${Math.round(v/RATE).toLocaleString()}`; };
         window.openExpenseModal = () => { document.getElementById('exp-amount').value = document.getElementById('calc-display').value; document.getElementById('expense-modal').classList.remove('hidden'); };
         
         window.saveExpense = () => {
             const title = document.getElementById('exp-title').value;
             const krw = parseFloat(document.getElementById('exp-amount').value);
-            if(!title || isNaN(krw)) return window.showToast("填寫完整金額");
+            if(!title || isNaN(krw)) return window.showToast("填寫金額");
             state.expenses.unshift({ title, krw, cat: document.getElementById('exp-cat').value, payer: document.getElementById('exp-payer').value, method: document.getElementById('exp-method').value, date: new Date().toLocaleDateString() });
             persistCloud(); window.closeExpenseModal();
         };
@@ -419,16 +455,18 @@
             let yianPaid = 0, mzPaid = 0;
             state.expenses.forEach(e => { if(e.payer==='Yian') yianPaid+=e.krw; if(e.payer==='MZ') mzPaid+=e.krw; });
             const diff = Math.abs(yianPaid - mzPaid); const bal = diff / 2;
-            document.getElementById('settlement-content').innerHTML = `
+            const content = document.getElementById('settlement-content');
+            if(content) content.innerHTML = `
                 <div class="flex justify-between border-b border-brown/5 pb-2"><span>Yian 已墊:</span><span class="font-bold">₩${yianPaid.toLocaleString()}</span></div>
                 <div class="flex justify-between border-b border-brown/5 pb-2"><span>MZ 已墊:</span><span class="font-bold">₩${mzPaid.toLocaleString()}</span></div>
                 <div class="bg-brown/5 p-3 rounded-xl mt-4 text-center">
-                    <p class="font-bold text-brown">💡 結算最佳解：</p>
+                    <p class="font-bold text-brown">💡 結算建議：</p>
                     <p class="text-[10px] mt-1">${yianPaid > mzPaid ? `MZ 應給 Yian ₩${Math.round(bal).toLocaleString()} (NT$ ${Math.round(bal/RATE)})` : `Yian 應給 MZ ₩${Math.round(bal).toLocaleString()} (NT$ ${Math.round(bal/RATE)})`}</p>
                 </div>`;
             const pF = document.getElementById('filter-payer').value, cF = document.getElementById('filter-cat').value;
             let fil = state.expenses.filter(e => (pF==='all'||e.payer===pF)&&(cF==='all'||e.cat===cF));
-            document.getElementById('expense-history').innerHTML = fil.map((e, idx) => `
+            const hist = document.getElementById('expense-history');
+            hist.innerHTML = fil.map((e, idx) => `
                 <div class="glass-card p-5 flex justify-between items-center shadow-sm">
                     <div class="flex-1">
                         <h4 class="font-bold text-sm text-brown">${e.title} <span class="text-[9px] bg-brown/5 px-2 py-0.5 rounded ml-1 font-bold">${e.cat}</span></h4>
@@ -457,7 +495,8 @@
                     <span class="text-sm font-bold text-brown ${item.done?'line-through opacity-30':''}">${item.text}</span>
                     <button onclick="window.removeList(${i})" class="ml-auto text-brown/20 p-2">×</button>
                 </div>`).join('');
-            document.getElementById('memo-input').value = state.memos;
+            const mi = document.getElementById('memo-input');
+            if(mi) mi.value = state.memos;
         };
         window.toggleCheck = (i) => { state.checklist[i].done = !state.checklist[i].done; persistCloud(); };
         window.removeList = (i) => { state.checklist.splice(i, 1); persistCloud(); };
@@ -465,7 +504,8 @@
         window.saveMemos = () => { state.memos = document.getElementById('memo-input').value; persistCloud(); };
 
         const renderVouchers = () => {
-            document.getElementById('voucher-grid').innerHTML = state.vouchers.map(v => `
+            const grid = document.getElementById('voucher-grid');
+            if(grid) grid.innerHTML = state.vouchers.map(v => `
                 <div class="relative glass-card overflow-hidden h-40 shadow-sm bg-black/5" onclick="window.viewImg('${v.data}')">
                     <img src="${v.data}" class="w-full h-full object-cover">
                     <button onclick="event.stopPropagation(); window.deleteVoucher(${v.id})" class="absolute top-2 right-2 text-white bg-black/40 w-6 h-6 rounded-full flex items-center justify-center">×</button>
@@ -493,13 +533,12 @@
         window.removeInfo = (i) => { state.customInfo.splice(i,1); persistCloud(); };
 
         window.copyFullData = () => { navigator.clipboard.writeText(JSON.stringify(state)); window.showToast("備份碼已複製"); };
-        window.importFullData = () => { const c = prompt("備份碼："); if(c){ state = JSON.parse(c); persistCloud(); location.reload(); } };
+        window.importFullData = () => { const c = prompt("請貼上備份碼："); if(c){ try { state = JSON.parse(c); persistCloud(); location.reload(); } catch(e) { window.showToast("格式錯誤"); } } };
         window.confirmReset = () => { window.customConfirm("切換暗號？", () => { localStorage.removeItem('busan_room_id'); location.reload(); }); };
 
         window.handleImage = (input, mode) => { 
             if (input.files && input.files[0]) { 
-                const reader = new FileReader(); 
-                reader.onload = (e) => { 
+                const reader = new FileReader(); reader.onload = (e) => { 
                     const img = new Image();
                     img.onload = () => {
                         const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
@@ -513,9 +552,17 @@
             } 
         };
 
-        onAuthStateChanged(auth, (u) => { if (u && roomId) { const overlay = document.getElementById('cloud-overlay'); if(overlay) overlay.style.display = 'none'; startSync(); } });
-        initAuth();
-        window.render();
+        // 監聽 Auth 狀態，如果已經有 roomId 且登入成功，就自動隱藏遮罩
+        onAuthStateChanged(auth, (u) => { 
+            if (u && roomId) { 
+                const overlay = document.getElementById('cloud-overlay'); 
+                if(overlay) overlay.style.display = 'none'; 
+                startSync(); 
+            } 
+        });
+        
+        // 頁面加載後直接觸發一次驗證與渲染
+        initAuth().then(() => render()).catch(() => render());
     </script>
 </body>
 </html>
