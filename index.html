@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Busan 2026 - Cloud Collaboration v3.7</title>
+    <title>Busan 2026 - Cloud Collaboration v4.1</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
@@ -35,27 +35,31 @@
         .status-online { background: #E1F5FE; color: #0288D1; }
         .status-offline { background: #F5F5F5; color: #9E9E9E; }
 
-        /* 全螢幕圖片查看器 */
-        #lightbox { display: none; background: rgba(0,0,0,0.92); z-index: 200; position: fixed; inset: 0; align-items: center; justify-content: center; padding: 10px; }
-        #lightbox img { max-width: 100%; max-height: 85vh; border-radius: 4px; object-fit: contain; }
+        #lightbox { display: none; background: rgba(0,0,0,0.95); z-index: 200; position: fixed; inset: 0; align-items: center; justify-content: center; padding: 0; }
+        #lightbox img { max-width: 100vw; max-height: 100vh; object-fit: contain; }
+        
+        #toast { position: fixed; top: 10%; left: 50%; transform: translateX(-50%); background: #3E2C2C; color: white; padding: 12px 24px; border-radius: 2rem; font-size: 12px; z-index: 300; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
     </style>
 </head>
 <body class="pb-32">
 
-    <!-- 全螢幕圖片查看器 (Lightbox) -->
+    <!-- Toast 訊息提示 -->
+    <div id="toast">Message here</div>
+
+    <!-- 全螢幕圖片查看器 -->
     <div id="lightbox" onclick="this.style.display='none'">
         <img id="lightbox-img" src="" alt="Full view">
-        <p class="fixed bottom-12 text-white text-[10px] opacity-40 font-bold uppercase tracking-widest">Tap to close</p>
+        <p class="fixed bottom-12 text-white text-[10px] opacity-40 font-bold uppercase tracking-widest bg-black/20 px-4 py-2 rounded-full">Tap to close</p>
     </div>
 
-    <!-- 雲端同步遮罩 (暗號輸入畫面) -->
+    <!-- 雲端同步遮罩 -->
     <div id="cloud-overlay" class="fixed inset-0 bg-[#F5EBE0] z-[100] flex items-center justify-center p-8">
         <div class="text-center w-full max-w-sm">
-            <h1 class="serif-en text-4xl mb-2 italic">Bonjour!</h1>
-            <p class="text-xs opacity-60 mb-10 tracking-widest uppercase">請輸入旅遊暗號進行雲端同步</p>
+            <h1 class="serif-en text-4xl mb-2 italic text-[#3E2C2C]">Annyeong, Busan!</h1>
+            <p class="text-xs opacity-60 mb-10 tracking-widest uppercase text-brown/70">안녕, 부산! 請輸入暗號進行同步</p>
             <input type="text" id="room-id-input" class="w-full bg-white/70 border-none rounded-2xl py-5 px-6 text-center text-xl font-bold text-[#3E2C2C] shadow-sm mb-6 focus:ring-2 focus:ring-brown" placeholder="例如: busan-2026">
-            <button onclick="startCloudSync()" class="w-full bg-[#3E2C2C] text-white py-5 rounded-2xl font-bold tracking-[0.4em] shadow-xl active:scale-95 transition-all">START ADVENTURE</button>
-            <p class="text-[10px] opacity-40 mt-8 italic px-4">與旅伴輸入同一個暗號，即可共享所有照片與帳務。</p>
+            <button id="start-sync-btn" onclick="startCloudSync()" class="w-full bg-[#3E2C2C] text-white py-5 rounded-2xl font-bold tracking-[0.4em] shadow-xl active:scale-95 transition-all">START ADVENTURE</button>
+            <p class="text-[10px] opacity-40 mt-8 italic px-4">輸入同一個暗號，即可即時共享。</p>
         </div>
     </div>
 
@@ -68,21 +72,21 @@
     </header>
 
     <main class="px-5">
-        <!-- 1. ITINERARY -->
+        <!-- 1. 行程規劃 (ITINERARY) -->
         <section id="tab-home" class="tab-content active">
             <div id="day-selector" class="mb-6 overflow-x-auto whitespace-nowrap py-2 no-scrollbar flex items-center gap-2"></div>
             <div id="day-info" class="mb-6 px-2"></div>
             <div id="itinerary-sections" class="space-y-2"></div>
         </section>
 
-        <!-- 2. WALLET -->
+        <!-- 2. 錢包記帳 (WALLET) -->
         <section id="tab-wallet" class="tab-content">
             <div class="glass-card p-6 mb-6">
                 <h2 class="serif-en text-2xl mb-4 italic text-brown font-bold">Calculator</h2>
                 <div class="space-y-3">
                     <input type="text" id="calc-display" class="w-full bg-white/50 rounded-2xl py-5 px-6 text-right text-2xl font-bold text-brown" placeholder="0" readonly>
                     <div class="flex justify-between items-center px-2 mb-2">
-                        <span class="text-[10px] font-bold opacity-40 uppercase tracking-widest">TWD Estimate</span>
+                        <span class="text-[10px] font-bold opacity-40 uppercase tracking-widest text-brown/60">TWD Estimate</span>
                         <span id="twd-result" class="text-lg font-bold text-sand">≈ NT$ 0</span>
                     </div>
                     <div class="grid grid-cols-4 gap-2">
@@ -135,7 +139,7 @@
             <div id="expense-history" class="space-y-3 mb-10"></div>
         </section>
 
-        <!-- 3. LISTS -->
+        <!-- 3. 行李與筆記 (LISTS) -->
         <section id="tab-lists" class="tab-content">
             <div class="glass-card p-6 mb-6">
                 <h2 class="serif-en text-2xl mb-4 italic text-brown font-bold">Checklist</h2>
@@ -151,7 +155,7 @@
             </div>
         </section>
 
-        <!-- 4. DOCS -->
+        <!-- 4. 憑證管理 (DOCS) -->
         <section id="tab-vouchers" class="tab-content">
             <div class="flex justify-between items-center mb-6 px-2">
                 <h2 class="serif-en text-3xl italic text-brown font-bold">Docs</h2>
@@ -163,10 +167,10 @@
             <div id="voucher-grid" class="grid grid-cols-2 gap-4 pb-10"></div>
         </section>
 
-        <!-- 5. INFO -->
+        <!-- 5. 旅程資訊 (INFO) -->
         <section id="tab-info" class="tab-content">
             <div class="space-y-6">
-                <div class="glass-card p-6 border-l-8 border-sand">
+                <div class="glass-card p-6 border-l-8 border-sand shadow-sm">
                     <h3 class="serif-en text-xl mb-4 font-bold italic text-brown"><i class="fa-solid fa-plane-up mr-2"></i>Flight Info</h3>
                     <div class="text-sm space-y-4 text-brown">
                         <div class="flex justify-between items-center pb-2 border-b border-brown/5">
@@ -180,7 +184,7 @@
                     </div>
                 </div>
 
-                <div class="glass-card p-6 border-l-8 border-brown">
+                <div class="glass-card p-6 border-l-8 border-brown shadow-sm">
                     <h3 class="serif-en text-xl mb-4 font-bold italic text-brown"><i class="fa-solid fa-hotel mr-2"></i>Stay</h3>
                     <div class="text-sm space-y-4 text-brown">
                         <div class="pb-2 border-b border-brown/5">
@@ -194,23 +198,31 @@
                     </div>
                 </div>
 
-                <div class="glass-card p-6 border-l-8 border-green-600/30">
+                <!-- 遺漏的自定義筆記區塊 -->
+                <div class="glass-card p-6 shadow-sm">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="serif-en text-xl font-bold italic text-brown">Custom Notes</h3>
+                        <button onclick="window.addCustomInfo()" class="text-brown/40 p-1"><i class="fa-solid fa-circle-plus text-xl"></i></button>
+                    </div>
+                    <div id="custom-info-list" class="space-y-4"></div>
+                </div>
+
+                <div class="glass-card p-6 border-l-8 border-green-600/30 shadow-sm">
                     <h3 class="serif-en text-xl mb-4 font-bold italic text-green-800"><i class="fa-solid fa-cloud-arrow-up mr-2"></i>Cloud & Backup</h3>
                     <div class="p-3 bg-white/50 rounded-xl mb-4">
                         <p class="text-[10px] opacity-40 uppercase font-bold text-brown/60">Current Shared Key</p>
                         <p id="display-room-id" class="text-sm font-bold text-brown tracking-wider italic">Not Connected</p>
                     </div>
                     <div class="grid grid-cols-2 gap-3">
-                        <button onclick="copyFullData()" class="bg-[#6B4F4F] text-white py-3 rounded-xl text-[10px] font-bold shadow-md active:scale-95 transition-transform">複製備份碼</button>
-                        <button onclick="importFullData()" class="bg-white border border-brown/20 text-brown py-3 rounded-xl text-[10px] font-bold shadow-sm active:scale-95 transition-transform">還原備份碼</button>
+                        <button onclick="window.copyFullData()" class="bg-[#6B4F4F] text-white py-3 rounded-xl text-[10px] font-bold shadow-md active:scale-95 transition-transform">複製備份碼</button>
+                        <button onclick="window.importFullData()" class="bg-white border border-brown/20 text-brown py-3 rounded-xl text-[10px] font-bold shadow-sm active:scale-95 transition-transform">還原備份碼</button>
                     </div>
-                    <button onclick="confirmReset()" class="w-full mt-4 text-[10px] text-red-400 underline">更換共用暗號 (退出目前房間)</button>
+                    <button onclick="window.confirmReset()" class="w-full mt-4 text-[10px] text-red-400 underline">更換共用暗號 (退出目前房間)</button>
                 </div>
             </div>
         </section>
     </main>
 
-    <!-- Navigation -->
     <nav class="fixed bottom-0 left-0 right-0 glass-card mx-4 mb-6 px-4 py-4 flex justify-between items-center shadow-2xl z-50">
         <button onclick="switchTab('home')" class="nav-btn active relative flex flex-col items-center flex-1 transition-all" id="btn-home">
             <i class="fa-solid fa-map-location-dot text-lg"></i>
@@ -234,7 +246,7 @@
         </button>
     </nav>
 
-    <!-- Modals -->
+    <!-- 彈出編輯視窗 -->
     <div id="card-modal" class="fixed inset-0 bg-black/60 hidden z-[60] flex items-center justify-center px-6">
         <div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 shadow-2xl max-h-[85vh] overflow-y-auto">
             <h3 class="serif-en text-xl mb-6 font-bold italic text-brown">Edit Itinerary</h3>
@@ -259,6 +271,7 @@
         </div>
     </div>
 
+    <!-- 彈出記帳視窗 -->
     <div id="expense-modal" class="fixed inset-0 bg-black/60 hidden z-[60] flex items-end">
         <div class="bg-white w-full rounded-t-[2.5rem] p-8 shadow-2xl">
             <div class="flex justify-between items-center mb-6 text-[#3E2C2C]">
@@ -293,10 +306,9 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Firebase 配置由環境變數提供
         const firebaseConfig = JSON.parse(__firebase_config);
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
@@ -305,6 +317,7 @@
 
         const RATE = 42;
         let roomId = localStorage.getItem('busan_room_id') || "";
+        let syncUnsubscribe = null;
         
         let state = {
             currentDayIdx: 0,
@@ -322,31 +335,69 @@
             customInfo: []
         };
 
-        const initAuth = async () => {
-            await signInAnonymously(auth);
-            if (roomId) {
-                document.getElementById('cloud-overlay').style.display = 'none';
-                document.getElementById('display-room-id').innerText = roomId;
-                startSync();
+        window.showToast = (msg) => {
+            const t = document.getElementById('toast');
+            if (t) {
+                t.innerText = msg;
+                t.style.opacity = '1';
+                setTimeout(() => { t.style.opacity = '0'; }, 2500);
             }
         };
 
-        window.startCloudSync = () => {
+        const initAuth = async () => {
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (e) {
+                console.error("Auth Error:", e);
+                window.showToast("驗證失敗");
+            }
+        };
+
+        onAuthStateChanged(auth, (user) => {
+            if (user && roomId) {
+                const overlay = document.getElementById('cloud-overlay');
+                if (overlay) overlay.style.display = 'none';
+                const rid = document.getElementById('display-room-id');
+                if (rid) rid.innerText = roomId;
+                startSync();
+            }
+        });
+
+        window.startCloudSync = async () => {
             const input = document.getElementById('room-id-input').value.trim();
             if (input) {
+                const btn = document.getElementById('start-sync-btn');
+                btn.innerText = "CONNECTING...";
+                btn.disabled = true;
+                
                 roomId = input;
                 localStorage.setItem('busan_room_id', roomId);
-                document.getElementById('cloud-overlay').style.display = 'none';
-                document.getElementById('display-room-id').innerText = roomId;
+                
+                if (!auth.currentUser) await initAuth();
+                
+                const overlay = document.getElementById('cloud-overlay');
+                if (overlay) overlay.style.display = 'none';
+                const rid = document.getElementById('display-room-id');
+                if (rid) rid.innerText = roomId;
                 startSync();
-            } else { alert("請輸入暗號！"); }
+            } else { 
+                window.showToast("請輸入暗號！");
+            }
         };
 
         const startSync = () => {
-            const docRef = doc(db, 'artifacts', globalAppId, 'public', 'data', roomId);
-            document.getElementById('sync-status').innerHTML = '<span class="status-pill status-online">Syncing...</span>';
+            if (!roomId || !auth.currentUser) return;
+            if (syncUnsubscribe) syncUnsubscribe();
+
+            const docRef = doc(db, 'artifacts', globalAppId, 'public', 'data', 'roomData', roomId);
+            const status = document.getElementById('sync-status');
+            if (status) status.innerHTML = '<span class="status-pill status-online">Syncing...</span>';
             
-            onSnapshot(docRef, (snap) => {
+            syncUnsubscribe = onSnapshot(docRef, (snap) => {
                 if (snap.exists()) {
                     const cloudData = snap.data();
                     if(cloudData.itinerary) {
@@ -354,42 +405,58 @@
                     }
                     state = { ...state, ...cloudData };
                     render();
-                    document.getElementById('sync-status').innerHTML = '<span class="status-pill status-online">Connected</span>';
+                    if (status) status.innerHTML = '<span class="status-pill status-online">Connected</span>';
                 } else {
                     persistCloud();
                 }
             }, (error) => {
-                document.getElementById('sync-status').innerHTML = '<span class="status-pill status-offline">Sync Error</span>';
+                console.error("Firebase Sync Error:", error);
+                if (status) status.innerHTML = '<span class="status-pill status-offline">Error</span>';
+                if (error.code === 'permission-denied') {
+                    window.showToast("權限不足，正在重新嘗試...");
+                    initAuth();
+                }
             });
         };
 
         const persistCloud = async () => {
-            if (!roomId) return;
-            const docRef = doc(db, 'artifacts', globalAppId, 'public', 'data', roomId);
-            await setDoc(docRef, state);
+            if (!roomId || !auth.currentUser) return;
+            const docRef = doc(db, 'artifacts', globalAppId, 'public', 'data', 'roomData', roomId);
+            try {
+                await setDoc(docRef, state);
+            } catch (e) {
+                console.error("Save Error:", e);
+                window.showToast("雲端儲存失敗");
+            }
         };
 
-        window.confirmReset = () => { if(confirm('確定要切換暗號？這會讓妳退出目前的房間。')){ localStorage.removeItem('busan_room_id'); location.reload(); } };
+        window.confirmReset = () => { if(confirm('確定要切換暗號？這會退出目前房間。')){ localStorage.removeItem('busan_room_id'); location.reload(); } };
 
         window.switchTab = (tabId) => {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(`tab-${tabId}`).classList.add('active');
-            document.getElementById(`btn-${tabId}`).classList.add('active');
+            const targetTab = document.getElementById(`tab-${tabId}`);
+            const targetBtn = document.getElementById(`btn-${tabId}`);
+            if (targetTab) targetTab.classList.add('active');
+            if (targetBtn) targetBtn.classList.add('active');
             render();
         };
 
         const render = () => {
-            const activeTab = document.querySelector('.nav-btn.active').id.replace('btn-', '');
-            if (activeTab === 'home') renderItinerary();
-            if (activeTab === 'wallet') renderExpenses();
-            if (activeTab === 'lists') renderLists();
-            if (activeTab === 'vouchers') renderVouchers();
-            if (activeTab === 'info') renderInfo();
+            const activeBtn = document.querySelector('.nav-btn.active');
+            if (!activeBtn) return;
+            const activeTabName = activeBtn.id.replace('btn-', '');
+            
+            if (activeTabName === 'home') renderItinerary();
+            if (activeTabName === 'wallet') renderExpenses();
+            if (activeTabName === 'lists') renderLists();
+            if (activeTabName === 'vouchers') renderVouchers();
+            if (activeTabName === 'info') renderInfo();
         };
 
         const renderItinerary = () => {
             const daySel = document.getElementById('day-selector');
+            if (!daySel) return;
             daySel.innerHTML = state.itinerary.map((d, i) => `
                 <button onclick="window.setDay(${i})" class="px-6 py-2 rounded-full text-xs font-bold ${state.currentDayIdx === i ? 'day-btn-active' : 'bg-brown/10 text-brown shadow-sm'}">
                     Day ${i+1}
@@ -397,32 +464,37 @@
             `).join('');
 
             const day = state.itinerary[state.currentDayIdx];
-            document.getElementById('day-info').innerHTML = `
-                <div class="flex justify-between items-end text-brown">
-                    <div>
-                        <h2 class="serif-en text-3xl font-bold tracking-tight">${day.date}</h2>
-                        <p class="text-[10px] font-bold opacity-50 uppercase mt-1 tracking-widest text-brown/60">Temp: ${day.weather} / ${day.text}</p>
+            const dinfo = document.getElementById('day-info');
+            if (dinfo) {
+                dinfo.innerHTML = `
+                    <div class="flex justify-between items-end text-brown">
+                        <div>
+                            <h2 class="serif-en text-3xl font-bold tracking-tight">${day.date}</h2>
+                            <p class="text-[10px] font-bold opacity-50 uppercase mt-1 tracking-widest text-brown/60">Temp: ${day.weather} / ${day.text}</p>
+                        </div>
                     </div>
-                </div>
-            `;
+                `;
+            }
 
             const slots = ["早上", "午餐", "下午", "晚餐", "晚上", "住宿"];
             const container = document.getElementById('itinerary-sections');
-            container.innerHTML = slots.map(slot => `
-                <div class="section-title flex justify-between items-center text-brown font-bold">
-                    <span>${slot}</span>
-                    <button onclick="window.addNewCard('${slot}')" class="text-brown/20 p-1"><i class="fa-solid fa-plus-circle text-lg"></i></button>
-                </div>
-                <div class="space-y-4 min-h-[10px]">
-                    ${(day.slots[slot] || []).map((card, idx) => `
-                        <div class="glass-card p-5 relative active:scale-95 transition-transform" onclick="window.openEditCard('${slot}', ${idx})">
-                            ${card.img ? `<img src="${card.img}" class="w-full h-40 object-cover rounded-xl mb-4 shadow-sm" onclick="event.stopPropagation(); window.viewFullImg('${card.img}')">` : ''}
-                            <h4 class="font-bold text-sm text-[#3E2C2C] leading-tight">${card.title || '新增行程'}</h4>
-                            <p class="text-xs opacity-60 mt-2 leading-relaxed text-[#6B4F4F]">${card.desc || '編輯敘述...'}</p>
-                        </div>
-                    `).join('')}
-                </div>
-            `).join('');
+            if (container) {
+                container.innerHTML = slots.map(slot => `
+                    <div class="section-title flex justify-between items-center text-brown font-bold">
+                        <span>${slot}</span>
+                        <button onclick="window.addNewCard('${slot}')" class="text-brown/20 p-1"><i class="fa-solid fa-plus-circle text-lg"></i></button>
+                    </div>
+                    <div class="space-y-4 min-h-[10px]">
+                        ${(day.slots[slot] || []).map((card, idx) => `
+                            <div class="glass-card p-5 relative active:scale-95 transition-transform shadow-sm" onclick="window.openEditCard('${slot}', ${idx})">
+                                ${card.img ? `<img src="${card.img}" class="w-full h-40 object-cover rounded-xl mb-4 shadow-sm" onclick="event.stopPropagation(); window.viewFullImg('${card.img}')">` : ''}
+                                <h4 class="font-bold text-sm text-[#3E2C2C] leading-tight">${card.title || '新增項目'}</h4>
+                                <p class="text-xs opacity-60 mt-2 leading-relaxed text-[#6B4F4F]">${card.desc || '編輯敘述...'}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                `).join('');
+            }
         };
 
         window.setDay = (i) => { state.currentDayIdx = i; renderItinerary(); };
@@ -461,11 +533,23 @@
         window.deleteCard = () => { if(confirm('確定刪除此行程？')){ const { slot, idx } = editingCardRef; state.itinerary[state.currentDayIdx].slots[slot].splice(idx, 1); persistCloud(); window.closeCardModal(); } };
         window.closeCardModal = () => { document.getElementById('card-modal').classList.add('hidden'); window.tempImg = null; };
 
-        window.appendCalc = (v) => { const d = document.getElementById('calc-display'); d.value = d.value === '0' ? v : d.value + v; window.updateTWD(); };
-        window.clearCalc = () => { document.getElementById('calc-display').value = ''; window.updateTWD(); };
-        window.calculateResult = () => { try { const d = document.getElementById('calc-display'); d.value = eval(d.value.replace('×', '*').replace('÷', '/')); window.updateTWD(); } catch { alert('算式錯誤'); } };
-        window.updateTWD = () => { const v = parseFloat(document.getElementById('calc-display').value) || 0; document.getElementById('twd-result').innerText = `≈ NT$ ${Math.round(v/RATE).toLocaleString()}`; };
-        window.openExpenseModal = () => { const val = parseFloat(document.getElementById('calc-display').value) || 0; document.getElementById('exp-amount').value = val; document.getElementById('expense-modal').classList.remove('hidden'); };
+        window.appendCalc = (v) => { const d = document.getElementById('calc-display'); if(d) d.value = d.value === '0' ? v : d.value + v; window.updateTWD(); };
+        window.clearCalc = () => { const d = document.getElementById('calc-display'); if(d) d.value = ''; window.updateTWD(); };
+        window.calculateResult = () => { try { const d = document.getElementById('calc-display'); if(d) d.value = eval(d.value.replace('×', '*').replace('÷', '/')); window.updateTWD(); } catch { alert('算式錯誤'); } };
+        window.updateTWD = () => {
+            const d = document.getElementById('calc-display');
+            if (!d) return;
+            const v = parseFloat(d.value) || 0;
+            const res = document.getElementById('twd-result');
+            if (res) res.innerText = `≈ NT$ ${Math.round(v/RATE).toLocaleString()}`;
+        };
+        window.openExpenseModal = () => {
+            const d = document.getElementById('calc-display');
+            const val = d ? parseFloat(d.value) || 0 : 0;
+            const eam = document.getElementById('exp-amount');
+            if (eam) eam.value = val;
+            document.getElementById('expense-modal').classList.remove('hidden');
+        };
         window.saveExpense = () => {
             const exp = { id: Date.now(), title: document.getElementById('exp-title').value || "未命名", krw: parseFloat(document.getElementById('exp-amount').value) || 0, cat: document.getElementById('exp-cat').value, method: document.getElementById('exp-method').value, payer: document.getElementById('exp-payer').value || "我", date: new Date().toLocaleDateString() };
             state.expenses.unshift(exp); persistCloud(); window.closeExpenseModal();
@@ -474,19 +558,22 @@
         window.deleteExpense = (id) => { if(confirm('刪除這筆紀錄？')){ state.expenses = state.expenses.filter(e => e.id !== id); persistCloud(); } };
 
         const renderExpenses = () => {
-            const payerF = document.getElementById('filter-payer').value;
-            const methodF = document.getElementById('filter-method').value;
-            const catF = document.getElementById('filter-cat').value;
+            const pF = document.getElementById('filter-payer').value;
+            const mF = document.getElementById('filter-method').value;
+            const cF = document.getElementById('filter-cat').value;
             const payers = [...new Set(state.expenses.map(e => e.payer))];
             const pSel = document.getElementById('filter-payer');
-            const curP = pSel.value;
-            pSel.innerHTML = `<option value="all">付款人</option>` + payers.map(p => `<option value="${p}">${p}</option>`).join('');
-            pSel.value = curP;
+            if (pSel) {
+                const curP = pSel.value;
+                pSel.innerHTML = `<option value="all">付款人</option>` + payers.map(p => `<option value="${p}">${p}</option>`).join('');
+                pSel.value = curP;
+            }
 
-            let filtered = state.expenses.filter(e => (payerF === 'all' || e.payer === payerF) && (methodF === 'all' || e.method === methodF) && (catF === 'all' || e.cat === catF));
+            let filtered = state.expenses.filter(e => (pF === 'all' || e.payer === pF) && (mF === 'all' || e.method === mF) && (cF === 'all' || e.cat === cF));
 
             const hist = document.getElementById('expense-history');
-            if (filtered.length === 0) { hist.innerHTML = `<p class="text-center py-10 opacity-30 text-xs italic">無紀錄</p>`; return; }
+            if (!hist) return;
+            if (filtered.length === 0) { hist.innerHTML = `<p class="text-center py-10 opacity-30 text-xs italic text-brown">無紀錄</p>`; return; }
             hist.innerHTML = filtered.map(e => `
                 <div class="glass-card p-5 flex justify-between items-center shadow-sm">
                     <div>
@@ -512,22 +599,26 @@
 
         const renderLists = () => {
             const c = document.getElementById('checklist-container');
-            c.innerHTML = (state.checklist || []).map((item, idx) => `
-                <label class="flex items-center gap-4 glass-card p-5 shadow-sm active:bg-sand/5">
-                    <input type="checkbox" ${item.done ? 'checked' : ''} onchange="window.toggleCheck(${idx})" class="w-6 h-6 accent-brown rounded-lg">
-                    <span class="text-sm font-bold text-[#3E2C2C] ${item.done ? 'opacity-30 line-through' : ''}">${item.text}</span>
-                    <button onclick="window.removeList(${idx})" class="ml-auto text-brown/20 p-2"><i class="fa-solid fa-xmark"></i></button>
-                </label>
-            `).join('');
-            document.getElementById('memo-input').value = state.memos || "";
+            if (c) {
+                c.innerHTML = (state.checklist || []).map((item, idx) => `
+                    <label class="flex items-center gap-4 glass-card p-5 shadow-sm active:bg-sand/5">
+                        <input type="checkbox" ${item.done ? 'checked' : ''} onchange="window.toggleCheck(${idx})" class="w-6 h-6 accent-brown rounded-lg">
+                        <span class="text-sm font-bold text-[#3E2C2C] ${item.done ? 'opacity-30 line-through' : ''}">${item.text}</span>
+                        <button onclick="window.removeList(${idx})" class="ml-auto text-brown/20 p-2"><i class="fa-solid fa-xmark"></i></button>
+                    </label>
+                `).join('');
+            }
+            const memo = document.getElementById('memo-input');
+            if (memo) memo.value = state.memos || "";
         };
         window.toggleCheck = (i) => { state.checklist[i].done = !state.checklist[i].done; persistCloud(); };
         window.removeList = (i) => { state.checklist.splice(i, 1); persistCloud(); };
         window.addChecklistItem = () => { const v = document.getElementById('new-check-item').value; if(v) { state.checklist.push({text: v, done: false}); document.getElementById('new-check-item').value=''; persistCloud(); } };
-        window.saveMemos = () => { state.memos = document.getElementById('memo-input').value; persistCloud(); };
+        window.saveMemos = () => { const mi = document.getElementById('memo-input'); state.memos = mi ? mi.value : ""; persistCloud(); };
 
         const renderInfo = () => {
             const list = document.getElementById('custom-info-list');
+            if (!list) return; // 防錯機制：如果元素不存在，不執行渲染
             list.innerHTML = (state.customInfo || []).map((info, idx) => `
                 <div class="flex justify-between items-start border-b border-brown/5 pb-3">
                     <div class="flex-1 pr-4">
@@ -538,13 +629,14 @@
                 </div>
             `).join('');
         };
+
         window.addCustomInfo = () => { const l = prompt("項目："); const v = prompt("內容："); if (l && v) { if(!state.customInfo) state.customInfo = []; state.customInfo.push({label: l, value: v}); persistCloud(); } };
         window.removeInfo = (i) => { if(confirm('確定刪除此資訊？')){ state.customInfo.splice(i, 1); persistCloud(); } };
 
-        window.copyFullData = () => { const el = document.createElement('textarea'); el.value = JSON.stringify(state); document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el); alert('備份碼已複製成功！請保存至 LINE 記事本。'); };
-        window.importFullData = () => { const c = prompt("請貼上備份碼："); if (c) { try { const newData = JSON.parse(c); state = newData; persistCloud(); alert('資料還原成功！網頁將重新載入。'); location.reload(); } catch(e){alert('備份碼格式錯誤！請檢查是否複製完整。');} } };
+        window.copyFullData = () => { const el = document.createElement('textarea'); el.value = JSON.stringify(state); document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el); window.showToast('備份碼已複製成功！'); };
+        window.importFullData = () => { const c = prompt("請貼上備份碼："); if (c) { try { const newData = JSON.parse(c); state = newData; persistCloud(); window.showToast('資料還原成功！'); setTimeout(() => location.reload(), 1000); } catch(e){ window.showToast('格式錯誤！'); } } };
 
-        window.viewFullImg = (src) => { const lb = document.getElementById('lightbox'); const lbImg = document.getElementById('lightbox-img'); lbImg.src = src; lb.style.display = 'flex'; };
+        window.viewFullImg = (src) => { const lb = document.getElementById('lightbox'); const lbImg = document.getElementById('lightbox-img'); if(lb && lbImg) { lbImg.src = src; lb.style.display = 'flex'; } };
 
         window.handleImage = (input, mode) => {
             if (input.files && input.files[0]) {
@@ -560,7 +652,7 @@
                         canvas.width = w; canvas.height = h;
                         ctx.drawImage(img, 0, 0, w, h);
                         const compressed = canvas.toDataURL('image/jpeg', 0.6);
-                        if (mode === 'card') { window.tempImg = compressed; document.getElementById('card-img-preview').src = compressed; document.getElementById('card-img-preview').classList.remove('hidden'); }
+                        if (mode === 'card') { window.tempImg = compressed; const cpreview = document.getElementById('card-img-preview'); if(cpreview) { cpreview.src = compressed; cpreview.classList.remove('hidden'); } }
                     };
                     img.src = e.target.result;
                 };
@@ -593,6 +685,7 @@
 
         const renderVouchers = () => {
             const g = document.getElementById('voucher-grid');
+            if (!g) return;
             g.innerHTML = (state.vouchers || []).map(v => `
                 <div class="relative glass-card overflow-hidden h-52 shadow-sm bg-black/5" onclick="window.viewFullImg('${v.data}')">
                     <img src="${v.data}" class="w-full h-full object-cover">
