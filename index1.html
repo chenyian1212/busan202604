@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Busan 2026 - Cloud Collaboration v5.2</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <style>
+        :root { --color-milk-tea: #F5EBE0; --color-cream: #FDF8F5; --color-sand: #D5BDAF; --color-brown: #6B4F4F; --color-dark-brown: #3E2C2C; }
+        body { font-family: 'Noto Serif TC', serif; background-color: var(--color-cream); color: var(--color-dark-brown); -webkit-tap-highlight-color: transparent; }
+        .serif-en { font-family: 'Playfair Display', serif; }
+        .glass-card { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border-radius: 1.5rem; border: 1px solid rgba(255, 255, 255, 0.5); box-shadow: 0 4px 20px rgba(107, 79, 79, 0.05); }
+        .nav-btn.active { color: var(--color-dark-brown); transform: translateY(-3px); }
+        .nav-btn.active::after { content: ''; position: absolute; bottom: -8px; width: 6px; height: 6px; background: var(--color-brown); border-radius: 50%; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        .day-btn-active { background-color: var(--color-dark-brown) !important; color: white !important; }
+        .section-title { border-left: 4px solid var(--color-sand); padding-left: 0.75rem; margin: 1.5rem 0 1rem; font-weight: 700; font-size: 0.95rem; color: var(--color-brown); }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .status-pill { font-size: 8px; padding: 2px 8px; border-radius: 10px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+        .status-online { background: #E1F5FE; color: #0288D1; }
+        .status-offline { background: #F5F5F5; color: #9E9E9E; }
+        #lightbox { display: none; background: rgba(0,0,0,0.95); z-index: 200; position: fixed; inset: 0; align-items: center; justify-content: center; padding: 0; }
+        #lightbox img { max-width: 100vw; max-height: 100vh; object-fit: contain; }
+        #toast { position: fixed; top: 10%; left: 50%; transform: translateX(-50%); background: #3E2C2C; color: white; padding: 12px 24px; border-radius: 2rem; font-size: 12px; z-index: 300; opacity: 0; transition: opacity 0.3s; pointer-events: none; text-align: center; }
+        #confirm-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 400; align-items: center; justify-content: center; padding: 20px; }
+    </style>
+
+    <script>
+        // 核心提示功能
+        window.showToast = (msg) => { 
+            const t = document.getElementById('toast'); 
+            if (t) { t.innerText = msg; t.style.opacity = '1'; setTimeout(() => { t.style.opacity = '0'; }, 3000); } 
+            else { alert(msg); }
+        };
+        // 捕捉初始化前的錯誤
+        window.onerror = function(message, source, lineno, colno, error) {
+            console.error("Critical Error:", message);
+            return false;
+        };
+    </script>
+</head>
+<body class="pb-32">
+    <div id="toast">Message</div>
+    <div id="lightbox" onclick="this.style.display='none'"><img id="lightbox-img" src=""><p class="fixed bottom-12 text-white text-[10px] opacity-40 font-bold uppercase tracking-widest bg-black/20 px-4 py-2 rounded-full text-center">Tap to close</p></div>
+
+    <!-- 確認對話框 -->
+    <div id="confirm-modal">
+        <div class="bg-white rounded-3xl p-8 w-full max-w-xs text-center shadow-2xl">
+            <h3 class="font-bold text-brown mb-4" id="confirm-msg">確認操作？</h3>
+            <div class="flex gap-4">
+                <button id="confirm-cancel" class="flex-1 py-3 bg-gray-100 rounded-xl text-xs font-bold text-gray-500">取消</button>
+                <button id="confirm-ok" class="flex-1 py-3 bg-brown text-white rounded-xl text-xs font-bold">確定</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 雲端同步遮罩 -->
+    <div id="cloud-overlay" class="fixed inset-0 bg-[#F5EBE0] z-[100] flex items-center justify-center p-8">
+        <div class="text-center w-full max-sm">
+            <h1 class="serif-en text-4xl mb-2 italic text-[#3E2C2C]">Annyeong, Busan!</h1>
+            <p class="text-xs opacity-60 mb-10 tracking-widest uppercase text-brown/70">안녕, 부산! 請輸入暗號進行同步</p>
+            <input type="text" id="room-id-input" class="w-full bg-white/70 border-none rounded-2xl py-5 px-6 text-center text-xl font-bold text-[#3E2C2C] shadow-sm mb-6 focus:ring-2 focus:ring-brown" placeholder="例如: busan-2026">
+            <button id="start-sync-btn" onclick="window.startCloudSync()" class="w-full bg-[#3E2C2C] text-white py-5 rounded-2xl font-bold tracking-[0.4em] shadow-xl active:scale-95 transition-all">START ADVENTURE</button>
+            <p id="connection-status-msg" class="text-[9px] opacity-40 mt-6 italic px-4">Waiting for key...</p>
+        </div>
+    </div>
+
+    <header class="p-8 pt-12 text-center relative">
+        <div class="absolute top-8 right-8" id="sync-status"><span class="status-pill status-offline">Offline</span></div>
+        <h1 class="serif-en text-4xl font-bold tracking-widest uppercase mb-1 text-[#3E2C2C]">Busan</h1>
+        <p class="text-[10px] tracking-[0.4em] opacity-60 italic">— Spring 2026 —</p>
+    </header>
+
+    <main class="px-5">
+        <!-- 1. PLAN -->
+        <section id="tab-home" class="tab-content active">
+            <div id="day-selector" class="mb-6 overflow-x-auto whitespace-nowrap py-2 no-scrollbar flex items-center gap-2"></div>
+            <div id="day-info" class="mb-6 px-2 text-center"></div>
+            <div id="itinerary-sections" class="space-y-2"></div>
+        </section>
+
+        <!-- 2. WALLET -->
+        <section id="tab-wallet" class="tab-content">
+            <div id="settlement-board" class="glass-card p-6 mb-6 border-t-8 border-sand text-center">
+                <h3 class="serif-en text-xl font-bold italic text-brown mb-4">Settlement Radar</h3>
+                <div id="settlement-content" class="space-y-2 text-xs"></div>
+            </div>
+            <div class="glass-card p-6 mb-6">
+                <h2 class="serif-en text-2xl mb-4 italic text-brown font-bold text-center">Calculator</h2>
+                <div class="space-y-3">
+                    <input type="text" id="calc-display" class="w-full bg-white/50 rounded-2xl py-5 px-6 text-right text-2xl font-bold text-brown" placeholder="0" readonly>
+                    <div id="twd-result" class="text-lg font-bold text-sand text-right px-2">≈ NT$ 0</div>
+                    <div class="grid grid-cols-4 gap-2">
+                        <button onclick="window.appendCalc('7')" class="bg-white p-4 rounded-xl shadow-sm font-bold">7</button>
+                        <button onclick="window.appendCalc('8')" class="bg-white p-4 rounded-xl shadow-sm font-bold">8</button>
+                        <button onclick="window.appendCalc('9')" class="bg-white p-4 rounded-xl shadow-sm font-bold">9</button>
+                        <button onclick="window.clearCalc()" class="bg-red-50 text-red-500 p-4 rounded-xl shadow-sm font-bold">C</button>
+                        <button onclick="window.appendCalc('4')" class="bg-white p-4 rounded-xl shadow-sm font-bold">4</button>
+                        <button onclick="window.appendCalc('5')" class="bg-white p-4 rounded-xl shadow-sm font-bold">5</button>
+                        <button onclick="window.appendCalc('6')" class="bg-white p-4 rounded-xl shadow-sm font-bold">6</button>
+                        <button onclick="window.appendCalc('/')" class="bg-sand/10 p-4 rounded-xl shadow-sm font-bold">÷</button>
+                        <button onclick="window.appendCalc('1')" class="bg-white p-4 rounded-xl shadow-sm font-bold">1</button>
+                        <button onclick="window.appendCalc('2')" class="bg-white p-4 rounded-xl shadow-sm font-bold">2</button>
+                        <button onclick="window.appendCalc('3')" class="bg-white p-4 rounded-xl shadow-sm font-bold">3</button>
+                        <button onclick="window.appendCalc('*')" class="bg-sand/10 p-4 rounded-xl shadow-sm font-bold">×</button>
+                        <button onclick="window.appendCalc('0')" class="bg-white p-4 rounded-xl shadow-sm font-bold">0</button>
+                        <button onclick="window.appendCalc('+')" class="bg-sand/10 p-4 rounded-xl shadow-sm font-bold">+</button>
+                        <button onclick="window.appendCalc('-')" class="bg-sand/10 p-4 rounded-xl shadow-sm font-bold">-</button>
+                        <button onclick="window.calculateResult()" class="bg-[#3E2C2C] text-white p-4 rounded-xl shadow-sm font-bold">=</button>
+                    </div>
+                    <button onclick="window.openExpenseModal()" class="w-full bg-[#6B4F4F] text-white py-4 rounded-2xl mt-2 font-bold shadow-lg">ADD RECORD</button>
+                </div>
+            </div>
+            <div id="expense-history" class="space-y-3 mb-10"></div>
+        </section>
+
+        <!-- 3. LISTS -->
+        <section id="tab-lists" class="tab-content">
+            <div class="glass-card p-6 mb-6">
+                <h2 class="serif-en text-2xl mb-4 italic text-brown font-bold text-center">Checklist</h2>
+                <div id="checklist-container" class="space-y-3"></div>
+                <div class="mt-6 flex gap-2">
+                    <input type="text" id="new-check-item" class="flex-1 bg-white/50 border-none rounded-xl p-3 text-sm text-brown" placeholder="新增清單項目...">
+                    <button onclick="window.addChecklistItem()" class="bg-[#6B4F4F] text-white px-5 rounded-xl"><i class="fa-solid fa-plus"></i></button>
+                </div>
+            </div>
+            <div class="glass-card p-6 text-center">
+                <h2 class="serif-en text-2xl mb-4 italic text-brown font-bold">Memos</h2>
+                <textarea id="memo-input" class="w-full bg-white/50 border-none rounded-xl p-4 text-sm h-48 focus:ring-1 focus:ring-sand text-brown leading-relaxed" placeholder="隨手筆記..." oninput="window.saveMemos()"></textarea>
+            </div>
+        </section>
+
+        <!-- 4. DOCS -->
+        <section id="tab-vouchers" class="tab-content">
+            <div class="flex justify-between items-center mb-6 px-2">
+                <h2 class="serif-en text-3xl italic text-brown font-bold">Docs</h2>
+                <label class="bg-[#6B4F4F] text-white px-5 py-3 rounded-full text-xs font-bold cursor-pointer shadow-md">
+                    上傳憑證<input type="file" class="hidden" accept="image/*" onchange="window.uploadVoucher(this)">
+                </label>
+            </div>
+            <div id="voucher-grid" class="grid grid-cols-2 gap-4 pb-10"></div>
+        </section>
+
+        <!-- 5. INFO -->
+        <section id="tab-info" class="tab-content">
+            <div class="space-y-6">
+                <div class="glass-card p-6 border-l-8 border-sand text-center">
+                    <h3 class="serif-en text-xl mb-4 font-bold italic text-brown">Flight & Stay</h3>
+                    <div class="text-xs space-y-4 text-brown opacity-80 leading-relaxed">
+                        <p>✈️ 4/24 TPE 02:35 → PUS 06:05 (ZE988)</p>
+                        <p>🏨 4/24-26 溫德姆華美達 (海雲台)</p>
+                        <p>🏨 4/26-28 Good Ol' Days (中央洞)</p>
+                    </div>
+                </div>
+                <div class="glass-card p-6 shadow-sm">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="serif-en text-xl font-bold italic text-brown">Custom Notes</h3>
+                        <button onclick="window.addCustomInfo()" class="text-brown/40"><i class="fa-solid fa-circle-plus text-xl"></i></button>
+                    </div>
+                    <div id="custom-info-list" class="space-y-4 text-center"></div>
+                </div>
+                <div class="glass-card p-6 border-l-8 border-green-600/30 text-center text-xs">
+                    <h3 class="serif-en text-xl mb-4 font-bold italic text-green-800">Connection</h3>
+                    <p id="display-room-id" class="mb-4 opacity-40 font-bold italic">Not Connected</p>
+                    <button onclick="window.confirmReset()" class="text-red-400 underline">登出 / 更換暗號</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <nav class="fixed bottom-0 left-0 right-0 glass-card mx-4 mb-6 px-4 py-4 flex justify-between items-center shadow-2xl z-50">
+        <button onclick="window.switchTab('home')" class="nav-btn active flex flex-col items-center flex-1" id="btn-home"><i class="fa-solid fa-map-location-dot text-lg"></i><span class="text-[9px] mt-1 font-bold">PLAN</span></button>
+        <button onclick="window.switchTab('wallet')" class="nav-btn flex flex-col items-center flex-1" id="btn-wallet"><i class="fa-solid fa-wallet text-lg"></i><span class="text-[9px] mt-1 font-bold">WALLET</span></button>
+        <button onclick="window.switchTab('lists')" class="nav-btn flex flex-col items-center flex-1" id="btn-lists"><i class="fa-solid fa-list-check text-lg"></i><span class="text-[9px] mt-1 font-bold">LISTS</span></button>
+        <button onclick="window.switchTab('vouchers')" class="nav-btn flex flex-col items-center flex-1" id="btn-vouchers"><i class="fa-solid fa-ticket text-lg"></i><span class="text-[9px] mt-1 font-bold">DOCS</span></button>
+        <button onclick="window.switchTab('info')" class="nav-btn flex flex-col items-center flex-1" id="btn-info"><i class="fa-solid fa-circle-info text-lg"></i><span class="text-[9px] mt-1 font-bold">INFO</span></button>
+    </nav>
+
+    <!-- Modal: Card -->
+    <div id="card-modal" class="fixed inset-0 bg-black/60 hidden z-[60] flex items-center justify-center px-6">
+        <div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 shadow-2xl max-h-[85vh] overflow-y-auto">
+            <h3 class="serif-en text-xl mb-6 font-bold italic text-brown text-center">Edit Itinerary</h3>
+            <div class="space-y-4">
+                <input type="text" id="card-title" class="w-full bg-cream rounded-xl p-4 text-sm font-bold text-brown border-none" placeholder="項目名稱">
+                <textarea id="card-desc" class="w-full bg-cream rounded-xl p-4 text-sm h-24 text-brown border-none leading-relaxed" placeholder="內容說明..."></textarea>
+                <div class="flex items-center gap-4 py-2 border-b border-sand/30 pb-4">
+                    <label class="bg-[#6B4F4F] text-white px-4 py-2 rounded-xl text-[10px] font-bold cursor-pointer">上傳照片<input type="file" class="hidden" accept="image/*" onchange="window.handleImage(this, 'card')"></label>
+                    <img id="card-img-preview" class="w-12 h-12 rounded-lg object-cover hidden">
+                </div>
+                <input type="text" id="card-loc" class="w-full bg-cream rounded-xl p-4 text-xs text-brown border-none" placeholder="Naver Map 關鍵字">
+                <input type="text" id="card-link" class="w-full bg-cream rounded-xl p-4 text-xs text-brown border-none" placeholder="攻略連結">
+                <div class="flex gap-3 mt-4">
+                    <button onclick="window.deleteCard()" class="flex-1 bg-red-50 text-red-500 py-3 rounded-xl font-bold text-xs text-center">刪除</button>
+                    <button onclick="window.saveCard()" class="flex-[2] bg-[#3E2C2C] text-white py-3 rounded-xl font-bold text-xs text-center">儲存</button>
+                </div>
+                <button onclick="window.closeCardModal()" class="w-full text-sand text-[10px] font-bold underline mt-4 text-center">CANCEL</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Expense -->
+    <div id="expense-modal" class="fixed inset-0 bg-black/60 hidden z-[60] flex items-end">
+        <div class="bg-white w-full rounded-t-[2.5rem] p-8 shadow-2xl">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="serif-en text-2xl font-bold italic text-brown">New Expense</h3>
+                <button onclick="window.closeExpenseModal()" class="text-brown"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            <div class="space-y-4">
+                <input type="text" id="exp-title" class="w-full border-b border-sand py-2 focus:outline-none font-bold text-lg text-brown" placeholder="品項名稱...">
+                <div class="grid grid-cols-2 gap-4">
+                    <input type="number" id="exp-amount" class="border-b border-sand py-2 focus:outline-none font-bold text-lg text-brown" placeholder="KRW">
+                    <select id="exp-cat" class="border-b border-sand py-2 bg-transparent text-xs font-bold text-brown">
+                        <option value="食">🍽️ 食</option><option value="行">交通</option><option value="玩">景點</option><option value="購">購物</option><option value="其他">其他</option>
+                    </select>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <select id="exp-payer" class="border-b border-sand py-2 bg-transparent text-xs font-bold text-brown">
+                        <option value="Yian">Yian 付款</option><option value="MZ">MZ 付款</option><option value="共同">公費 付款</option>
+                    </select>
+                    <select id="exp-method" class="border-b border-sand py-2 bg-transparent text-xs font-bold text-brown">
+                        <option value="Card">刷卡</option><option value="Cash">現鈔</option><option value="WOWPASS">WOWPASS</option>
+                    </select>
+                </div>
+                <button onclick="window.saveExpense()" class="w-full bg-[#3E2C2C] text-white py-4 rounded-2xl font-bold mt-6 shadow-lg">SAVE RECORD</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- Firebase 安全初始化 ---
+        let db, auth;
+        let firebaseConfig = {};
+        try {
+            firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
+            if (firebaseConfig) {
+                const app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+            }
+        } catch(e) { console.error("Firebase Config Error", e); }
+
+        const globalAppId = typeof __app_id !== 'undefined' ? __app_id : 'busan-2026-v4';
+        const RATE = 42;
+        let roomId = localStorage.getItem('busan_room_id') || "";
+        let syncUnsubscribe = null;
+        
+        let state = {
+            currentDayIdx: 0,
+            itinerary: [
+                { date: "4/24 (五)", weather: "14/12°C", slots: { "早上": [], "午餐": [], "下午": [], "晚餐": [], "晚上": [], "住宿": [] } },
+                { date: "4/25 (六)", weather: "16/14°C", slots: { "早上": [], "午餐": [], "下午": [], "晚餐": [], "晚上": [], "住宿": [] } },
+                { date: "4/26 (日)", weather: "15/13°C", slots: { "早上": [], "午餐": [], "下午": [], "晚餐": [], "晚上": [], "住宿": [] } },
+                { date: "4/27 (一)", weather: "17/15°C", slots: { "早上": [], "午餐": [], "下午": [], "晚餐": [], "晚上": [], "住宿": [] } },
+                { date: "4/28 (二)", weather: "18/16°C", slots: { "早上": [], "午餐": [], "下午": [], "晚餐": [], "晚上": [], "住宿": [] } }
+            ],
+            expenses: [], checklist: [], memos: "", vouchers: [], customInfo: []
+        };
+
+        window.customConfirm = (msg, onConfirm) => {
+            const m = document.getElementById('confirm-modal');
+            const ok = document.getElementById('confirm-ok');
+            const cancel = document.getElementById('confirm-cancel');
+            document.getElementById('confirm-msg').innerText = msg; m.style.display = 'flex';
+            const cl = () => { m.style.display = 'none'; ok.onclick = null; cancel.onclick = null; };
+            ok.onclick = () => { onConfirm(); cl(); }; cancel.onclick = () => { cl(); };
+        };
+
+        async function initAuth() {
+            if (!auth) { window.showToast("設定遺失：進入預覽模式"); return null; }
+            if (auth.currentUser) return auth.currentUser;
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else { await signInAnonymously(auth); }
+                return auth.currentUser;
+            } catch (e) { console.error(e); return null; }
+        }
+
+        const startSync = () => {
+            if (!roomId || !auth?.currentUser || !db) return;
+            const docRef = doc(db, 'artifacts', globalAppId, 'public', 'data', 'roomData', roomId);
+            if (syncUnsubscribe) syncUnsubscribe();
+            const status = document.getElementById('sync-status');
+            if(status) status.innerHTML = '<span class="status-pill status-online">Syncing...</span>';
+
+            syncUnsubscribe = onSnapshot(docRef, (snap) => {
+                if (snap.exists()) {
+                    state = { ...state, ...snap.data() };
+                    window.render();
+                    if(status) status.innerHTML = '<span class="status-pill status-online">Connected</span>';
+                    const ridTxt = document.getElementById('display-room-id');
+                    if(ridTxt) ridTxt.innerText = `Room: ${roomId}`;
+                } else { persistCloud(); }
+            }, (err) => { if(status) status.innerHTML = '<span class="status-pill status-offline">Offline</span>'; });
+        };
+
+        async function persistCloud() {
+            if (!roomId || !auth?.currentUser || !db) return;
+            const docRef = doc(db, 'artifacts', globalAppId, 'public', 'data', 'roomData', roomId);
+            try { await setDoc(docRef, state); } catch (e) { console.error(e); }
+        }
+
+        window.startCloudSync = async () => {
+            const input = document.getElementById('room-id-input').value.trim();
+            if (!input) return window.showToast("請輸入暗號！");
+            if (!auth) { 
+                roomId = input; document.getElementById('cloud-overlay').style.display = 'none'; 
+                window.render(); return; 
+            }
+            const btn = document.getElementById('start-sync-btn');
+            const msg = document.getElementById('connection-status-msg');
+            btn.innerText = "CONNECTING..."; btn.disabled = true;
+            try {
+                const u = await initAuth();
+                if (u) {
+                    roomId = input; localStorage.setItem('busan_room_id', roomId);
+                    document.getElementById('cloud-overlay').style.display = 'none'; startSync();
+                } else {
+                    btn.innerText = "START ADVENTURE"; btn.disabled = false;
+                    msg.innerText = "連線失敗，請檢查設定或稍後再試";
+                }
+            } catch (e) { btn.innerText = "START ADVENTURE"; btn.disabled = false; }
+        };
+
+        window.switchTab = (id) => {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            const tab = document.getElementById('tab-'+id); const btn = document.getElementById('btn-'+id);
+            if(tab) tab.classList.add('active'); if(btn) btn.classList.add('active');
+            window.render();
+        };
+
+        window.render = () => {
+            const activeBtn = document.querySelector('.nav-btn.active');
+            if (!activeBtn) return;
+            const active = activeBtn.id.replace('btn-', '');
+            if (active === 'home') renderHome();
+            if (active === 'wallet') renderWallet();
+            if (active === 'lists') renderLists();
+            if (active === 'vouchers') renderVouchers();
+            if (active === 'info') renderInfo();
+        };
+
+        const renderHome = () => {
+            const daySel = document.getElementById('day-selector');
+            if(!daySel) return;
+            daySel.innerHTML = state.itinerary.map((d, i) => `<button onclick="window.setDay(${i})" class="px-6 py-2 rounded-full text-xs font-bold ${state.currentDayIdx===i?'day-btn-active':'bg-brown/10 text-brown'}">Day ${i+1}</button>`).join('');
+            const day = state.itinerary[state.currentDayIdx];
+            const dinfo = document.getElementById('day-info');
+            if(dinfo) dinfo.innerHTML = `<h2 class="serif-en text-3xl font-bold text-brown">${day.date}</h2><p class="text-[10px] opacity-50 font-bold uppercase tracking-widest text-brown/60">${day.weather.temp} · ${day.weather.text}</p>`;
+            const slots = ["早上", "午餐", "下午", "晚餐", "晚上", "住宿"];
+            document.getElementById('itinerary-sections').innerHTML = slots.map(s => `
+                <div class="section-title flex justify-between items-center"><span>${s}</span><button onclick="window.addCard('${s}')"><i class="fa-solid fa-plus-circle text-lg opacity-20"></i></button></div>
+                <div class="space-y-4 min-h-[10px]">${(day.slots[s]||[]).map((c, i) => `
+                    <div class="glass-card p-5 relative shadow-sm" onclick="window.openEdit('${s}', ${i})">
+                        ${c.img?`<img src="${c.img}" class="w-full h-40 object-cover rounded-xl mb-4" onclick="event.stopPropagation(); window.viewImg('${c.img}')">`:''}
+                        <h4 class="font-bold text-sm text-brown leading-tight">${c.title||'新項目'}</h4>
+                        ${c.desc ? `<p class="text-xs opacity-60 mt-2 leading-relaxed text-brown/70">${c.desc}</p>` : ''}
+                        <div class="mt-4 flex flex-wrap gap-2">
+                            ${c.loc ? `<button onclick="event.stopPropagation(); window.openMap('${c.loc}')" class="bg-brown/10 text-brown text-[9px] px-3 py-1.5 rounded-full font-bold border border-brown/10">Naver Map</button>` : ''}
+                            ${c.link ? `<button onclick="event.stopPropagation(); window.open('${c.link}', '_blank')" class="bg-sand/20 text-brown text-[9px] px-3 py-1.5 rounded-full font-bold border border-sand/30">攻略連結</button>` : ''}
+                        </div>
+                    </div>`).join('')}</div>
+            `).join('');
+        };
+
+        window.setDay = (i) => { state.currentDayIdx = i; renderHome(); };
+        window.addCard = (s) => { 
+            if(!state.itinerary[state.currentDayIdx].slots[s]) state.itinerary[state.currentDayIdx].slots[s] = [];
+            state.itinerary[state.currentDayIdx].slots[s].push({ title: "", desc: "", img: null, loc: "", link: "" }); persistCloud(); 
+        };
+        window.openMap = (q) => window.open(`https://map.naver.com/v5/search/${encodeURIComponent(q)}`, '_blank');
+        
+        let editRef = null;
+        window.openEdit = (s, i) => {
+            editRef = {s, i}; const c = state.itinerary[state.currentDayIdx].slots[s][i];
+            document.getElementById('card-title').value = c.title; document.getElementById('card-desc').value = c.desc;
+            document.getElementById('card-loc').value = c.loc || ""; document.getElementById('card-link').value = c.link || "";
+            const preview = document.getElementById('card-img-preview');
+            if(c.img) { preview.src = c.img; preview.classList.remove('hidden'); } else { preview.classList.add('hidden'); }
+            document.getElementById('card-modal').classList.remove('hidden');
+        };
+        window.saveCard = () => {
+            const c = state.itinerary[state.currentDayIdx].slots[editRef.s][editRef.i];
+            c.title = document.getElementById('card-title').value; c.desc = document.getElementById('card-desc').value;
+            c.loc = document.getElementById('card-loc').value; c.link = document.getElementById('card-link').value;
+            if(window.tmpImg) c.img = window.tmpImg; persistCloud(); window.closeCardModal();
+        };
+        window.closeCardModal = () => { document.getElementById('card-modal').classList.add('hidden'); window.tmpImg=null; };
+        window.deleteCard = () => { window.customConfirm("刪除？", () => { state.itinerary[state.currentDayIdx].slots[editRef.s].splice(editRef.i, 1); persistCloud(); window.closeCardModal(); }); };
+
+        window.appendCalc = (v) => { const d = document.getElementById('calc-display'); d.value = d.value==='0'?v:d.value+v; updateTWD(); };
+        window.clearCalc = () => { document.getElementById('calc-display').value=''; updateTWD(); };
+        window.calculateResult = () => { try { const d = document.getElementById('calc-display'); d.value = eval(d.value.replace('×', '*').replace('÷', '/')); updateTWD(); } catch(e){ window.showToast('算式錯誤'); } };
+        const updateTWD = () => { const v = parseFloat(document.getElementById('calc-display').value)||0; document.getElementById('twd-result').innerText = `≈ NT$ ${Math.round(v/RATE).toLocaleString()}`; };
+        window.openExpenseModal = () => { document.getElementById('exp-amount').value = document.getElementById('calc-display').value; document.getElementById('expense-modal').classList.remove('hidden'); };
+        
+        window.saveExpense = () => {
+            const title = document.getElementById('exp-title').value;
+            const krw = parseFloat(document.getElementById('exp-amount').value);
+            if(!title || isNaN(krw)) return window.showToast("填寫金額");
+            state.expenses.unshift({ title, krw, cat: document.getElementById('exp-cat').value, payer: document.getElementById('exp-payer').value, method: document.getElementById('exp-method').value, date: new Date().toLocaleDateString() });
+            persistCloud(); window.closeExpenseModal();
+        };
+        window.closeExpenseModal = () => document.getElementById('expense-modal').classList.add('hidden');
+
+        const renderWallet = () => {
+            let yianPaid = 0, mzPaid = 0;
+            state.expenses.forEach(e => { if(e.payer==='Yian') yianPaid+=e.krw; if(e.payer==='MZ') mzPaid+=e.krw; });
+            const diff = Math.abs(yianPaid - mzPaid); const bal = diff / 2;
+            const content = document.getElementById('settlement-content');
+            if(content) content.innerHTML = `
+                <div class="flex justify-between border-b border-brown/5 pb-2"><span>Yian 已墊:</span><span class="font-bold">₩${yianPaid.toLocaleString()}</span></div>
+                <div class="flex justify-between border-b border-brown/5 pb-2"><span>MZ 已墊:</span><span class="font-bold">₩${mzPaid.toLocaleString()}</span></div>
+                <div class="bg-brown/5 p-3 rounded-xl mt-4 text-center">
+                    <p class="font-bold text-brown">💡 結算建議：</p>
+                    <p class="text-[10px] mt-1">${yianPaid > mzPaid ? `MZ 應給 Yian ₩${Math.round(bal).toLocaleString()} (NT$ ${Math.round(bal/RATE)})` : `Yian 應給 MZ ₩${Math.round(bal).toLocaleString()} (NT$ ${Math.round(bal/RATE)})`}</p>
+                </div>`;
+            const hist = document.getElementById('expense-history');
+            if(hist) hist.innerHTML = state.expenses.map((e, idx) => `
+                <div class="glass-card p-5 flex justify-between items-center shadow-sm">
+                    <div class="flex-1">
+                        <h4 class="font-bold text-sm text-brown">${e.title} <span class="text-[9px] bg-brown/5 px-2 py-0.5 rounded font-bold">${e.cat}</span></h4>
+                        <p class="text-[10px] opacity-50 mt-1 font-bold">${e.payer} · ${e.method}</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="font-bold text-sm text-brown">₩${e.krw.toLocaleString()}</p>
+                        <p class="text-[10px] text-sand font-bold">NT$ ${Math.round(e.krw/RATE).toLocaleString()}</p>
+                    </div>
+                    <button onclick="window.deleteExpense(${idx})" class="ml-4 text-red-200">×</button>
+                </div>`).join('');
+        };
+        window.deleteExpense = (idx) => { window.customConfirm("刪除記帳？", () => { state.expenses.splice(idx, 1); persistCloud(); }); };
+
+        const renderLists = () => {
+            const container = document.getElementById('checklist-container');
+            if(container) container.innerHTML = (state.checklist || []).map((item, i) => `
+                <div class="flex items-center gap-4 glass-card p-5 shadow-sm">
+                    <input type="checkbox" ${item.done?'checked':''} onchange="window.toggleCheck(${i})" class="w-6 h-6 accent-brown rounded-lg">
+                    <span class="text-sm font-bold text-brown ${item.done?'line-through opacity-30':''}">${item.text}</span>
+                    <button onclick="window.removeList(${i})" class="ml-auto text-brown/20 p-2">×</button>
+                </div>`).join('');
+            const mi = document.getElementById('memo-input'); if(mi) mi.value = state.memos;
+        };
+        window.toggleCheck = (i) => { state.checklist[i].done = !state.checklist[i].done; persistCloud(); };
+        window.removeList = (i) => { state.checklist.splice(i, 1); persistCloud(); };
+        window.addChecklistItem = () => { const v = document.getElementById('new-check-item').value; if(v){ state.checklist.push({text:v, done:false}); document.getElementById('new-check-item').value=''; persistCloud(); } };
+        window.saveMemos = () => { const mi = document.getElementById('memo-input'); if(mi) state.memos = mi.value; persistCloud(); };
+
+        const renderVouchers = () => {
+            const grid = document.getElementById('voucher-grid');
+            if(grid) grid.innerHTML = (state.vouchers || []).map(v => `
+                <div class="relative glass-card overflow-hidden h-40 shadow-sm bg-black/5" onclick="window.viewImg('${v.data}')">
+                    <img src="${v.data}" class="w-full h-full object-cover">
+                    <button onclick="event.stopPropagation(); window.deleteVoucher(${v.id})" class="absolute top-2 right-2 text-white bg-black/30 w-6 h-6 rounded-full flex items-center justify-center">×</button>
+                </div>`).join('');
+        };
+        window.viewImg = (src) => { const lb = document.getElementById('lightbox'); const img = document.getElementById('lightbox-img'); if(lb && img) { img.src = src; lb.style.display = 'flex'; } };
+        window.uploadVoucher = (input) => {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader(); reader.onload = (e) => {
+                    if(!state.vouchers) state.vouchers = [];
+                    state.vouchers.unshift({ id: Date.now(), data: e.target.result }); persistCloud();
+                }; reader.readAsDataURL(input.files[0]);
+            }
+        };
+        window.deleteVoucher = (id) => { state.vouchers = state.vouchers.filter(v => v.id !== id); persistCloud(); };
+
+        const renderInfo = () => {
+            const list = document.getElementById('custom-info-list'); if(!list) return;
+            list.innerHTML = (state.customInfo || []).map((info, i) => `
+                <div class="flex justify-between items-start border-b border-brown/5 pb-2">
+                    <div class="flex-1 pr-4"><p class="text-[10px] font-bold opacity-30 uppercase text-brown">${info.label}</p><p class="text-sm font-bold text-brown mt-1">${info.value}</p></div>
+                    <button onclick="window.removeInfo(${i})" class="text-red-200">×</button>
+                </div>`).join('');
+        };
+        window.addCustomInfo = () => { const l = prompt("項目："); const v = prompt("內容："); if(l&&v){ if(!state.customInfo) state.customInfo = []; state.customInfo.push({label:l, value:v}); persistCloud(); } };
+        window.removeInfo = (i) => { state.customInfo.splice(i,1); persistCloud(); };
+
+        window.confirmReset = () => { window.customConfirm("更換暗號？", () => { localStorage.removeItem('busan_room_id'); location.reload(); }); };
+
+        window.handleImage = (input, mode) => { 
+            if (input.files && input.files[0]) { 
+                const reader = new FileReader(); reader.onload = (e) => { 
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
+                        const maxSide = mode==='card'?700:400; let w=img.width, h=img.height;
+                        if(w>h){if(w>maxSide){h*=maxSide/w; w=maxSide;}}else{if(h>maxSide){w*=maxSide/h; h=maxSide;}}
+                        canvas.width=w; canvas.height=h; ctx.drawImage(img,0,0,w,h);
+                        window.tmpImg = canvas.toDataURL('image/jpeg', 0.6); 
+                        if(mode==='card'){const p=document.getElementById('card-img-preview'); if(p) { p.src=window.tmpImg; p.classList.remove('hidden'); }}
+                    }; img.src=e.target.result;
+                }; reader.readAsDataURL(input.files[0]); 
+            } 
+        };
+
+        if (auth) {
+            onAuthStateChanged(auth, (u) => { 
+                if (u && roomId) { 
+                    const overlay = document.getElementById('cloud-overlay'); 
+                    if(overlay) overlay.style.display = 'none'; 
+                    startSync(); 
+                } 
+            });
+        }
+        
+        window.render();
+    </script>
+</body>
+</html>
