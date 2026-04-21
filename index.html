@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Busan 2026 - LET'S GO! v22</title>
+    <title>Busan 2026 - Final Soul v31</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Playfair+Display:wght@700;900&family=Gaegu:wght@400;700&display=swap" rel="stylesheet">
@@ -20,48 +20,44 @@
         }
         body { font-family: 'Noto Serif TC', serif; background-color: var(--color-cream); color: var(--color-dark-brown); -webkit-tap-highlight-color: transparent; overflow-x: hidden; }
         
+        /* 標題與風格 */
         .main-title { font-family: 'Playfair Display', serif; font-size: 3rem; font-weight: 900; letter-spacing: 0.1em; color: var(--color-dark-brown); text-transform: uppercase; line-height: 1; }
         .slogan-go { font-family: 'Gaegu', cursive; color: var(--color-deep-pink); font-size: 1.6rem; font-weight: bold; transform: rotate(-3deg); display: inline-block; margin-top: -5px; }
         .korean-font { font-family: 'Gaegu', cursive; } 
         
         .time-bar { width: 4px; height: 1.1em; background-color: var(--color-deep-pink); border-radius: 2px; margin-right: 12px; display: inline-block; vertical-align: middle; }
 
-        .itinerary-card { background: white; border-radius: 1.5rem; border: 1px solid rgba(107, 79, 79, 0.08); overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin-bottom: 1.2rem; }
-        .itinerary-card:active { transform: scale(0.98); }
+        /* 卡片設計 */
+        .itinerary-card { background: white; border-radius: 1.8rem; border: 1px solid rgba(107, 79, 79, 0.08); overflow: hidden; box-shadow: 0 8px 25px rgba(107, 79, 79, 0.05); margin-bottom: 1.2rem; }
+        .card-img-box { width: 100%; height: 160px; background: var(--color-milk-tea); overflow: hidden; }
+        .card-img-box img { width: 100%; height: 100%; object-fit: cover; }
 
+        /* Docs 色塊縮圖 */
+        .doc-tile { background: white; border-radius: 1.5rem; border: 1px solid rgba(0,0,0,0.08); overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
+        .doc-thumb { height: 100px; background: linear-gradient(135deg, var(--color-milk-tea), var(--color-sand)); display: flex; align-items: center; justify-content: center; font-size: 2rem; cursor: pointer; color: white; }
+        .doc-label { padding: 10px; font-size: 10px; font-weight: 800; text-align: center; border-top: 1px solid rgba(0,0,0,0.05); color: var(--color-brown); text-decoration: underline; text-transform: uppercase; }
+
+        /* 導覽列 */
         .nav-container { background-color: #ffffff !important; border-top: 1px solid rgba(0,0,0,0.08); box-shadow: 0 -5px 25px rgba(0,0,0,0.05); }
         .nav-btn { color: rgba(62, 44, 44, 0.4); position: relative; transition: all 0.2s; }
         .nav-btn.active { color: var(--color-dark-brown); transform: translateY(-2px); }
         .nav-btn.active::after { content: '●'; position: absolute; bottom: -12px; font-size: 8px; color: var(--color-deep-pink); left: 50%; transform: translateX(-50%); }
         
-        .day-btn-active { background-color: var(--color-dark-brown) !important; color: #ffffff !important; box-shadow: 0 4px 12px rgba(62, 44, 44, 0.2); font-weight: 900 !important; }
+        .day-btn-active { background-color: var(--color-dark-brown) !important; color: #ffffff !important; font-weight: 900 !important; }
         
-        .status-pill { padding: 4px 12px; border-radius: 2rem; font-size: 9px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.05em; cursor: pointer; transition: all 0.2s; }
-        .status-online { background: #E8F5E9; color: #2E7D32; border: 1px solid #C8E6C9; }
-        .status-local { background: #FFF3E0; color: #EF6C00; border: 1px solid #FFE0B2; }
-        .status-syncing { background: #E3F2FD; color: #1565C0; border: 1px solid #BBDEFB; }
+        .settlement-radar { background-color: var(--color-dark-brown); border-radius: 2.2rem; padding: 2rem; color: white; margin-top: 1.5rem; }
+        .settlement-radar h3 { font-family: 'Playfair Display', serif; font-size: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem; margin-bottom: 1.2rem; font-style: italic; }
+
+        .btn-dark-solid { background-color: var(--color-dark-brown) !important; color: white !important; font-weight: 800; border-radius: 1.2rem; border: none; text-align: center; display: block; width: 100%; padding: 16px; }
+        
+        #toast { position: fixed; top: 12%; left: 50%; transform: translateX(-50%); background: var(--color-dark-brown); color: white; padding: 14px 28px; border-radius: 3rem; font-size: 12px; z-index: 500; opacity: 0; transition: all 0.3s; pointer-events: none; text-align: center; }
+        .edit-input-hand { background: transparent; border: none; border-bottom: 2px dashed var(--color-sand); font-weight: bold; width: 100%; padding: 4px 0; color: var(--color-dark-brown); }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
 
         .tab-content { display: none; }
         .tab-content.active { display: block; animation: fadeIn 0.4s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        .btn-dark-solid { background-color: var(--color-dark-brown) !important; color: white !important; font-weight: 800; border-radius: 1.2rem; border: none; text-align: center; display: block; width: 100%; padding: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .btn-dark-solid:active { transform: scale(0.97); }
-
-        #toast { position: fixed; top: 12%; left: 50%; transform: translateX(-50%); background: var(--color-dark-brown); color: white; padding: 14px 28px; border-radius: 3rem; font-size: 12px; z-index: 500; opacity: 0; transition: all 0.3s; pointer-events: none; text-align: center; width: 80%; max-width: 300px; line-height: 1.5; }
-        .edit-input-hand { background: transparent; border: none; border-bottom: 2px dashed var(--color-sand); font-weight: bold; width: 100%; padding: 4px 0; color: var(--color-dark-brown); }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
-
-    <script>
-        window.showToast = (msg, duration = 3000) => { 
-            const t = document.getElementById('toast'); 
-            if (t) { 
-                t.innerText = msg; t.style.opacity = '1'; 
-                setTimeout(() => { t.style.opacity = '0'; }, duration); 
-            } 
-        };
-    </script>
 </head>
 <body class="pb-40">
     <div id="toast">Annyeong!</div>
@@ -70,7 +66,7 @@
         <img id="lightbox-img" class="max-w-full max-h-full object-contain">
     </div>
 
-    <!-- 登入頁面 -->
+    <!-- 登入頁面：안녕, 부산 -->
     <div id="cloud-overlay" class="fixed inset-0 bg-[#FDF8F5] z-[100] flex items-center justify-center p-8 hidden">
         <div class="text-center w-full max-sm">
             <h1 class="main-title mb-2">Busan</h1>
@@ -84,9 +80,8 @@
     </div>
 
     <header class="p-6 pt-12 text-center relative">
-        <!-- 點擊此處可看錯誤代碼 -->
-        <div class="absolute top-6 right-6" id="sync-status" onclick="window.showDiagnostic()">
-            <span class="status-pill status-local">Local</span>
+        <div class="absolute top-6 right-6" id="sync-status" onclick="window.retrySync()">
+            <span class="status-pill status-local">Local Mode</span>
         </div>
         <h1 class="main-title">Busan</h1>
         <div class="slogan-go">Let's go! ✈️</div>
@@ -94,12 +89,14 @@
     </header>
 
     <main class="px-6">
+        <!-- 1. PLAN -->
         <section id="tab-home" class="tab-content active">
             <div id="day-selector" class="mb-6 overflow-x-auto whitespace-nowrap py-1 no-scrollbar flex items-center gap-3"></div>
             <div id="day-info" class="mb-4 px-2 text-center"></div>
-            <div id="itinerary-sections" class="space-y-4 pb-12"></div>
+            <div id="itinerary-sections" class="space-y-6 pb-12"></div>
         </section>
 
+        <!-- 2. WALLET (真·清空版) -->
         <section id="tab-wallet" class="tab-content">
             <div class="glass-card p-8 mb-6 bg-white border-2 border-peach/20 rounded-[2.5rem]">
                 <div class="flex justify-between items-end mb-4 px-2">
@@ -108,39 +105,73 @@
                 </div>
                 <input type="text" id="calc-display" class="w-full bg-cream border-none rounded-3xl py-6 px-8 text-right text-4xl font-bold text-brown mb-6 shadow-inner" placeholder="0" readonly>
                 <div class="grid grid-cols-4 gap-3">
-                    <button onclick="window.appendCalc('7')" class="bg-white h-14 rounded-2xl shadow-sm font-bold text-brown text-xl">7</button>
-                    <button onclick="window.appendCalc('8')" class="bg-white h-14 rounded-2xl shadow-sm font-bold text-brown text-xl">8</button>
-                    <button onclick="window.appendCalc('9')" class="bg-white h-14 rounded-2xl shadow-sm font-bold text-brown text-xl">9</button>
-                    <button onclick="window.clearCalc()" class="bg-red-50 text-red-600 h-14 rounded-2xl shadow-sm font-bold text-xl">C</button>
-                    <button onclick="window.appendCalc('4')" class="bg-white h-14 rounded-2xl shadow-sm font-bold text-brown text-xl">4</button>
-                    <button onclick="window.appendCalc('5')" class="bg-white h-14 rounded-2xl shadow-sm font-bold text-brown text-xl">5</button>
-                    <button onclick="window.appendCalc('6')" class="bg-white h-14 rounded-2xl shadow-sm font-bold text-brown text-xl">6</button>
-                    <button onclick="window.appendCalc('/')" class="bg-sand/20 text-brown h-14 rounded-2xl shadow-sm font-bold text-xl">÷</button>
-                    <button onclick="window.appendCalc('1')" class="bg-white h-14 rounded-2xl shadow-sm font-bold text-brown text-xl">1</button>
-                    <button onclick="window.appendCalc('2')" class="bg-white h-14 rounded-2xl shadow-sm font-bold text-brown text-xl">2</button>
-                    <button onclick="window.appendCalc('3')" class="bg-white h-14 rounded-2xl shadow-sm font-bold text-brown text-xl">3</button>
-                    <button onclick="window.appendCalc('*')" class="bg-sand/20 text-brown h-14 rounded-2xl shadow-sm font-bold text-xl">×</button>
-                    <button onclick="window.appendCalc('0')" class="bg-white h-14 rounded-2xl shadow-sm font-bold text-brown text-xl">0</button>
-                    <button onclick="window.appendCalc('+')" class="bg-sand/20 text-brown h-14 rounded-2xl shadow-sm font-bold text-xl">+</button>
-                    <button onclick="window.appendCalc('-')" class="bg-sand/20 text-brown h-14 rounded-2xl shadow-sm font-bold text-xl">-</button>
+                    <button onclick="window.appendCalc('7')" class="bg-white h-14 rounded-2xl shadow-sm font-bold">7</button>
+                    <button onclick="window.appendCalc('8')" class="bg-white h-14 rounded-2xl shadow-sm font-bold">8</button>
+                    <button onclick="window.appendCalc('9')" class="bg-white h-14 rounded-2xl shadow-sm font-bold">9</button>
+                    <button onclick="window.clearCalc()" class="bg-red-50 text-red-600 h-14 rounded-2xl shadow-sm font-bold">C</button>
+                    <button onclick="window.appendCalc('4')" class="bg-white h-14 rounded-2xl shadow-sm font-bold">4</button>
+                    <button onclick="window.appendCalc('5')" class="bg-white h-14 rounded-2xl shadow-sm font-bold">5</button>
+                    <button onclick="window.appendCalc('6')" class="bg-white h-14 rounded-2xl shadow-sm font-bold">6</button>
+                    <button onclick="window.appendCalc('/')" class="bg-sand/20 text-brown h-14 rounded-2xl shadow-sm font-bold">÷</button>
+                    <button onclick="window.appendCalc('1')" class="bg-white h-14 rounded-2xl shadow-sm font-bold">1</button>
+                    <button onclick="window.appendCalc('2')" class="bg-white h-14 rounded-2xl shadow-sm font-bold">2</button>
+                    <button onclick="window.appendCalc('3')" class="bg-white h-14 rounded-2xl shadow-sm font-bold">3</button>
+                    <button onclick="window.appendCalc('*')" class="bg-sand/20 text-brown h-14 rounded-2xl shadow-sm font-bold">×</button>
+                    <button onclick="window.appendCalc('0')" class="bg-white h-14 rounded-2xl shadow-sm font-bold">0</button>
+                    <button onclick="window.appendCalc('+')" class="bg-sand/20 text-brown h-14 rounded-2xl shadow-sm font-bold">+</button>
+                    <button onclick="window.appendCalc('-')" class="bg-sand/20 text-brown h-14 rounded-2xl shadow-sm font-bold">-</button>
                     <button onclick="window.calculateResult()" class="btn-dark-solid h-14 text-2xl shadow-xl">=</button>
                 </div>
                 <button onclick="window.openExpenseModal()" class="btn-dark-solid mt-8 tracking-widest uppercase text-sm">ADD RECORD ✏️</button>
             </div>
-            <div id="expense-history" class="space-y-4 mb-6"></div>
+
+            <div class="flex justify-between items-center mb-4 px-1">
+                <h3 class="font-bold text-brown text-xs opacity-60 uppercase tracking-widest">Ledger 📜</h3>
+                <button onclick="window.exportToExcel()" class="text-[9px] bg-green-700 text-white px-4 py-2 rounded-full font-bold shadow-md active:scale-95"><i class="fa-solid fa-file-excel mr-2"></i>EXCEL</button>
+            </div>
+
+            <div class="flex gap-2 mb-6 overflow-x-auto no-scrollbar">
+                <select id="filter-payer" onchange="window.renderWallet()" class="bg-white border-2 border-peach/20 rounded-xl p-3 text-[11px] font-bold text-brown min-w-[120px]">
+                    <option value="all">所有付款人</option>
+                    <option value="Yian 墊付">Yian 墊付</option><option value="MZ 墊付">MZ 墊付</option>
+                    <option value="Yian">Yian 私人</option><option value="MZ">MZ 私人</option>
+                </select>
+                <select id="filter-cat" onchange="window.renderWallet()" class="bg-white border-2 border-peach/20 rounded-xl p-3 text-[11px] font-bold text-brown min-w-[120px]">
+                    <option value="all">所有類別</option>
+                    <option value="🍽️ 食">🍽️ 食</option><option value="🏨 住">🏨 住</option>
+                    <option value="🎡 玩">🎡 玩</option><option value="🛍️ 購">🛍️ 購</option>
+                    <option value="🚌 行">🚌 行</option><option value="✨ 其他">✨ 其他</option>
+                </select>
+            </div>
+
+            <div id="expense-history" class="space-y-4 mb-8"></div>
+
+            <div class="settlement-radar">
+                <h3>Settlement Radar 🧭</h3>
+                <div id="settlement-content" class="space-y-4 text-sm font-bold"></div>
+            </div>
+            <div class="py-12 text-center">
+                <button onclick="window.forceClearCloudData()" class="text-[10px] text-red-400 font-bold opacity-20 underline">粉碎當前房間所有雲端帳目 (RESET CLOUD)</button>
+            </div>
         </section>
 
+        <!-- 3. LISTS -->
         <section id="tab-lists" class="tab-content">
             <div class="glass-card p-8 mb-6 border-2 border-peach/20">
                 <h2 class="serif-en text-3xl mb-6 italic text-brown text-center font-bold">Checklist 🧸</h2>
                 <div id="checklist-container" class="space-y-3"></div>
                 <div class="mt-8 flex gap-3">
                     <input type="text" id="new-check-item" class="flex-1 bg-cream rounded-2xl p-4 text-sm text-brown font-bold focus:outline-none" placeholder="我想帶...">
-                    <button onclick="window.addChecklistItem()" class="btn-dark-solid px-6 rounded-2xl active:scale-90 w-auto"><i class="fa-solid fa-plus text-lg"></i></button>
+                    <button onclick="window.addChecklistItem()" class="btn-dark-solid px-6 rounded-2xl w-auto active:scale-90"><i class="fa-solid fa-plus text-lg"></i></button>
                 </div>
+            </div>
+            <div class="glass-card p-8 border-2 border-peach/20">
+                <h2 class="serif-en text-3xl mb-6 italic text-brown text-center font-bold">Memos 📝</h2>
+                <textarea id="memo-input" class="w-full bg-cream border-none rounded-2xl p-6 text-sm h-64 text-brown font-bold leading-relaxed" placeholder="寫點什麼..." oninput="window.saveMemos()"></textarea>
             </div>
         </section>
 
+        <!-- 4. DOCS (色塊風格縮圖) -->
         <section id="tab-vouchers" class="tab-content">
             <div class="flex justify-between items-center mb-8 px-2">
                 <h2 class="serif-en text-3xl italic text-brown font-bold">Docs 📷</h2>
@@ -151,47 +182,108 @@
             <div id="voucher-grid" class="grid grid-cols-2 gap-5 pb-12"></div>
         </section>
 
+        <!-- 5. INFO (資源全回歸) -->
         <section id="tab-info" class="tab-content">
-            <!-- 資訊欄位維持原樣 -->
-            <div class="glass-card p-10 border-l-8 border-green-200 text-center relative overflow-hidden">
-                <h3 class="serif-en text-xl mb-6 font-bold italic text-green-900">Cloud Sync ✨</h3>
-                <div class="p-6 bg-cream rounded-3xl mb-6 shadow-inner border border-green-100">
-                    <p id="display-room-id" class="text-md font-bold text-brown italic korean-font tracking-widest">Not Connected</p>
+            <div class="space-y-6 pb-20">
+                <div class="space-y-4 px-1">
+                    <h3 class="serif-en text-2xl font-bold italic text-brown">Resources 💡</h3>
+                    <div class="grid grid-cols-1 gap-3">
+                        <button onclick="window.open('https://creatrip.com/zh-TW/blog/9469', '_blank')" class="bg-white p-5 flex items-center gap-6 text-left border-2 border-peach/20 rounded-[2rem] active:scale-98">
+                            <div class="text-3xl">💰</div>
+                            <div>
+                                <p class="font-bold text-sm text-brown">Creatrip 換錢攻略</p>
+                                <p class="text-[10px] opacity-50 font-bold">即時匯率比較</p>
+                            </div>
+                        </button>
+                        <button onclick="window.open('https://www.humetro.busan.kr/homepage/cyberstation/mapinfor.do', '_blank')" class="bg-white p-5 flex items-center gap-6 text-left border-2 border-peach/20 rounded-[2rem] active:scale-98">
+                            <div class="text-3xl">🚇</div>
+                            <div>
+                                <p class="font-bold text-sm text-brown">釜山地鐵地圖</p>
+                                <p class="text-[10px] opacity-50 font-bold">官方查詢</p>
+                            </div>
+                        </button>
+                    </div>
                 </div>
-                <button onclick="window.confirmReset()" class="text-xs text-red-600 underline font-black uppercase tracking-widest active:scale-95">登出 / 切換暗號</button>
+
+                <div class="glass-card p-6 border-l-8 border-peach">
+                    <h3 class="serif-en text-xl mb-4 font-bold italic text-brown">Flight & Stay ✈️</h3>
+                    <div class="space-y-6 text-brown font-bold text-xs">
+                        <p class="text-[9px] opacity-40 uppercase tracking-widest font-black">Flight</p>
+                        <textarea id="flight-input" class="edit-input-hand h-16 w-full" placeholder="航班資訊 (例如: 4/24 ZE988)..." oninput="window.saveFlightStay()"></textarea>
+                        <p class="text-[9px] opacity-40 uppercase tracking-widest font-black mt-4">Accommodation</p>
+                        <textarea id="stay-input" class="edit-input-hand h-16 w-full" placeholder="住宿地點 (例如: 溫德姆)..." oninput="window.saveFlightStay()"></textarea>
+                    </div>
+                </div>
+
+                <div class="glass-card p-10 border-l-8 border-green-200 text-center relative overflow-hidden">
+                    <h3 class="serif-en text-xl mb-6 font-bold italic text-green-900">Cloud Sync ✨</h3>
+                    <div class="p-6 bg-cream rounded-3xl mb-6 shadow-inner border border-green-100">
+                        <p id="display-room-id" class="text-sm font-bold text-brown italic tracking-widest uppercase">Not Connected</p>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3 mb-8">
+                        <button onclick="window.copyFullData()" class="btn-dark-solid py-3 text-[10px] font-bold shadow-lg uppercase rounded-2xl">Copy Data</button>
+                        <button onclick="window.importFullData()" class="bg-white border-2 border-brown/10 text-brown py-3 rounded-2xl text-[10px] font-bold uppercase">Restore</button>
+                    </div>
+                    <button onclick="window.confirmReset()" class="text-xs text-red-600 underline font-black uppercase tracking-widest active:scale-95">登出房間</button>
+                </div>
             </div>
         </section>
     </main>
 
+    <!-- 導覽列 -->
     <nav class="fixed bottom-0 left-0 right-0 nav-container px-8 py-8 flex justify-between items-center z-50">
         <button onclick="window.switchTab('home')" class="nav-btn active flex flex-col items-center flex-1" id="btn-home"><i class="fa-solid fa-map-location-dot text-2xl"></i><span class="text-[10px] mt-2 font-black uppercase">Plan</span></button>
         <button onclick="window.switchTab('wallet')" class="nav-btn flex flex-col items-center flex-1" id="btn-wallet"><i class="fa-solid fa-wallet text-2xl"></i><span class="text-[10px] mt-2 font-black uppercase">Wallet</span></button>
         <button onclick="window.switchTab('lists')" class="nav-btn flex flex-col items-center flex-1" id="btn-lists"><i class="fa-solid fa-list-check text-2xl"></i><span class="text-[10px] mt-2 font-black uppercase">Lists</span></button>
         <button onclick="window.switchTab('vouchers')" class="nav-btn flex flex-col items-center flex-1" id="btn-vouchers"><i class="fa-solid fa-ticket text-2xl"></i><span class="text-[10px] mt-2 font-black uppercase">Docs</span></button>
-        <button onclick="window.switchTab('info')" class="nav-btn flex flex-col items-center flex-1" id="btn-info"><i class="fa-solid fa-face-smile text-2xl"></i><span class="text-[10px] mt-2 font-black uppercase">Info</span></button>
+        <button onclick="window.switchTab('info')" class="nav-btn flex flex-col items-center flex-1" id="btn-info"><i class="fa-solid fa-circle-info text-2xl"></i><span class="text-[10px] mt-2 font-black uppercase">Info</span></button>
     </nav>
 
-    <!-- Modal: Expense -->
+    <!-- Modals (編輯窗) -->
+    <div id="card-modal" class="fixed inset-0 bg-black/80 hidden z-[60] flex items-center justify-center px-8">
+        <div class="bg-white w-full max-sm rounded-[3rem] p-10 shadow-2xl max-h-[85vh] overflow-y-auto border-4 border-peach/20">
+            <h3 class="serif-en text-2xl mb-8 font-bold italic text-brown text-center">Memory Edit ✍️</h3>
+            <div class="space-y-5">
+                <input type="text" id="card-title" class="w-full bg-cream rounded-2xl p-5 text-md font-bold text-brown border-none" placeholder="地點名稱">
+                <textarea id="card-desc" class="w-full bg-cream rounded-2xl p-5 text-sm h-32 text-brown border-none font-bold leading-relaxed" placeholder="備註..."></textarea>
+                <div class="flex items-center gap-6">
+                    <label class="btn-dark-solid px-8 py-4 text-[10px] cursor-pointer shadow-md w-auto">PHOTO<input type="file" class="hidden" accept="image/*" onchange="window.handleImage(this, 'card')"></label>
+                    <img id="card-img-preview" class="w-16 h-16 rounded-2xl object-cover hidden shadow-lg">
+                </div>
+                <input type="text" id="card-loc" class="w-full bg-cream rounded-2xl p-4 text-xs font-bold text-brown border-none shadow-inner" placeholder="地圖關鍵字">
+                <input type="text" id="card-link" class="w-full bg-cream rounded-2xl p-4 text-xs font-bold text-brown border-none shadow-inner" placeholder="攻略網址">
+                <div class="flex gap-4 mt-8">
+                    <button onclick="window.deleteCard()" class="flex-1 bg-red-50 text-red-600 py-4 rounded-2xl font-black text-xs uppercase">Delete</button>
+                    <button onclick="window.saveCard()" class="flex-[2] btn-dark-solid py-4 text-xs uppercase rounded-2xl">Save</button>
+                </div>
+                <button onclick="window.closeCardModal()" class="w-full text-sand text-[10px] font-bold underline mt-4 text-center uppercase tracking-widest">Cancel</button>
+            </div>
+        </div>
+    </div>
+
     <div id="expense-modal" class="fixed inset-0 bg-black/80 hidden z-[60] flex items-end">
         <div class="bg-white w-full rounded-t-[3rem] p-10 shadow-2xl border-t-8 border-peach">
             <div class="flex justify-between items-center mb-8">
-                <h3 class="serif-en text-2xl font-bold italic text-brown" id="exp-modal-title">New Record 💸</h3>
-                <button onclick="window.closeExpenseModal()" class="text-brown/60"><i class="fa-solid fa-xmark text-2xl"></i></button>
+                <h3 class="serif-en text-2xl font-bold italic text-brown">New Record 💸</h3>
+                <button onclick="window.closeExpenseModal()" class="text-brown"><i class="fa-solid fa-xmark text-2xl"></i></button>
             </div>
             <div class="space-y-6">
                 <input type="text" id="exp-title" class="w-full border-b border-sand/30 py-3 font-bold text-xl text-brown bg-transparent focus:outline-none" placeholder="品項...">
                 <div class="grid grid-cols-2 gap-6">
                     <input type="number" id="exp-amount" class="w-full border-b border-sand/30 py-3 font-bold text-xl text-brown bg-transparent focus:outline-none" placeholder="₩">
                     <select id="exp-cat" class="border-b border-sand/30 py-3 bg-transparent text-xs font-black text-brown">
-                        <option value="食">🍽️ 食</option><option value="住">🏨 住</option><option value="其他">其他</option>
+                        <option value="🍽️ 食">🍽️ 食</option><option value="🏨 住">🏨 住</option>
+                        <option value="🎡 玩">🎡 玩</option><option value="🛍️ 購">🛍️ 購</option>
+                        <option value="🚌 行">🚌 行</option><option value="✨ 其他">✨ 其他</option>
                     </select>
                 </div>
                 <div class="grid grid-cols-2 gap-6">
                     <select id="exp-payer" class="border-b border-sand/30 py-3 bg-transparent text-[10px] font-black text-brown">
                         <option value="Yian 墊付">Yian 墊付</option><option value="MZ 墊付">MZ 墊付</option>
+                        <option value="Yian">Yian (私人)</option><option value="MZ">MZ (私人)</option>
                     </select>
                     <select id="exp-method" class="border-b border-sand/30 py-3 bg-transparent text-[10px] font-black text-brown">
-                        <option value="Card">刷卡</option><option value="Cash">現鈔</option>
+                        <option value="Card">刷卡</option><option value="Cash">現鈔</option><option value="WOWPASS">WOWPASS</option>
                     </select>
                 </div>
                 <button onclick="window.saveExpense()" class="w-full btn-dark-solid py-4 rounded-[2rem] text-xs tracking-widest uppercase mt-6">Confirm</button>
@@ -222,8 +314,6 @@
         
         let roomId = localStorage.getItem('busan_room_id') || "";
         let syncUnsubscribe = null;
-        let lastFirebaseError = "No connection attempted yet.";
-        
         let state = {
             currentDayIdx: 0,
             itinerary: [
@@ -231,9 +321,28 @@
                 { date: "4/25 (六)", weather: {temp: "16°C", text: "多雲"}, slots: { "早上": [], "午餐": [], "下午": [], "晚餐": [], "晚上": [], "住宿": [] } },
                 { date: "4/26 (日)", weather: {temp: "15°C", text: "雨"}, slots: { "早上": [], "午餐": [], "下午": [], "晚餐": [], "晚上": [], "住宿": [] } },
                 { date: "4/27 (一)", weather: {temp: "17°C", text: "晴"}, slots: { "早上": [], "午餐": [], "下午": [], "晚餐": [], "晚上": [], "住宿": [] } },
-                { date: "4/28 (二)", weather: {temp: "18°C", text: "晴"}, slots: { "早上": [], "午餐": [], "下午": [], "晚上": [], "住宿": [] } }
+                { date: "4/28 (二)", weather: {temp: "18°C", text: "暖"}, slots: { "早上": [], "午餐": [], "下午": [], "晚餐": [], "晚上": [], "住宿": [] } }
             ],
-            expenses: [], checklist: [], memos: "", vouchers: [], flightInfo: "", stayInfo: ""
+            expenses: [], // 預設淨空
+            checklist: [],
+            memos: "",
+            vouchers: [],
+            flightInfo: "",
+            stayInfo: ""
+        };
+
+        window.showToast = (msg) => { 
+            const t = document.getElementById('toast'); 
+            if (t) { t.innerText = msg; t.style.opacity = '1'; setTimeout(() => { t.style.opacity = '0'; }, 3000); } 
+        };
+
+        // 強力攔截器：防止舊的測試資料（溫德姆）干擾
+        const sanitizeData = (data) => {
+            if (data && data.expenses) {
+                // 過濾掉所有名稱包含「溫德姆」的帳目
+                data.expenses = data.expenses.filter(e => !e.title.includes('溫德姆'));
+            }
+            return data;
         };
 
         const startSync = () => {
@@ -242,33 +351,34 @@
             if (syncUnsubscribe) syncUnsubscribe();
             
             const statusEl = document.getElementById('sync-status');
-            statusEl.innerHTML = '<span class="status-pill status-syncing animate-pulse">Syncing...</span>';
-
             syncUnsubscribe = onSnapshot(docRef, (snap) => {
                 if (snap.exists()) {
-                    state = { ...state, ...snap.data() };
+                    // 套用攔截器
+                    state = { ...state, ...sanitizeData(snap.data()) };
                     window.render();
-                    statusEl.innerHTML = '<span class="status-pill status-online">Online</span>';
+                    statusEl.innerHTML = '<span class="status-pill status-online">🟢 Online</span>';
                     document.getElementById('display-room-id').innerText = `Room: ${roomId}`;
-                    lastFirebaseError = "Connected Successfully ✨";
                 } else { persistCloud(); }
             }, (err) => {
-                lastFirebaseError = err.message;
-                statusEl.innerHTML = '<span class="status-pill status-local">Local</span>';
-                console.error("Firebase Sync Error:", err);
+                statusEl.innerHTML = '<span class="status-pill status-local">Local Mode</span>';
             });
-        };
-
-        window.showDiagnostic = () => {
-            window.showToast("🛠️ 診斷報告：\n" + lastFirebaseError, 6000);
         };
 
         async function persistCloud() {
             localStorage.setItem(`local_state_${roomId}`, JSON.stringify(state));
             if (!roomId || !auth.currentUser) return;
             const docRef = doc(db, 'artifacts', globalAppId, 'public', 'data', 'roomData', roomId);
-            try { await setDoc(docRef, state); } catch (e) { lastFirebaseError = e.message; }
+            try { await setDoc(docRef, state); } catch (e) { console.error(e); }
         }
+
+        window.forceClearCloudData = () => {
+            if (confirm("這將粉碎雲端上的所有記帳資料！確定嗎？")) {
+                state.expenses = [];
+                persistCloud();
+                window.showToast("雲端資料已粉碎！💣");
+                window.render();
+            }
+        };
 
         window.startCloudSync = async () => {
             const input = document.getElementById('room-id-input').value.trim();
@@ -276,19 +386,10 @@
             roomId = input;
             localStorage.setItem('busan_room_id', roomId);
             document.getElementById('cloud-overlay').classList.add('hidden'); 
-            
             const local = localStorage.getItem(`local_state_${roomId}`);
             if(local) state = JSON.parse(local);
             window.render();
-
-            try { 
-                await signInAnonymously(auth); 
-                startSync(); 
-                window.showToast("雲端連線中...");
-            } catch (e) { 
-                lastFirebaseError = e.message;
-                window.showToast("登入機關未開！進入離線模式"); 
-            }
+            try { await signInAnonymously(auth); startSync(); } catch (e) { window.showToast("連線失敗"); }
         };
 
         window.switchTab = (id) => {
@@ -297,6 +398,99 @@
             document.getElementById('tab-'+id).classList.add('active');
             document.getElementById('btn-'+id).classList.add('active');
             window.render();
+        };
+
+        // --- RENDER ---
+        const renderHome = () => {
+            const daySel = document.getElementById('day-selector');
+            daySel.innerHTML = state.itinerary.map((d, i) => `<button onclick="window.setDay(${i})" class="px-6 py-3 rounded-3xl text-[10px] font-bold ${state.currentDayIdx===i?'day-btn-active shadow-md':'bg-brown/10 text-brown'}">Day ${i+1}</button>`).join('');
+            const day = state.itinerary[state.currentDayIdx];
+            const [dStr, wStr] = day.date.split(' ');
+            document.getElementById('day-info').innerHTML = `
+                <h2 class="serif-en text-3xl font-bold text-brown">${dStr} <span>${wStr}</span></h2>
+                <p class="text-[10px] opacity-60 font-black uppercase mt-1 text-brown tracking-[0.1em]">${day.weather.temp} · ${day.weather.text} ✨</p>`;
+            const slots = ["早上", "午餐", "下午", "晚餐", "晚上", "住宿"];
+            document.getElementById('itinerary-sections').innerHTML = slots.map(s => `
+                <div class="mb-6">
+                    <div class="flex items-center mb-4">
+                        <div class="time-bar"></div>
+                        <span class="font-bold text-brown opacity-40 uppercase tracking-widest text-xs">${s}</span>
+                        <button onclick="window.addCard('${s}')" class="ml-auto text-brown/20"><i class="fa-solid fa-circle-plus text-xl"></i></button>
+                    </div>
+                    <div class="space-y-4 min-h-[10px]">${(day.slots[s]||[]).map((c, i) => `
+                        <div class="itinerary-card" onclick="window.openEdit('${s}', ${i})">
+                            ${c.img ? `<div class="card-img-box"><img src="${c.img}"></div>` : ''}
+                            <div class="p-5">
+                                <h4 class="font-bold text-sm text-brown leading-tight">${c.title || '點擊新增...'}</h4>
+                                ${c.desc ? `<p class="text-[10px] opacity-60 mt-2 leading-relaxed line-clamp-2">${c.desc}</p>` : ''}
+                                <div class="mt-4 flex flex-wrap gap-2">
+                                    ${c.loc ? `<span onclick="event.stopPropagation(); window.openMap('${c.loc}')" class="bg-brown/10 text-brown text-[8px] px-3 py-1.5 rounded-full font-bold">MAP</span>` : ''}
+                                    ${c.link ? `<span onclick="event.stopPropagation(); window.open('${c.link}', '_blank')" class="bg-sand/20 text-brown text-[8px] px-3 py-1.5 rounded-full font-bold">BLOG</span>` : ''}
+                                </div>
+                            </div>
+                        </div>`).join('')}</div>
+                </div>`).join('');
+        };
+
+        const renderWallet = () => {
+            let yianAdv = 0, mzAdv = 0;
+            state.expenses.forEach(e => {
+                if(e.payer === 'Yian 墊付') yianAdv += e.krw;
+                if(e.payer === 'MZ 墊付') mzAdv += e.krw;
+            });
+            const diff = Math.abs(yianAdv - mzAdv);
+            const bal = diff / 2;
+            const radar = document.getElementById('settlement-content');
+            radar.innerHTML = `
+                <div class="flex justify-between border-b border-white/10 pb-4"><span>Yian 墊付總額:</span><span>₩${yianAdv.toLocaleString()}</span></div>
+                <div class="flex justify-between border-b border-white/10 pb-4"><span>MZ 墊付總額:</span><span>₩${mzAdv.toLocaleString()}</span></div>
+                <div class="bg-white/10 p-5 rounded-[1.5rem] mt-6 text-center border border-white/5">
+                    <p class="text-[13px] font-black">${yianAdv > mzAdv ? `MZ 應給 Yian ₩${Math.round(bal).toLocaleString()} (NT$ ${Math.round(bal/RATE)})` : `Yian 應給 MZ ₩${Math.round(bal).toLocaleString()} (NT$ ${Math.round(bal/RATE)})`}</p>
+                </div>`;
+
+            const fPayer = document.getElementById('filter-payer').value;
+            const fCat = document.getElementById('filter-cat').value;
+            const filtered = state.expenses.filter(e => (fPayer === 'all' || e.payer === fPayer) && (fCat === 'all' || e.cat === fCat));
+            
+            document.getElementById('expense-history').innerHTML = filtered.map(e => `
+                <div class="glass-card p-5 flex justify-between items-center shadow-sm">
+                    <div class="flex-1 pr-4 text-left">
+                        <h4 class="font-bold text-xs text-brown truncate">${e.title} <span class="text-[8px] bg-peach/40 px-2 rounded-full ml-1 font-black">${e.cat}</span></h4>
+                        <p class="text-[9px] opacity-60 mt-0.5 italic font-bold">${e.payer} · ${e.method}</p>
+                    </div>
+                    <div class="text-right flex items-center gap-4">
+                        <div>
+                            <p class="font-bold text-xs text-brown">₩${e.krw.toLocaleString()}</p>
+                            <p class="text-[9px] text-brown opacity-40 font-bold">NT$ ${Math.round(e.krw/RATE)}</p>
+                        </div>
+                        <button onclick="window.deleteExpense(${e.id})" class="text-red-200 text-lg active:scale-95">×</button>
+                    </div>
+                </div>`).join('') || `<p class="text-center opacity-30 py-10 italic font-bold text-xs">No records found.</p>`;
+        };
+
+        const renderLists = () => {
+            document.getElementById('checklist-container').innerHTML = (state.checklist || []).map((item, i) => `
+                <div class="flex items-center gap-4 glass-card p-4 shadow-sm mb-2 bg-white border border-peach/10 text-left">
+                    <input type="checkbox" ${item.done?'checked':''} onchange="window.toggleCheck(${i})" class="w-6 h-6 accent-deep-pink rounded-full">
+                    <span class="text-sm font-bold text-brown ${item.done?'line-through opacity-30':''}">${item.text}</span>
+                    <button onclick="window.removeList(${i})" class="ml-auto text-sand"><i class="fa-solid fa-xmark text-xl"></i></button>
+                </div>`).join('');
+            document.getElementById('memo-input').value = state.memos;
+        };
+
+        const renderVouchers = () => {
+            document.getElementById('voucher-grid').innerHTML = (state.vouchers || []).map(v => `
+                <div class="doc-tile flex flex-col shadow-sm">
+                    <div class="doc-thumb" onclick="window.viewImg('${v.data}')">📷</div>
+                    <div class="doc-label" onclick="window.renameVoucher(${v.id})">${v.name || 'Doc 憑證'}</div>
+                    <button onclick="window.deleteVoucher(${v.id})" class="text-[9px] text-red-300 py-2 font-bold uppercase tracking-widest active:scale-95">Delete</button>
+                </div>`).join('');
+        };
+
+        const renderInfo = () => {
+            document.getElementById('display-room-id').innerText = roomId || "Not Connected";
+            document.getElementById('flight-input').value = state.flightInfo || "";
+            document.getElementById('stay-input').value = state.stayInfo || "";
         };
 
         window.render = () => {
@@ -310,45 +504,13 @@
             else if (active === 'info') renderInfo();
         };
 
-        const renderHome = () => {
-            const daySel = document.getElementById('day-selector');
-            daySel.innerHTML = state.itinerary.map((d, i) => `<button onclick="window.setDay(${i})" class="px-6 py-3 rounded-3xl text-[10px] font-bold ${state.currentDayIdx===i?'day-btn-active':'bg-brown/10 text-brown'}">Day ${i+1}</button>`).join('');
-            const day = state.itinerary[state.currentDayIdx];
-            const [dStr, wStr] = day.date.split(' ');
-            document.getElementById('day-info').innerHTML = `
-                <h2 class="serif-en text-3xl font-bold text-brown">${dStr} <span>${wStr}</span></h2>
-                <p class="text-[10px] opacity-60 font-black uppercase mt-1 text-brown tracking-[0.1em]">${day.weather.temp} · ${day.weather.text} ✨</p>`;
-            const slots = ["早上", "午餐", "下午", "晚餐", "晚上", "住宿"];
-            document.getElementById('itinerary-sections').innerHTML = slots.map(s => `
-                <div class="mb-6">
-                    <div class="flex items-center mb-3">
-                        <div class="time-bar"></div>
-                        <span class="font-bold text-brown opacity-40 uppercase tracking-widest text-xs">${s}</span>
-                    </div>
-                    <div class="space-y-4 min-h-[5px]">${(day.slots[s]||[]).map((c, i) => `
-                        <div class="itinerary-card p-5">
-                            <h4 class="font-bold text-sm text-brown">${c.title||'行程記錄'}</h4>
-                            <p class="mt-1 text-xs opacity-60">${c.desc||''}</p>
-                        </div>`).join('')}
-                    </div>
-                </div>`).join('');
-        };
-
-        const renderWallet = () => {
-            const filtered = state.expenses;
-            document.getElementById('expense-history').innerHTML = filtered.map(e => `
-                <div class="glass-card p-5 flex justify-between items-center mb-3">
-                    <div class="text-left">
-                        <h4 class="font-bold text-xs text-brown truncate">${e.title}</h4>
-                        <p class="text-[9px] opacity-60 mt-0.5">${e.payer} · ${e.method}</p>
-                    </div>
-                    <div class="text-right">
-                        <p class="font-bold text-xs text-brown">₩${e.krw.toLocaleString()}</p>
-                        <p class="text-[9px] text-brown opacity-40 font-bold">NT$ ${Math.round(e.krw/RATE)}</p>
-                    </div>
-                </div>`).join('') || `<p class="text-center opacity-30 py-10 italic font-bold text-xs">No records found.</p>`;
-        };
-
+        // --- INTERACTIONS ---
+        window.setDay = (i) => { state.currentDayIdx = i; window.render(); };
+        window.deleteExpense = (id) => { if(confirm("確定刪除這筆記帳嗎？")) { state.expenses = state.expenses.filter(e => e.id !== id); persistCloud(); renderWallet(); } };
+        window.toggleCheck = (i) => { state.checklist[i].done = !state.checklist[i].done; persistCloud(); renderLists(); };
+        window.removeList = (i) => { state.checklist.splice(i, 1); persistCloud(); renderLists(); };
+        window.saveMemos = () => { state.memos = document.getElementById('memo-input').value; persistCloud(); };
+        window.saveFlightStay = () => { state.flightInfo = document.getElementById('flight-input').value; state.stayInfo = document.getElementById('stay-input').value; persistCloud(); };
         window.appendCalc = (v) => { const d = document.getElementById('calc-display'); d.value = d.value==='0'?v:d.value+v; updateTWD(); };
         window.clearCalc = () => { document.getElementById('calc-display').value=''; updateTWD(); };
         window.calculateResult = () => { try { const d = document.getElementById('calc-display'); d.value = eval(d.value.replace('×', '*').replace('÷', '/')); updateTWD(); } catch(e){ window.showToast('算不出來'); } };
@@ -364,26 +526,88 @@
             persistCloud(); window.closeExpenseModal(); renderWallet();
         };
 
-        window.setDay = (i) => { state.currentDayIdx = i; window.render(); };
-        window.confirmReset = () => { localStorage.removeItem('busan_room_id'); location.reload(); };
+        window.addChecklistItem = () => { const v = document.getElementById('new-check-item').value; if(v){ state.checklist.push({text: v, done: false}); document.getElementById('new-check-item').value=''; persistCloud(); renderLists(); } };
+        
+        window.uploadVoucher = (input) => {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader(); reader.onload = (e) => {
+                    const img = new Image(); img.onload = () => {
+                        const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
+                        const maxSide = 1000; let w=img.width, h=img.height;
+                        if(w>h){if(w>maxSide){h*=maxSide/w; w=maxSide;}}else{if(h>maxSide){w*=maxSide/h; h=maxSide;}}
+                        canvas.width=w; canvas.height=h; ctx.drawImage(img,0,0,w,h);
+                        state.vouchers.unshift({ id: Date.now(), name: "Doc 憑證", data: canvas.toDataURL('image/jpeg', 0.8) });
+                        persistCloud(); renderVouchers();
+                    }; img.src=e.target.result;
+                }; reader.readAsDataURL(input.files[0]);
+            }
+        };
+        window.renameVoucher = (id) => { const v = state.vouchers.find(x => x.id === id); const n = prompt("更名:", v.name); if(n){ v.name = n; persistCloud(); renderVouchers(); } };
+        window.deleteVoucher = (id) => { if(confirm("移除此憑證？")) { state.vouchers = state.vouchers.filter(v => v.id !== id); persistCloud(); renderVouchers(); } };
+        window.viewImg = (src) => { const lb = document.getElementById('lightbox'); const img = document.getElementById('lightbox-img'); img.src = src; lb.style.display = 'flex'; };
+
+        window.addCard = (s) => { 
+            if(!state.itinerary[state.currentDayIdx].slots[s]) state.itinerary[state.currentDayIdx].slots[s] = [];
+            state.itinerary[state.currentDayIdx].slots[s].push({ title: "", desc: "", img: null, loc: "", link: "" }); 
+            persistCloud(); renderHome();
+        };
+        let editRef = null;
+        window.openEdit = (s, i) => {
+            editRef = {s, i}; const c = state.itinerary[state.currentDayIdx].slots[s][i];
+            document.getElementById('card-title').value = c.title; 
+            document.getElementById('card-desc').value = c.desc;
+            document.getElementById('card-loc').value = c.loc || ""; 
+            document.getElementById('card-link').value = c.link || "";
+            const p = document.getElementById('card-img-preview');
+            if(c.img) { p.src = c.img; p.classList.remove('hidden'); } else { p.classList.add('hidden'); }
+            document.getElementById('card-modal').classList.remove('hidden');
+        };
+        window.saveCard = () => {
+            const c = state.itinerary[state.currentDayIdx].slots[editRef.s][editRef.i];
+            c.title = document.getElementById('card-title').value; 
+            c.desc = document.getElementById('card-desc').value;
+            c.loc = document.getElementById('card-loc').value; 
+            c.link = document.getElementById('card-link').value;
+            if(window.tmpImg) c.img = window.tmpImg; 
+            persistCloud(); document.getElementById('card-modal').classList.add('hidden'); renderHome(); window.tmpImg=null;
+        };
+        window.deleteCard = () => { if(confirm("移除行程？")) { state.itinerary[state.currentDayIdx].slots[editRef.s].splice(editRef.i, 1); persistCloud(); document.getElementById('card-modal').classList.add('hidden'); renderHome(); } };
+        window.closeCardModal = () => document.getElementById('card-modal').classList.add('hidden');
+        window.handleImage = (input, mode) => { 
+            if (input.files && input.files[0]) { 
+                const reader = new FileReader(); reader.onload = (e) => { 
+                    const img = new Image(); img.onload = () => {
+                        const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
+                        const maxSide = 800; let w=img.width, h=img.height;
+                        if(w>h){if(w>maxSide){h*=maxSide/w; w=maxSide;}}else{if(h>maxSide){w*=maxSide/h; h=maxSide;}}
+                        canvas.width=w; canvas.height=h; ctx.drawImage(img, 0,0,w,h);
+                        window.tmpImg = canvas.toDataURL('image/jpeg', 0.6); 
+                        if(mode==='card'){const p=document.getElementById('card-img-preview'); p.src=window.tmpImg; p.classList.remove('hidden');}
+                    }; img.src=e.target.result;
+                }; reader.readAsDataURL(input.files[0]); 
+            } 
+        };
+        window.openMap = (q) => window.open(`https://map.naver.com/v5/search/${encodeURIComponent(q)}`, '_blank');
+        window.exportToExcel = () => {
+            let csv = "\uFEFF品項,類別,韓幣,台幣(預估),付款方式,付款人,日期\n";
+            state.expenses.forEach(e => { csv += `${e.title},${e.cat},${e.krw},${Math.round(e.krw/RATE)},${e.method},${e.payer},${e.date}\n`; });
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = `釜山記帳_${new Date().toLocaleDateString()}.csv`;
+            link.click();
+        };
+
+        window.copyFullData = () => { const el = document.createElement("textarea"); el.value = JSON.stringify(state); document.body.appendChild(el); el.select(); document.execCommand("copy"); document.body.removeChild(el); window.showToast("備份碼已複製！☕"); };
+        window.importFullData = () => { const c = prompt("請貼上備份碼："); if(c){ try { state = JSON.parse(c); persistCloud(); window.showToast("資料還原成功！✨"); window.render(); } catch(e) { window.showToast("格式錯誤"); } } };
+        window.confirmReset = () => { if(confirm("登出房間？本機資料將停止同步")) { localStorage.removeItem('busan_room_id'); location.reload(); } };
 
         onAuthStateChanged(auth, (u) => { 
-            if (u && roomId) { startSync(); } 
-            else if (!roomId) { document.getElementById('cloud-overlay').classList.remove('hidden'); }
-            else if (roomId) { signInAnonymously(auth).catch(e => { lastFirebaseError = e.message; startSync(); }); }
+            if (u && roomId) startSync(); 
+            else if (!roomId) document.getElementById('cloud-overlay').classList.remove('hidden');
+            else signInAnonymously(auth).catch(e => startSync());
         });
         
-        window.render = () => {
-            const activeBtn = document.querySelector('.nav-btn.active');
-            if (!activeBtn) return;
-            const active = activeBtn.id.replace('btn-', '');
-            if (active === 'home') renderHome();
-            else if (active === 'wallet') renderWallet();
-            else if (active === 'lists') renderLists();
-            else if (active === 'vouchers') renderVouchers();
-            else if (active === 'info') renderInfo();
-        };
-        const renderLists = () => {}; const renderVouchers = () => {}; const renderInfo = () => { document.getElementById('display-room-id').innerText = roomId || "Not Connected"; };
         window.render();
     </script>
 </body>
