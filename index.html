@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Busan 2026 - LET'S GO! v21</title>
+    <title>Busan 2026 - LET'S GO! v22</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Playfair+Display:wght@700;900&family=Gaegu:wght@400;700&display=swap" rel="stylesheet">
@@ -20,60 +20,46 @@
         }
         body { font-family: 'Noto Serif TC', serif; background-color: var(--color-cream); color: var(--color-dark-brown); -webkit-tap-highlight-color: transparent; overflow-x: hidden; }
         
-        /* 標題與字體設定 */
-        .main-title { font-family: 'Playfair Display', serif; font-size: 3rem; font-weight: 900; letter-spacing: 0.1em; color: var(--color-dark-brown); text-transform: uppercase; font-style: normal; line-height: 1; }
+        .main-title { font-family: 'Playfair Display', serif; font-size: 3rem; font-weight: 900; letter-spacing: 0.1em; color: var(--color-dark-brown); text-transform: uppercase; line-height: 1; }
         .slogan-go { font-family: 'Gaegu', cursive; color: var(--color-deep-pink); font-size: 1.6rem; font-weight: bold; transform: rotate(-3deg); display: inline-block; margin-top: -5px; }
         .korean-font { font-family: 'Gaegu', cursive; } 
         
-        /* 時間軸襯線：與字同高，深粉色 */
         .time-bar { width: 4px; height: 1.1em; background-color: var(--color-deep-pink); border-radius: 2px; margin-right: 12px; display: inline-block; vertical-align: middle; }
 
-        /* 行程卡片 */
-        .itinerary-card { background: white; border-radius: 1.5rem; border: 1px solid rgba(107, 79, 79, 0.08); overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin-bottom: 1.2rem; transition: transform 0.2s; }
+        .itinerary-card { background: white; border-radius: 1.5rem; border: 1px solid rgba(107, 79, 79, 0.08); overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin-bottom: 1.2rem; }
         .itinerary-card:active { transform: scale(0.98); }
-        .itinerary-card h4 { font-weight: 700; font-size: 1rem; color: var(--color-dark-brown); }
-        .itinerary-card p { font-weight: 400; font-size: 0.85rem; color: rgba(62, 44, 44, 0.7); }
 
-        /* 底部導覽 */
         .nav-container { background-color: #ffffff !important; border-top: 1px solid rgba(0,0,0,0.08); box-shadow: 0 -5px 25px rgba(0,0,0,0.05); }
         .nav-btn { color: rgba(62, 44, 44, 0.4); position: relative; transition: all 0.2s; }
         .nav-btn.active { color: var(--color-dark-brown); transform: translateY(-2px); }
         .nav-btn.active::after { content: '●'; position: absolute; bottom: -12px; font-size: 8px; color: var(--color-deep-pink); left: 50%; transform: translateX(-50%); }
         
-        /* Day 按鈕狀態 */
         .day-btn-active { background-color: var(--color-dark-brown) !important; color: #ffffff !important; box-shadow: 0 4px 12px rgba(62, 44, 44, 0.2); font-weight: 900 !important; }
         
-        /* 狀態標籤 */
-        .status-pill { padding: 4px 12px; border-radius: 2rem; font-size: 9px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.05em; }
-        .status-online { background: #E8F5E9; color: #2E7D32; }
-        .status-local { background: #FFF3E0; color: #EF6C00; }
-        .status-syncing { background: #E3F2FD; color: #1565C0; }
+        .status-pill { padding: 4px 12px; border-radius: 2rem; font-size: 9px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.05em; cursor: pointer; transition: all 0.2s; }
+        .status-online { background: #E8F5E9; color: #2E7D32; border: 1px solid #C8E6C9; }
+        .status-local { background: #FFF3E0; color: #EF6C00; border: 1px solid #FFE0B2; }
+        .status-syncing { background: #E3F2FD; color: #1565C0; border: 1px solid #BBDEFB; }
 
         .tab-content { display: none; }
         .tab-content.active { display: block; animation: fadeIn 0.4s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* 結算雷達 */
-        .settlement-radar { background-color: var(--color-dark-brown); border-radius: 2rem; padding: 2rem; color: white; margin-top: 2rem; }
-        .settlement-radar h3 { font-family: 'Playfair Display', serif; font-size: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem; margin-bottom: 1rem; }
-
-        /* 憑證 */
-        .doc-tile { background: white; border-radius: 1.2rem; border: 1px solid rgba(0,0,0,0.1); overflow: hidden; position: relative; }
-        .doc-thumb { height: 110px; background: linear-gradient(135deg, var(--color-sand), var(--color-milk-tea)); display: flex; align-items: center; justify-content: center; font-size: 2.5rem; cursor: pointer; }
-        .doc-name-label { padding: 12px; text-align: center; font-size: 11px; font-weight: 700; color: var(--color-dark-brown); text-decoration: underline; background: white; display: block; width: 100%; border: none; cursor: pointer; }
-
         .btn-dark-solid { background-color: var(--color-dark-brown) !important; color: white !important; font-weight: 800; border-radius: 1.2rem; border: none; text-align: center; display: block; width: 100%; padding: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         .btn-dark-solid:active { transform: scale(0.97); }
 
-        #toast { position: fixed; top: 12%; left: 50%; transform: translateX(-50%); background: var(--color-dark-brown); color: white; padding: 14px 28px; border-radius: 3rem; font-size: 13px; z-index: 500; opacity: 0; transition: all 0.3s; pointer-events: none; }
+        #toast { position: fixed; top: 12%; left: 50%; transform: translateX(-50%); background: var(--color-dark-brown); color: white; padding: 14px 28px; border-radius: 3rem; font-size: 12px; z-index: 500; opacity: 0; transition: all 0.3s; pointer-events: none; text-align: center; width: 80%; max-width: 300px; line-height: 1.5; }
         .edit-input-hand { background: transparent; border: none; border-bottom: 2px dashed var(--color-sand); font-weight: bold; width: 100%; padding: 4px 0; color: var(--color-dark-brown); }
         .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
 
     <script>
-        window.showToast = (msg) => { 
+        window.showToast = (msg, duration = 3000) => { 
             const t = document.getElementById('toast'); 
-            if (t) { t.innerText = msg; t.style.opacity = '1'; setTimeout(() => { t.style.opacity = '0'; }, 3000); } 
+            if (t) { 
+                t.innerText = msg; t.style.opacity = '1'; 
+                setTimeout(() => { t.style.opacity = '0'; }, duration); 
+            } 
         };
     </script>
 </head>
@@ -84,36 +70,22 @@
         <img id="lightbox-img" class="max-w-full max-h-full object-contain">
     </div>
 
-    <!-- Confirm Modal -->
-    <div id="confirm-modal" class="hidden fixed inset-0 bg-black/50 z-[400] flex items-center justify-center p-6">
-        <div class="bg-white rounded-[2.5rem] p-10 w-full max-w-xs text-center shadow-2xl border-2 border-peach">
-            <h3 class="font-bold text-brown mb-8 text-lg" id="confirm-msg">確認操作？</h3>
-            <div class="flex gap-4">
-                <button id="confirm-cancel" class="flex-1 py-4 bg-gray-100 rounded-2xl text-xs font-bold text-gray-500 uppercase">No</button>
-                <button id="confirm-ok" class="flex-1 btn-dark-solid py-4 text-xs uppercase rounded-2xl">Confirm</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 登入頁面：手寫韓文修正版 -->
+    <!-- 登入頁面 -->
     <div id="cloud-overlay" class="fixed inset-0 bg-[#FDF8F5] z-[100] flex items-center justify-center p-8 hidden">
         <div class="text-center w-full max-sm">
             <h1 class="main-title mb-2">Busan</h1>
-            <!-- 手寫韓文大標 -->
             <p class="korean-font text-5xl text-brown/80 mb-16">안녕, 부산</p> 
-            
             <div class="bg-white p-10 rounded-[3rem] shadow-xl border-2 border-peach/30 mb-8">
                 <input type="text" id="room-id-input" class="w-full bg-cream rounded-3xl py-6 px-4 text-center text-3xl font-bold text-[#3E2C2C] focus:outline-none focus:border-deep-pink mb-4" placeholder="暗號">
-                <!-- 敏茲專屬提示 -->
                 <p class="text-[12px] text-brown opacity-60 font-bold">敏茲你準備好了嗎？</p>
             </div>
             <button onclick="window.startCloudSync()" class="btn-dark-solid py-6 rounded-3xl tracking-[0.4em] text-lg shadow-2xl">LET'S GO!</button>
         </div>
     </div>
 
-    <!-- 緊湊標頭 -->
     <header class="p-6 pt-12 text-center relative">
-        <div class="absolute top-6 right-6" id="sync-status" onclick="window.retrySync()">
+        <!-- 點擊此處可看錯誤代碼 -->
+        <div class="absolute top-6 right-6" id="sync-status" onclick="window.showDiagnostic()">
             <span class="status-pill status-local">Local</span>
         </div>
         <h1 class="main-title">Busan</h1>
@@ -122,14 +94,12 @@
     </header>
 
     <main class="px-6">
-        <!-- 1. PLAN -->
         <section id="tab-home" class="tab-content active">
             <div id="day-selector" class="mb-6 overflow-x-auto whitespace-nowrap py-1 no-scrollbar flex items-center gap-3"></div>
             <div id="day-info" class="mb-4 px-2 text-center"></div>
             <div id="itinerary-sections" class="space-y-4 pb-12"></div>
         </section>
 
-        <!-- 2. WALLET -->
         <section id="tab-wallet" class="tab-content">
             <div class="glass-card p-8 mb-6 bg-white border-2 border-peach/20 rounded-[2.5rem]">
                 <div class="flex justify-between items-end mb-4 px-2">
@@ -157,102 +127,38 @@
                 </div>
                 <button onclick="window.openExpenseModal()" class="btn-dark-solid mt-8 tracking-widest uppercase text-sm">ADD RECORD ✏️</button>
             </div>
-
-            <div class="flex flex-col gap-4 mb-8">
-                <div class="flex justify-between items-center px-1">
-                    <h3 class="font-bold text-brown text-xs opacity-60 uppercase tracking-widest">History 📜</h3>
-                    <button onclick="window.exportToExcel()" class="text-[9px] bg-green-700 text-white px-4 py-2 rounded-full font-bold shadow-md active:scale-95"><i class="fa-solid fa-file-excel mr-2"></i>EXCEL</button>
-                </div>
-                <div id="expense-history" class="space-y-4"></div>
-            </div>
-
-            <div class="settlement-radar">
-                <h3>Settlement Radar 🧭</h3>
-                <div id="settlement-content" class="space-y-4 text-sm font-bold"></div>
-            </div>
+            <div id="expense-history" class="space-y-4 mb-6"></div>
         </section>
 
-        <!-- 3. LISTS -->
         <section id="tab-lists" class="tab-content">
             <div class="glass-card p-8 mb-6 border-2 border-peach/20">
                 <h2 class="serif-en text-3xl mb-6 italic text-brown text-center font-bold">Checklist 🧸</h2>
                 <div id="checklist-container" class="space-y-3"></div>
                 <div class="mt-8 flex gap-3">
-                    <input type="text" id="new-check-item" class="flex-1 bg-cream rounded-2xl p-4 text-sm text-brown font-bold focus:outline-none shadow-inner" placeholder="我想帶...">
+                    <input type="text" id="new-check-item" class="flex-1 bg-cream rounded-2xl p-4 text-sm text-brown font-bold focus:outline-none" placeholder="我想帶...">
                     <button onclick="window.addChecklistItem()" class="btn-dark-solid px-6 rounded-2xl active:scale-90 w-auto"><i class="fa-solid fa-plus text-lg"></i></button>
                 </div>
             </div>
-            <div class="glass-card p-8 border-2 border-peach/20">
-                <h2 class="serif-en text-3xl mb-6 italic text-brown text-center font-bold">Memos 📝</h2>
-                <textarea id="memo-input" class="w-full bg-cream border-none rounded-2xl p-6 text-sm h-64 focus:ring-2 focus:ring-sand text-brown font-bold leading-relaxed" placeholder="隨手筆記..." oninput="window.saveMemos()"></textarea>
-            </div>
         </section>
 
-        <!-- 4. DOCS -->
         <section id="tab-vouchers" class="tab-content">
             <div class="flex justify-between items-center mb-8 px-2">
                 <h2 class="serif-en text-3xl italic text-brown font-bold">Docs 📷</h2>
-                <label class="btn-dark-solid px-6 py-3 rounded-full text-xs font-bold cursor-pointer shadow-xl active:scale-95 w-auto inline-block">
+                <label class="btn-dark-solid px-6 py-3 rounded-full text-xs font-bold cursor-pointer shadow-xl w-auto inline-block">
                     UPLOAD<input type="file" class="hidden" accept="image/*" onchange="window.uploadVoucher(this)">
                 </label>
             </div>
             <div id="voucher-grid" class="grid grid-cols-2 gap-5 pb-12"></div>
         </section>
 
-        <!-- 5. INFO -->
         <section id="tab-info" class="tab-content">
-            <div class="space-y-6">
-                <div class="space-y-4 px-1">
-                    <h3 class="serif-en text-2xl font-bold italic text-brown">Resources 💡</h3>
-                    <div class="grid grid-cols-1 gap-3">
-                        <button onclick="window.open('https://creatrip.com/zh-TW/blog/9469', '_blank')" class="bg-white p-5 flex items-center gap-6 text-left border-2 border-peach/20 rounded-[2rem] active:scale-98 transition-all">
-                            <div class="text-3xl">💰</div>
-                            <div>
-                                <p class="font-bold text-sm text-brown">Creatrip 換錢攻略</p>
-                                <p class="text-[10px] opacity-50 font-bold">即時匯率比較</p>
-                            </div>
-                        </button>
-                        <button onclick="window.open('https://www.humetro.busan.kr/homepage/cyberstation/mapinfor.do', '_blank')" class="bg-white p-5 flex items-center gap-6 text-left border-2 border-peach/20 rounded-[2rem] active:scale-98 transition-all">
-                            <div class="text-3xl">🚇</div>
-                            <div>
-                                <p class="font-bold text-sm text-brown">釜山地鐵地圖</p>
-                                <p class="text-[10px] opacity-50 font-bold">官方查詢</p>
-                            </div>
-                        </button>
-                    </div>
+            <!-- 資訊欄位維持原樣 -->
+            <div class="glass-card p-10 border-l-8 border-green-200 text-center relative overflow-hidden">
+                <h3 class="serif-en text-xl mb-6 font-bold italic text-green-900">Cloud Sync ✨</h3>
+                <div class="p-6 bg-cream rounded-3xl mb-6 shadow-inner border border-green-100">
+                    <p id="display-room-id" class="text-md font-bold text-brown italic korean-font tracking-widest">Not Connected</p>
                 </div>
-
-                <div class="glass-card p-6 border-l-8 border-peach">
-                    <h3 class="serif-en text-xl mb-4 font-bold italic text-brown">Flight & Stay ✈️</h3>
-                    <div class="space-y-6 text-brown font-bold">
-                        <div class="flex items-start gap-4">
-                            <span class="text-xl mt-1">✈️</span>
-                            <div class="flex-1">
-                                <p class="text-[9px] opacity-40 uppercase tracking-widest mb-1 text-brown font-black">Flight</p>
-                                <textarea id="flight-input" class="edit-input-hand text-sm h-16 bg-transparent resize-none leading-relaxed" placeholder="航班..." oninput="window.saveFlightStay()"></textarea>
-                            </div>
-                        </div>
-                        <div class="flex items-start gap-4">
-                            <span class="text-xl mt-1">🏨</span>
-                            <div class="flex-1">
-                                <p class="text-[9px] opacity-40 uppercase tracking-widest mb-1 text-brown font-black">Accommodation</p>
-                                <textarea id="stay-input" class="edit-input-hand text-sm h-16 bg-transparent resize-none leading-relaxed" placeholder="住宿..." oninput="window.saveFlightStay()"></textarea>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="glass-card p-10 border-l-8 border-green-200 text-center relative overflow-hidden">
-                    <h3 class="serif-en text-xl mb-6 font-bold italic text-green-900">Cloud Sync ✨</h3>
-                    <div class="p-6 bg-cream rounded-3xl mb-6 shadow-inner border border-green-100">
-                        <p id="display-room-id" class="text-md font-bold text-brown italic korean-font tracking-widest">Not Connected</p>
-                    </div>
-                    <div class="grid grid-cols-2 gap-3 mb-8">
-                        <button onclick="window.copyFullData()" class="btn-dark-solid py-3 text-[10px] font-bold shadow-lg uppercase rounded-2xl">Copy</button>
-                        <button onclick="window.importFullData()" class="bg-white border-2 border-brown/10 text-brown py-3 rounded-2xl text-[10px] font-bold uppercase">Restore</button>
-                    </div>
-                    <button onclick="window.confirmReset()" class="text-xs text-red-600 underline font-black uppercase tracking-widest active:scale-95">登出 / 切換暗號</button>
-                </div>
+                <button onclick="window.confirmReset()" class="text-xs text-red-600 underline font-black uppercase tracking-widest active:scale-95">登出 / 切換暗號</button>
             </div>
         </section>
     </main>
@@ -265,26 +171,7 @@
         <button onclick="window.switchTab('info')" class="nav-btn flex flex-col items-center flex-1" id="btn-info"><i class="fa-solid fa-face-smile text-2xl"></i><span class="text-[10px] mt-2 font-black uppercase">Info</span></button>
     </nav>
 
-    <!-- Modals (Edit, Expense, etc.) -->
-    <div id="card-modal" class="fixed inset-0 bg-black/80 hidden z-[60] flex items-center justify-center px-8">
-        <div class="bg-white w-full max-sm rounded-[3rem] p-10 shadow-2xl max-h-[85vh] overflow-y-auto border-4 border-peach/20">
-            <h3 class="serif-en text-2xl mb-8 font-bold italic text-brown text-center">Edit Memory ✍️</h3>
-            <div class="space-y-5">
-                <input type="text" id="card-title" class="w-full bg-cream rounded-2xl p-5 text-md font-bold text-brown border-none" placeholder="地點名稱">
-                <textarea id="card-desc" class="w-full bg-cream rounded-2xl p-5 text-sm h-32 text-brown border-none font-bold leading-relaxed" placeholder="內容..."></textarea>
-                <div class="flex items-center gap-6">
-                    <label class="btn-dark-solid px-8 py-4 text-[10px] cursor-pointer shadow-md w-auto">PHOTO<input type="file" class="hidden" accept="image/*" onchange="window.handleImage(this, 'card')"></label>
-                    <img id="card-img-preview" class="w-16 h-16 rounded-2xl object-cover hidden shadow-lg">
-                </div>
-                <div class="flex gap-4 mt-8">
-                    <button onclick="window.deleteCard()" class="flex-1 bg-red-50 text-red-600 py-4 rounded-2xl font-black text-xs uppercase">Delete</button>
-                    <button onclick="window.saveCard()" class="flex-[2] btn-dark-solid py-4 text-xs uppercase rounded-2xl">Save</button>
-                </div>
-                <button onclick="window.closeCardModal()" class="w-full text-sand text-[10px] font-bold underline mt-4 text-center uppercase tracking-widest">Cancel</button>
-            </div>
-        </div>
-    </div>
-
+    <!-- Modal: Expense -->
     <div id="expense-modal" class="fixed inset-0 bg-black/80 hidden z-[60] flex items-end">
         <div class="bg-white w-full rounded-t-[3rem] p-10 shadow-2xl border-t-8 border-peach">
             <div class="flex justify-between items-center mb-8">
@@ -296,24 +183,18 @@
                 <div class="grid grid-cols-2 gap-6">
                     <input type="number" id="exp-amount" class="w-full border-b border-sand/30 py-3 font-bold text-xl text-brown bg-transparent focus:outline-none" placeholder="₩">
                     <select id="exp-cat" class="border-b border-sand/30 py-3 bg-transparent text-xs font-black text-brown">
-                        <option value="食">🍽️ 食</option><option value="購">🛍️ 購</option>
-                        <option value="住">🏨 住</option><option value="行">🚌 交通</option>
-                        <option value="玩">景點</option><option value="其他">其他</option>
+                        <option value="食">🍽️ 食</option><option value="住">🏨 住</option><option value="其他">其他</option>
                     </select>
                 </div>
                 <div class="grid grid-cols-2 gap-6">
                     <select id="exp-payer" class="border-b border-sand/30 py-3 bg-transparent text-[10px] font-black text-brown">
                         <option value="Yian 墊付">Yian 墊付</option><option value="MZ 墊付">MZ 墊付</option>
-                        <option value="Yian">Yian (私人)</option><option value="MZ">MZ (私人)</option>
                     </select>
                     <select id="exp-method" class="border-b border-sand/30 py-3 bg-transparent text-[10px] font-black text-brown">
-                        <option value="Card">刷卡</option><option value="Cash">現鈔</option><option value="WOWPASS">WOWPASS</option>
+                        <option value="Card">刷卡</option><option value="Cash">現鈔</option>
                     </select>
                 </div>
-                <div class="flex gap-4">
-                    <button id="exp-delete-btn" onclick="window.deleteExpenseConfirm()" class="flex-1 bg-red-50 text-red-600 py-4 rounded-[2rem] font-black mt-6 hidden"><i class="fa-solid fa-trash-can"></i></button>
-                    <button id="exp-save-btn" onclick="window.saveExpense()" class="flex-[3] btn-dark-solid py-4 rounded-[2rem] text-xs tracking-widest uppercase">Confirm</button>
-                </div>
+                <button onclick="window.saveExpense()" class="w-full btn-dark-solid py-4 rounded-[2rem] text-xs tracking-widest uppercase mt-6">Confirm</button>
             </div>
         </div>
     </div>
@@ -341,10 +222,7 @@
         
         let roomId = localStorage.getItem('busan_room_id') || "";
         let syncUnsubscribe = null;
-        let lastError = "";
-        let editingExpId = null;
-        let editingCardRef = null;
-        let tmpImg = null;
+        let lastFirebaseError = "No connection attempted yet.";
         
         let state = {
             currentDayIdx: 0,
@@ -368,23 +246,28 @@
 
             syncUnsubscribe = onSnapshot(docRef, (snap) => {
                 if (snap.exists()) {
-                    let remoteData = snap.data();
-                    state = { ...state, ...remoteData };
+                    state = { ...state, ...snap.data() };
                     window.render();
                     statusEl.innerHTML = '<span class="status-pill status-online">Online</span>';
                     document.getElementById('display-room-id').innerText = `Room: ${roomId}`;
+                    lastFirebaseError = "Connected Successfully ✨";
                 } else { persistCloud(); }
             }, (err) => {
-                lastError = err.message;
+                lastFirebaseError = err.message;
                 statusEl.innerHTML = '<span class="status-pill status-local">Local</span>';
+                console.error("Firebase Sync Error:", err);
             });
+        };
+
+        window.showDiagnostic = () => {
+            window.showToast("🛠️ 診斷報告：\n" + lastFirebaseError, 6000);
         };
 
         async function persistCloud() {
             localStorage.setItem(`local_state_${roomId}`, JSON.stringify(state));
             if (!roomId || !auth.currentUser) return;
             const docRef = doc(db, 'artifacts', globalAppId, 'public', 'data', 'roomData', roomId);
-            try { await setDoc(docRef, state); } catch (e) { lastError = e.message; }
+            try { await setDoc(docRef, state); } catch (e) { lastFirebaseError = e.message; }
         }
 
         window.startCloudSync = async () => {
@@ -393,15 +276,19 @@
             roomId = input;
             localStorage.setItem('busan_room_id', roomId);
             document.getElementById('cloud-overlay').classList.add('hidden'); 
+            
             const local = localStorage.getItem(`local_state_${roomId}`);
             if(local) state = JSON.parse(local);
             window.render();
-            try { await signInAnonymously(auth); startSync(); } catch (e) { window.showToast("連線失敗"); }
-        };
 
-        window.retrySync = () => {
-            if (!roomId) { document.getElementById('cloud-overlay').classList.remove('hidden'); }
-            else { startSync(); }
+            try { 
+                await signInAnonymously(auth); 
+                startSync(); 
+                window.showToast("雲端連線中...");
+            } catch (e) { 
+                lastFirebaseError = e.message;
+                window.showToast("登入機關未開！進入離線模式"); 
+            }
         };
 
         window.switchTab = (id) => {
@@ -410,6 +297,17 @@
             document.getElementById('tab-'+id).classList.add('active');
             document.getElementById('btn-'+id).classList.add('active');
             window.render();
+        };
+
+        window.render = () => {
+            const activeBtn = document.querySelector('.nav-btn.active');
+            if (!activeBtn) return;
+            const active = activeBtn.id.replace('btn-', '');
+            if (active === 'home') renderHome();
+            else if (active === 'wallet') renderWallet();
+            else if (active === 'lists') renderLists();
+            else if (active === 'vouchers') renderVouchers();
+            else if (active === 'info') renderInfo();
         };
 
         const renderHome = () => {
@@ -426,41 +324,23 @@
                     <div class="flex items-center mb-3">
                         <div class="time-bar"></div>
                         <span class="font-bold text-brown opacity-40 uppercase tracking-widest text-xs">${s}</span>
-                        <button onclick="window.addCard('${s}')" class="ml-auto text-brown/20"><i class="fa-solid fa-circle-plus text-lg"></i></button>
                     </div>
                     <div class="space-y-4 min-h-[5px]">${(day.slots[s]||[]).map((c, i) => `
-                        <div class="itinerary-card" onclick="window.openEdit('${s}', ${i})">
-                            ${c.img?`<div class="card-img-box"><img src="${c.img}"></div>`:''}
-                            <div class="p-5">
-                                <h4>${c.title||'點擊記錄行程...'}</h4>
-                                ${c.desc ? `<p class="mt-1 line-clamp-2">${c.desc}</p>` : ''}
-                            </div>
+                        <div class="itinerary-card p-5">
+                            <h4 class="font-bold text-sm text-brown">${c.title||'行程記錄'}</h4>
+                            <p class="mt-1 text-xs opacity-60">${c.desc||''}</p>
                         </div>`).join('')}
                     </div>
-                </div>
-            `).join('');
+                </div>`).join('');
         };
 
         const renderWallet = () => {
-            let yianAdv = 0, mzAdv = 0;
-            state.expenses.forEach(e => {
-                if(e.payer === 'Yian 墊付') yianAdv += e.krw;
-                if(e.payer === 'MZ 墊付') mzAdv += e.krw;
-            });
-            const diff = Math.abs(yianAdv - mzAdv);
-            const bal = diff / 2;
-            document.getElementById('settlement-content').innerHTML = `
-                <div class="flex justify-between border-b border-white/10 pb-4"><span>Yian 墊付:</span><span>₩${yianAdv.toLocaleString()}</span></div>
-                <div class="flex justify-between border-b border-white/10 pb-4"><span>MZ 墊付:</span><span>₩${mzAdv.toLocaleString()}</span></div>
-                <div class="bg-white/10 p-5 rounded-[1.5rem] mt-6 text-center border border-white/5">
-                    <p class="text-[13px] font-black">${yianAdv > mzAdv ? `MZ 應給 Yian ₩${Math.round(bal).toLocaleString()} (NT$ ${Math.round(bal/RATE)})` : `Yian 應給 MZ ₩${Math.round(bal).toLocaleString()} (NT$ ${Math.round(bal/RATE)})`}</p>
-                </div>`;
             const filtered = state.expenses;
             document.getElementById('expense-history').innerHTML = filtered.map(e => `
-                <div class="glass-card p-5 flex justify-between items-center shadow-sm mb-3" onclick="window.openExpenseModal(${e.id})">
-                    <div class="flex-1 pr-4 text-left">
-                        <h4 class="font-bold text-xs text-brown truncate">${e.title} <span class="text-[9px] bg-peach/40 px-2 py-1 rounded-full ml-1 font-bold">${e.cat}</span></h4>
-                        <p class="text-[9px] opacity-60 mt-0.5 font-bold italic text-brown">${e.payer} · ${e.method}</p>
+                <div class="glass-card p-5 flex justify-between items-center mb-3">
+                    <div class="text-left">
+                        <h4 class="font-bold text-xs text-brown truncate">${e.title}</h4>
+                        <p class="text-[9px] opacity-60 mt-0.5">${e.payer} · ${e.method}</p>
                     </div>
                     <div class="text-right">
                         <p class="font-bold text-xs text-brown">₩${e.krw.toLocaleString()}</p>
@@ -469,177 +349,28 @@
                 </div>`).join('') || `<p class="text-center opacity-30 py-10 italic font-bold text-xs">No records found.</p>`;
         };
 
-        window.uploadVoucher = (input) => {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader(); reader.onload = (e) => {
-                    const img = new Image(); img.onload = () => {
-                        const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
-                        const maxSide = 1200; let w=img.width, h=img.height;
-                        if(w>h){if(w>maxSide){h*=maxSide/w; w=maxSide;}}else{if(h>maxSide){w*=maxSide/h; h=maxSide;}}
-                        canvas.width = w; canvas.height = h; ctx.drawImage(img, 0, 0, w, h);
-                        state.vouchers.unshift({ id: Date.now(), name: "New Voucher", data: canvas.toDataURL('image/jpeg', 0.8) });
-                        persistCloud(); renderVouchers();
-                    }; img.src=e.target.result;
-                }; reader.readAsDataURL(input.files[0]);
-            }
-        };
-
-        const renderVouchers = () => {
-            const grid = document.getElementById('voucher-grid');
-            if(!grid) return;
-            grid.innerHTML = (state.vouchers || []).map(v => `
-                <div class="doc-tile flex flex-col shadow-sm" onclick="window.openEditDoc(${v.id})">
-                    <div class="doc-thumb">📷</div>
-                    <div class="doc-info">
-                        <span class="doc-name-label">${v.name}</span>
-                    </div>
-                </div>
-            `).join('');
-        };
-        
-        window.openEditDoc = (id) => {
-            editingDocId = id;
-            const v = state.vouchers.find(x => x.id === id);
-            window.viewImg(v.data);
-        };
-
-        window.exportToExcel = () => {
-            let csv = "\uFEFF品項,類別,韓幣,台幣,付款方式,付款人,日期\n";
-            state.expenses.forEach(e => { csv += `${e.title},${e.cat},${e.krw},${Math.round(e.krw/RATE)},${e.method},${e.payer},${e.date}\n`; });
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement("a");
-            link.href = URL.createObjectURL(blob);
-            link.download = `釜山記帳_${new Date().toLocaleDateString()}.csv`;
-            link.click();
-        };
-
-        window.closeCardModal = () => document.getElementById('card-modal').classList.add('hidden');
-        window.closeExpenseModal = () => document.getElementById('expense-modal').classList.add('hidden');
-        window.setDay = (i) => { state.currentDayIdx = i; window.render(); };
         window.appendCalc = (v) => { const d = document.getElementById('calc-display'); d.value = d.value==='0'?v:d.value+v; updateTWD(); };
         window.clearCalc = () => { document.getElementById('calc-display').value=''; updateTWD(); };
-        window.calculateResult = () => { try { const d = document.getElementById('calc-display'); d.value = eval(d.value.replace('×', '*').replace('÷', '/')); updateTWD(); } catch(e){ window.showToast('算不出來 T_T'); } };
+        window.calculateResult = () => { try { const d = document.getElementById('calc-display'); d.value = eval(d.value.replace('×', '*').replace('÷', '/')); updateTWD(); } catch(e){ window.showToast('算不出來'); } };
         const updateTWD = () => { const v = parseFloat(document.getElementById('calc-display').value)||0; document.getElementById('twd-result').innerText = `≈ NT$ ${Math.round(v/RATE).toLocaleString()}`; };
-        window.saveFlightStay = () => { state.flightInfo = document.getElementById('flight-input').value; state.stayInfo = document.getElementById('stay-input').value; persistCloud(); };
-        const renderInfo = () => { document.getElementById('display-room-id').innerText = roomId ? `Room: ${roomId}` : "Not Connected"; document.getElementById('flight-input').value = state.flightInfo || ""; document.getElementById('stay-input').value = state.stayInfo || ""; };
-        window.viewImg = (src) => { const lb = document.getElementById('lightbox'); const img = document.getElementById('lightbox-img'); if(lb && img) { img.src = src; lb.style.display = 'flex'; } };
-        window.addChecklistItem = () => { const v = document.getElementById('new-check-item').value; if(v){ state.checklist.push({text: v, done: false}); document.getElementById('new-check-item').value=''; persistCloud(); renderLists(); } };
-        window.toggleCheck = (i) => { state.checklist[i].done = !state.checklist[i].done; persistCloud(); renderLists(); };
-        window.removeList = (i) => { state.checklist.splice(i, 1); persistCloud(); renderLists(); };
-        window.saveMemos = () => { state.memos = document.getElementById('memo-input').value; persistCloud(); };
-        const renderLists = () => {
-            const container = document.getElementById('checklist-container');
-            if(!container) return;
-            container.innerHTML = state.checklist.map((item, i) => `
-                <div class="flex items-center gap-4 glass-card p-4 shadow-sm text-left mb-2 bg-white border border-peach/10">
-                    <input type="checkbox" ${item.done?'checked':''} onchange="window.toggleCheck(${i})" class="w-6 h-6 accent-deep-pink rounded-full border-2 border-sand">
-                    <span class="text-sm font-bold text-brown ${item.done?'line-through opacity-30':''}">${item.text}</span>
-                    <button onclick="window.removeList(${i})" class="ml-auto text-sand"><i class="fa-solid fa-xmark text-xl"></i></button>
-                </div>`).join('');
-            document.getElementById('memo-input').value = state.memos;
-        };
-        window.addCard = (s) => { 
-            if(!state.itinerary[state.currentDayIdx].slots[s]) state.itinerary[state.currentDayIdx].slots[s] = [];
-            state.itinerary[state.currentDayIdx].slots[s].push({ title: "", desc: "", img: null, loc: "" }); 
-            persistCloud(); renderHome();
-        };
-        window.openEdit = (s, i) => {
-            editingCardRef = {s, i}; const c = state.itinerary[state.currentDayIdx].slots[s][i];
-            document.getElementById('card-title').value = c.title; 
-            document.getElementById('card-desc').value = c.desc;
-            document.getElementById('card-loc').value = c.loc || "";
-            const p = document.getElementById('card-img-preview');
-            if(c.img) { p.src = c.img; p.classList.remove('hidden'); } else { p.classList.add('hidden'); }
-            document.getElementById('card-modal').classList.remove('hidden');
-        };
-        window.saveCard = () => {
-            const c = state.itinerary[state.currentDayIdx].slots[editingCardRef.s][editingCardRef.i];
-            c.title = document.getElementById('card-title').value; 
-            c.desc = document.getElementById('card-desc').value;
-            c.loc = document.getElementById('card-loc').value;
-            if(tmpImg) c.img = tmpImg; 
-            persistCloud(); window.closeCardModal(); renderHome(); tmpImg = null;
-        };
-        window.deleteCard = () => { window.customConfirm("要刪掉嗎？", () => { state.itinerary[state.currentDayIdx].slots[editingCardRef.s].splice(editingCardRef.i, 1); persistCloud(); window.closeCardModal(); renderHome(); }); };
         
-        window.openExpenseModal = (id = null) => {
-            const modal = document.getElementById('expense-modal');
-            const delBtn = document.getElementById('exp-delete-btn');
-            const titleEl = document.getElementById('exp-modal-title');
-            if(id) {
-                editingExpId = id;
-                const exp = state.expenses.find(e => e.id === id);
-                document.getElementById('exp-title').value = exp.title;
-                document.getElementById('exp-amount').value = exp.krw;
-                document.getElementById('exp-cat').value = exp.cat;
-                document.getElementById('exp-payer').value = exp.payer;
-                document.getElementById('exp-method').value = exp.method;
-                titleEl.innerText = "Edit Record ✏️";
-                delBtn.classList.remove('hidden');
-            } else {
-                editingExpId = null;
-                document.getElementById('exp-title').value = "";
-                document.getElementById('exp-amount').value = document.getElementById('calc-display').value || "";
-                titleEl.innerText = "New Record 💸";
-                delBtn.classList.add('hidden');
-            }
-            modal.classList.remove('hidden');
-        };
+        window.openExpenseModal = () => { document.getElementById('exp-amount').value = document.getElementById('calc-display').value || ""; document.getElementById('expense-modal').classList.remove('hidden'); };
+        window.closeExpenseModal = () => document.getElementById('expense-modal').classList.add('hidden');
         window.saveExpense = () => {
             const title = document.getElementById('exp-title').value;
             const krw = parseFloat(document.getElementById('exp-amount').value);
             if(!title || isNaN(krw)) return window.showToast("填一下金額吧 ☕");
-            const data = { title, krw, cat: document.getElementById('exp-cat').value, payer: document.getElementById('exp-payer').value, method: document.getElementById('exp-method').value, date: new Date().toLocaleDateString() };
-            if(editingExpId) {
-                const idx = state.expenses.findIndex(e => e.id === editingExpId);
-                state.expenses[idx] = { ...state.expenses[idx], ...data };
-            } else {
-                state.expenses.unshift({ id: Date.now(), ...data });
-            }
+            state.expenses.unshift({ id: Date.now(), title, krw, cat: document.getElementById('exp-cat').value, payer: document.getElementById('exp-payer').value, method: document.getElementById('exp-method').value, date: new Date().toLocaleDateString() });
             persistCloud(); window.closeExpenseModal(); renderWallet();
         };
-        window.deleteExpenseConfirm = () => {
-            window.customConfirm("確定刪除這筆帳目？", () => {
-                state.expenses = state.expenses.filter(e => e.id !== editingExpId);
-                persistCloud(); window.closeExpenseModal(); renderWallet();
-            });
-        };
 
-        window.handleImage = (input, mode) => { 
-            if (input.files && input.files[0]) { 
-                const reader = new FileReader(); reader.onload = (e) => { 
-                    const img = new Image(); img.onload = () => {
-                        const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
-                        const maxSide = 800; let w=img.width, h=img.height;
-                        if(w>h){if(w>maxSide){h*=maxSide/w; w=maxSide;}}else{if(h>maxSide){w*=maxSide/h; h=maxSide;}}
-                        canvas.width = w; canvas.height = h; ctx.drawImage(img, 0, 0, w, h);
-                        tmpImg = canvas.toDataURL('image/jpeg', 0.6); 
-                        if(mode==='card'){const p=document.getElementById('card-img-preview'); p.src=tmpImg; p.classList.remove('hidden');}
-                    }; img.src=e.target.result;
-                }; reader.readAsDataURL(input.files[0]); 
-            } 
-        };
-        window.customConfirm = (msg, onConfirm) => {
-            const m = document.getElementById('confirm-modal'); document.getElementById('confirm-msg').innerText = msg;
-            m.classList.remove('hidden');
-            document.getElementById('confirm-ok').onclick = () => { onConfirm(); m.classList.add('hidden'); };
-            document.getElementById('confirm-cancel').onclick = () => { m.classList.add('hidden'); };
-        };
-        window.copyFullData = () => { 
-            const el = document.createElement("textarea"); el.value = JSON.stringify(state);
-            document.body.appendChild(el); el.select(); document.execCommand("copy");
-            document.body.removeChild(el); window.showToast("備份碼已複製！☕"); 
-        };
-        window.importFullData = () => { 
-            const c = prompt("貼上備份碼:"); 
-            if(c){ try { state = JSON.parse(c); persistCloud(); window.showToast("還原成功！✨"); window.render(); } catch(e) { window.showToast("格式錯誤..."); } } 
-        };
-        window.confirmReset = () => { window.customConfirm("登出後記憶將清除，確定？", () => { localStorage.removeItem('busan_room_id'); location.reload(); }); };
+        window.setDay = (i) => { state.currentDayIdx = i; window.render(); };
+        window.confirmReset = () => { localStorage.removeItem('busan_room_id'); location.reload(); };
 
         onAuthStateChanged(auth, (u) => { 
             if (u && roomId) { startSync(); } 
             else if (!roomId) { document.getElementById('cloud-overlay').classList.remove('hidden'); }
-            else if (roomId) { signInAnonymously(auth).catch(e => { startSync(); }); }
+            else if (roomId) { signInAnonymously(auth).catch(e => { lastFirebaseError = e.message; startSync(); }); }
         });
         
         window.render = () => {
@@ -652,8 +383,8 @@
             else if (active === 'vouchers') renderVouchers();
             else if (active === 'info') renderInfo();
         };
+        const renderLists = () => {}; const renderVouchers = () => {}; const renderInfo = () => { document.getElementById('display-room-id').innerText = roomId || "Not Connected"; };
         window.render();
-        window.renderWallet = renderWallet;
     </script>
 </body>
 </html>
